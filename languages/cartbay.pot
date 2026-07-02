@@ -1,0 +1,1621 @@
+# Copyright (C) 2026 WPAnchorBay
+# This file is distributed under the GPL-2.0-or-later.
+msgid ""
+msgstr ""
+"Project-Id-Version: CartBay — Abandoned Cart Recovery for WooCommerce 1.0.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/cartbay\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-07-02T08:55:34+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: cartbay\n"
+
+#. Plugin Name of the plugin
+#: cartbay.php
+msgid "CartBay — Abandoned Cart Recovery for WooCommerce"
+msgstr ""
+
+#. Plugin URI of the plugin
+#: cartbay.php
+msgid "https://wpanchorbay.com/plugins/cartbay/"
+msgstr ""
+
+#. Description of the plugin
+#: cartbay.php
+msgid "Recover abandoned WooCommerce checkout revenue with a focused plugin that sets up in minutes."
+msgstr ""
+
+#. Author of the plugin
+#: cartbay.php
+msgid "WPAnchorBay"
+msgstr ""
+
+#. Author URI of the plugin
+#: cartbay.php
+msgid "https://wpanchorbay.com/"
+msgstr ""
+
+#: app/Admin/Settings/CaptureSection.php:37
+msgid "Capture"
+msgstr ""
+
+#: app/Admin/Settings/CaptureSection.php:50
+msgid "Capture Settings"
+msgstr ""
+
+#: app/Admin/Settings/CaptureSection.php:52
+msgid "Configure how CartBay captures email and cart data at checkout."
+msgstr ""
+
+#: app/Admin/Settings/CaptureSection.php:56
+msgid "Enable Capture"
+msgstr ""
+
+#: app/Admin/Settings/CaptureSection.php:57
+msgid "Capture email and cart data at checkout"
+msgstr ""
+
+#: app/Admin/Settings/CaptureSection.php:58
+msgid "Turns guest cart capture on for both classic checkout and WooCommerce Blocks checkout."
+msgstr ""
+
+#: app/Admin/Settings/CaptureSection.php:59
+msgid "When enabled, CartBay loads the checkout capture scripts and accepts consented capture requests. Turn this off to pause new cart and email capture without deleting existing sessions."
+msgstr ""
+
+#: app/Admin/Settings/CaptureSection.php:65
+#: app/Admin/Wizard/WizardController.php:225
+msgid "Consent Text"
+msgstr ""
+
+#: app/Admin/Settings/CaptureSection.php:66
+msgid "Text shown next to the consent checkbox on checkout."
+msgstr ""
+
+#: app/Admin/Settings/CaptureSection.php:67
+msgid "Keep this short and explicit so shoppers understand you may email them about an unfinished checkout."
+msgstr ""
+
+#: app/Admin/Settings/CaptureSection.php:74
+msgid "Consent Checkbox Default State"
+msgstr ""
+
+#: app/Admin/Settings/CaptureSection.php:75
+msgid "Choose whether the checkout consent checkbox starts checked or unchecked."
+msgstr ""
+
+#: app/Admin/Settings/CaptureSection.php:76
+msgid "Shoppers can still change the checkbox at checkout. CartBay only captures while it is checked."
+msgstr ""
+
+#: app/Admin/Settings/CaptureSection.php:81
+msgid "Checked"
+msgstr ""
+
+#: app/Admin/Settings/CaptureSection.php:82
+msgid "Unchecked"
+msgstr ""
+
+#: app/Admin/Settings/CaptureSection.php:86
+#: app/Admin/Wizard/WizardController.php:234
+msgid "Abandonment Timeout (minutes)"
+msgstr ""
+
+#: app/Admin/Settings/CaptureSection.php:87
+msgid "Minutes of inactivity before a cart is marked as abandoned."
+msgstr ""
+
+#: app/Admin/Settings/CaptureSection.php:88
+msgid "CartBay waits this long after the shopper stops interacting before the recovery sequence becomes eligible."
+msgstr ""
+
+#: app/Admin/Settings/LogsSection.php:59
+msgid "Logs"
+msgstr ""
+
+#: app/Admin/Settings/LogsSection.php:72
+msgid "CartBay Log Configuration"
+msgstr ""
+
+#: app/Admin/Settings/LogsSection.php:74
+msgid "Control CartBay-owned troubleshooting logs. WooCommerce native logs remain available separately."
+msgstr ""
+
+#: app/Admin/Settings/LogsSection.php:78
+msgid "CartBay File Logging"
+msgstr ""
+
+#: app/Admin/Settings/LogsSection.php:79
+msgid "Enable CartBay-owned troubleshooting log"
+msgstr ""
+
+#: app/Admin/Settings/LogsSection.php:80
+msgid "Keeps a separate CartBay log in addition to WooCommerce native logs. Sensitive values such as emails, license keys, and tokens are redacted."
+msgstr ""
+
+#: app/Admin/Settings/LogsSection.php:86
+msgid "CartBay Log Retention (days)"
+msgstr ""
+
+#: app/Admin/Settings/LogsSection.php:87
+msgid "CartBay file log entries older than this are removed automatically."
+msgstr ""
+
+#: app/Admin/Settings/LogsSection.php:98
+msgid "CartBay Log Size Limit (MB)"
+msgstr ""
+
+#: app/Admin/Settings/LogsSection.php:99
+msgid "When the log file exceeds this size, older entries are removed first."
+msgstr ""
+
+#: app/Admin/Settings/LogsSection.php:124
+msgid "Back to Settings"
+msgstr ""
+
+#: app/Admin/Settings/LogsSection.php:198
+msgid "CartBay Log Entries"
+msgstr ""
+
+#: app/Admin/Settings/LogsSection.php:199
+msgid "These entries are sanitized for support. Context values for emails, tokens, and licenses are redacted."
+msgstr ""
+
+#: app/Admin/Settings/LogsSection.php:204
+msgid "Filter by level"
+msgstr ""
+
+#: app/Admin/Settings/LogsSection.php:206
+msgid "All levels"
+msgstr ""
+
+#: app/Admin/Settings/LogsSection.php:211
+#: app/Admin/Settings/OverviewSection.php:362
+msgid "Filter"
+msgstr ""
+
+#. translators: %s: number of items
+#: app/Admin/Settings/LogsSection.php:216
+#: app/Admin/Settings/LogsSection.php:299
+#, php-format
+msgid "%s entries"
+msgstr ""
+
+#: app/Admin/Settings/LogsSection.php:224
+#: app/Admin/Settings/LogsSection.php:266
+msgid "Time"
+msgstr ""
+
+#: app/Admin/Settings/LogsSection.php:227
+#: app/Admin/Settings/LogsSection.php:267
+msgid "Level"
+msgstr ""
+
+#: app/Admin/Settings/LogsSection.php:228
+#: app/Admin/Settings/LogsSection.php:268
+msgid "System"
+msgstr ""
+
+#: app/Admin/Settings/LogsSection.php:229
+#: app/Admin/Settings/LogsSection.php:269
+msgid "Message"
+msgstr ""
+
+#. translators: %s: number of context fields recorded for the log entry.
+#: app/Admin/Settings/LogsSection.php:230
+#: app/Admin/Settings/LogsSection.php:271
+msgid "Context"
+msgstr ""
+
+#: app/Admin/Settings/LogsSection.php:231
+#: app/Admin/Settings/LogsSection.php:272
+#: app/Admin/Settings/TemplatesSection.php:135
+msgid "Actions"
+msgstr ""
+
+#: app/Admin/Settings/LogsSection.php:235
+msgid "No log entries found for the selected filter."
+msgstr ""
+
+#. translators: %s: number of context fields recorded for the log entry.
+#: app/Admin/Settings/LogsSection.php:271
+#, php-format
+msgid "%s item"
+msgid_plural "%s items"
+msgstr[0] ""
+msgstr[1] ""
+
+#: app/Admin/Settings/LogsSection.php:274
+msgid "CartBay Log Entry"
+msgstr ""
+
+#: app/Admin/Settings/LogsSection.php:274
+msgid "Details"
+msgstr ""
+
+#: app/Admin/Settings/LogsSection.php:275
+#: app/Admin/Settings/SettingsPage.php:511
+#: app/Admin/Settings/SettingsPage.php:555
+msgid "Copy Entry"
+msgstr ""
+
+#. translators: 1: current page, 2: total pages
+#: app/Admin/Settings/LogsSection.php:311
+#: app/Admin/Settings/OverviewSection.php:554
+#, php-format
+msgid "%1$d of %2$d"
+msgstr ""
+
+#: app/Admin/Settings/NotificationsSection.php:82
+#: app/Admin/Settings/NotificationsSection.php:114
+msgid "Notifications"
+msgstr ""
+
+#: app/Admin/Settings/NotificationsSection.php:115
+msgid "Monitor recovery email health: how many emails are queued, sent, and failed, and verify your store can deliver mail. Sent means WordPress/WooCommerce accepted the email; provider-confirmed delivery is reserved for future integrations."
+msgstr ""
+
+#: app/Admin/Settings/NotificationsSection.php:117
+msgid "Notification activity summary"
+msgstr ""
+
+#: app/Admin/Settings/NotificationsSection.php:166
+msgid "SMTP delivery detected."
+msgstr ""
+
+#: app/Admin/Settings/NotificationsSection.php:171
+msgid "Email logging detected, but no SMTP delivery service. Emails to buyers may not be delivered reliably."
+msgstr ""
+
+#: app/Admin/Settings/NotificationsSection.php:173
+msgid "No SMTP plugin detected. Without an SMTP service, recovery emails may land in spam."
+msgstr ""
+
+#: app/Admin/Settings/NotificationsSection.php:177
+msgid "Email Delivery Test"
+msgstr ""
+
+#: app/Admin/Settings/NotificationsSection.php:186
+msgid "From email"
+msgstr ""
+
+#: app/Admin/Settings/NotificationsSection.php:190
+msgid "From name"
+msgstr ""
+
+#: app/Admin/Settings/NotificationsSection.php:195
+msgid "Delivery service"
+msgstr ""
+
+#: app/Admin/Settings/NotificationsSection.php:203
+#: app/Admin/Wizard/WizardController.php:325
+msgid "Send to:"
+msgstr ""
+
+#: app/Admin/Settings/NotificationsSection.php:204
+#: app/Admin/Wizard/WizardController.php:326
+msgid "email@example.com"
+msgstr ""
+
+#: app/Admin/Settings/NotificationsSection.php:206
+#: app/Admin/Settings/NotificationsSection.php:227
+#: app/Admin/Wizard/WizardController.php:328
+#: app/Admin/Wizard/WizardController.php:348
+msgid "Send Test Email"
+msgstr ""
+
+#: app/Admin/Settings/NotificationsSection.php:210
+#: app/Admin/Wizard/WizardController.php:332
+msgid "Enter an email address and click to send a test email and verify delivery."
+msgstr ""
+
+#: app/Admin/Settings/NotificationsSection.php:218
+#: app/Admin/Wizard/WizardController.php:339
+msgid "Sending..."
+msgstr ""
+
+#: app/Admin/Settings/NotificationsSection.php:223
+#: app/Admin/Wizard/WizardController.php:344
+msgid "Test email sent!"
+msgstr ""
+
+#: app/Admin/Settings/NotificationsSection.php:225
+#: app/Admin/Wizard/WizardController.php:346
+msgid "Failed to send test email."
+msgstr ""
+
+#: app/Admin/Settings/NotificationsSection.php:247
+msgid "7 Days"
+msgstr ""
+
+#: app/Admin/Settings/NotificationsSection.php:248
+msgid "30 Days"
+msgstr ""
+
+#: app/Admin/Settings/NotificationsSection.php:249
+msgid "90 Days"
+msgstr ""
+
+#: app/Admin/Settings/NotificationsSection.php:276
+msgid "Pending Queue"
+msgstr ""
+
+#: app/Admin/Settings/NotificationsSection.php:278
+msgid "Current pending recovery emails: first-time queued notifications plus retry-queued notifications."
+msgstr ""
+
+#: app/Admin/Settings/NotificationsSection.php:281
+#: app/Admin/Settings/OverviewSection.php:401
+#: app/Admin/Settings/OverviewSection.php:409
+#: app/Admin/Settings/OverviewSection.php:429
+msgid "Emails Sent"
+msgstr ""
+
+#: app/Admin/Settings/NotificationsSection.php:283
+msgid "Accepted or provider-delivered recovery emails tied to sessions in the selected period."
+msgstr ""
+
+#: app/Admin/Settings/NotificationsSection.php:286
+msgid "Emails Failed"
+msgstr ""
+
+#: app/Admin/Settings/NotificationsSection.php:288
+msgid "Recovery emails tied to sessions in the selected period that ended in failed status."
+msgstr ""
+
+#: app/Admin/Settings/NotificationsSection.php:291
+msgid "Email Acceptance Rate"
+msgstr ""
+
+#: app/Admin/Settings/NotificationsSection.php:293
+msgid "Accepted or delivered recovery emails divided by attempted recovery email sends."
+msgstr ""
+
+#: app/Admin/Settings/OffersSection.php:43
+msgid "Offers"
+msgstr ""
+
+#: app/Admin/Settings/OffersSection.php:56
+msgid "Recovery Coupon"
+msgstr ""
+
+#: app/Admin/Settings/OffersSection.php:58
+msgid "Reference a coupon you created under WooCommerce &rarr; Marketing &rarr; Coupons. When a recovery email step has its coupon enabled, this code is included in the email as plain text for shoppers to apply at checkout."
+msgstr ""
+
+#: app/Admin/Settings/OffersSection.php:62
+msgid "Coupon Code"
+msgstr ""
+
+#: app/Admin/Settings/OffersSection.php:63
+msgid "Enter an existing WooCommerce coupon code. Leave blank to send recovery emails without a discount code."
+msgstr ""
+
+#: app/Admin/Settings/OffersSection.php:64
+msgid "CartBay does not create or expire this coupon — manage it in WooCommerce &rarr; Marketing &rarr; Coupons."
+msgstr ""
+
+#: app/Admin/Settings/OffersSection.php:71
+msgid "Want unique, expiring coupons?"
+msgstr ""
+
+#: app/Admin/Settings/OffersSection.php:73
+msgid "CartBay Pro generates a unique, single-use coupon per shopper, sets an expiry, and auto-applies it when the cart is restored — so discount codes can't leak or be reused."
+msgstr ""
+
+#: app/Admin/Settings/OverviewSection.php:82
+#: app/Core/Plugin.php:425
+msgid "Overview"
+msgstr ""
+
+#: app/Admin/Settings/OverviewSection.php:115
+msgid "Tracked Carts"
+msgstr ""
+
+#: app/Admin/Settings/OverviewSection.php:117
+msgid "Captured checkout sessions created by CartBay during the selected period."
+msgstr ""
+
+#: app/Admin/Settings/OverviewSection.php:120
+msgid "Abandoned Carts"
+msgstr ""
+
+#: app/Admin/Settings/OverviewSection.php:122
+msgid "Tracked carts that passed the inactivity timeout during the selected period."
+msgstr ""
+
+#: app/Admin/Settings/OverviewSection.php:125
+msgid "Recovered Carts"
+msgstr ""
+
+#: app/Admin/Settings/OverviewSection.php:127
+msgid "Abandoned CartBay sessions that matched a later WooCommerce order in the selected period."
+msgstr ""
+
+#: app/Admin/Settings/OverviewSection.php:130
+msgid "Abandoned Cart Value"
+msgstr ""
+
+#: app/Admin/Settings/OverviewSection.php:132
+msgid "Total cart value for sessions that became abandoned during the selected period."
+msgstr ""
+
+#: app/Admin/Settings/OverviewSection.php:136
+msgid "Recovered Revenue"
+msgstr ""
+
+#: app/Admin/Settings/OverviewSection.php:138
+msgid "Revenue from WooCommerce orders matched to recovered CartBay sessions in the selected period."
+msgstr ""
+
+#: app/Admin/Settings/OverviewSection.php:142
+msgid "Recovery Rate"
+msgstr ""
+
+#: app/Admin/Settings/OverviewSection.php:144
+msgid "Recovered carts divided by abandoned carts for the selected period."
+msgstr ""
+
+#: app/Admin/Settings/OverviewSection.php:172
+msgid "CartBay Overview"
+msgstr ""
+
+#: app/Admin/Settings/OverviewSection.php:211
+msgid "Help"
+msgstr ""
+
+#: app/Admin/Settings/OverviewSection.php:212
+msgid "Read the documentation to learn how to get started with CartBay. If you have any questions, please email us."
+msgstr ""
+
+#: app/Admin/Settings/OverviewSection.php:216
+#: app/Admin/Wizard/WizardController.php:159
+msgid "Documentation"
+msgstr ""
+
+#: app/Admin/Settings/OverviewSection.php:217
+msgid "Open Setup Wizard"
+msgstr ""
+
+#: app/Admin/Settings/OverviewSection.php:350
+msgid "Sessions"
+msgstr ""
+
+#: app/Admin/Settings/OverviewSection.php:354
+msgid "Filter by session status"
+msgstr ""
+
+#: app/Admin/Settings/OverviewSection.php:356
+msgid "All statuses"
+msgstr ""
+
+#: app/Admin/Settings/OverviewSection.php:388
+msgid "Search sessions"
+msgstr ""
+
+#: app/Admin/Settings/OverviewSection.php:389
+msgid "Email or ID"
+msgstr ""
+
+#: app/Admin/Settings/OverviewSection.php:390
+msgid "Search"
+msgstr ""
+
+#: app/Admin/Settings/OverviewSection.php:395
+#: app/Admin/Settings/OverviewSection.php:403
+#: app/Admin/Settings/OverviewSection.php:423
+msgid "Session"
+msgstr ""
+
+#: app/Admin/Settings/OverviewSection.php:396
+#: app/Admin/Settings/OverviewSection.php:404
+#: app/Admin/Settings/OverviewSection.php:424
+msgid "Email"
+msgstr ""
+
+#: app/Admin/Settings/OverviewSection.php:397
+#: app/Admin/Settings/OverviewSection.php:405
+#: app/Admin/Settings/OverviewSection.php:425
+#: app/Admin/Settings/OverviewSection.php:583
+msgid "Status"
+msgstr ""
+
+#: app/Admin/Settings/OverviewSection.php:398
+#: app/Admin/Settings/OverviewSection.php:406
+#: app/Admin/Settings/OverviewSection.php:426
+msgid "Cart Total"
+msgstr ""
+
+#: app/Admin/Settings/OverviewSection.php:399
+#: app/Admin/Settings/OverviewSection.php:407
+#: app/Admin/Settings/OverviewSection.php:427
+msgid "Created"
+msgstr ""
+
+#: app/Admin/Settings/OverviewSection.php:400
+#: app/Admin/Settings/OverviewSection.php:408
+#: app/Admin/Settings/OverviewSection.php:428
+msgid "Last Activity"
+msgstr ""
+
+#: app/Admin/Settings/OverviewSection.php:413
+msgid "No sessions found."
+msgstr ""
+
+#: app/Admin/Settings/OverviewSection.php:423
+msgid "Show more details"
+msgstr ""
+
+#: app/Admin/Settings/OverviewSection.php:471
+msgid "Captured"
+msgstr ""
+
+#: app/Admin/Settings/OverviewSection.php:472
+msgid "Abandoned"
+msgstr ""
+
+#: app/Admin/Settings/OverviewSection.php:473
+msgid "Recovered"
+msgstr ""
+
+#: app/Admin/Settings/OverviewSection.php:474
+msgid "Suppressed"
+msgstr ""
+
+#: app/Admin/Settings/OverviewSection.php:487
+msgid "Shopper email and cart data were captured and the cart is still inside the abandonment timeout."
+msgstr ""
+
+#: app/Admin/Settings/OverviewSection.php:488
+msgid "The cart passed the inactivity timeout and is eligible for recovery emails."
+msgstr ""
+
+#: app/Admin/Settings/OverviewSection.php:489
+msgid "A later WooCommerce order matched this CartBay session."
+msgstr ""
+
+#: app/Admin/Settings/OverviewSection.php:490
+msgid "The shopper or email is excluded from recovery messaging."
+msgstr ""
+
+#. translators: %s: number of items
+#: app/Admin/Settings/OverviewSection.php:542
+#, php-format
+msgid "%s items"
+msgstr ""
+
+#: app/Admin/Settings/OverviewSection.php:580
+msgid "Status Guide"
+msgstr ""
+
+#: app/Admin/Settings/OverviewSection.php:581
+msgid "Current session counts help explain the table filters. Overview cards above use the selected reporting period."
+msgstr ""
+
+#: app/Admin/Settings/OverviewSection.php:584
+msgid "Current Sessions"
+msgstr ""
+
+#: app/Admin/Settings/OverviewSection.php:585
+msgid "Meaning"
+msgstr ""
+
+#: app/Admin/Settings/RecoverySequenceSection.php:39
+#: app/Admin/Settings/RecoverySequenceSection.php:55
+msgid "Recovery Sequence"
+msgstr ""
+
+#: app/Admin/Settings/RecoverySequenceSection.php:57
+msgid "Configure when each recovery email is sent and whether individual steps include an incentive."
+msgstr ""
+
+#: app/Admin/Settings/RecoverySequenceSection.php:102
+msgid "Email sending"
+msgstr ""
+
+#: app/Admin/Settings/RecoverySequenceSection.php:107
+msgid "Recommended"
+msgstr ""
+
+#: app/Admin/Settings/RecoverySequenceSection.php:108
+msgid "Send the 3-email recovery sequence"
+msgstr ""
+
+#: app/Admin/Settings/RecoverySequenceSection.php:109
+msgid "When enabled, CartBay sends the sequence below after a cart becomes abandoned. Turn this off to keep cart capture active without sending recovery emails."
+msgstr ""
+
+#: app/Admin/Settings/RecoverySequenceSection.php:114
+msgid "Enable sending"
+msgstr ""
+
+#: app/Admin/Settings/RecoverySequenceSection.php:118
+msgid "Recovery sequence steps"
+msgstr ""
+
+#. translators: %d: recovery email step number
+#: app/Admin/Settings/RecoverySequenceSection.php:128
+#, php-format
+msgid "Email %d"
+msgstr ""
+
+#: app/Admin/Settings/RecoverySequenceSection.php:140
+#: app/Admin/Settings/TemplatesSection.php:133
+msgid "Timing"
+msgstr ""
+
+#: app/Admin/Settings/RecoverySequenceSection.php:142
+msgid "Send after"
+msgstr ""
+
+#: app/Admin/Settings/RecoverySequenceSection.php:145
+#: app/Admin/Wizard/WizardController.php:268
+msgid "minutes"
+msgstr ""
+
+#: app/Admin/Settings/RecoverySequenceSection.php:146
+#: app/Admin/Wizard/WizardController.php:269
+msgid "hours"
+msgstr ""
+
+#: app/Admin/Settings/RecoverySequenceSection.php:147
+#: app/Admin/Wizard/WizardController.php:270
+msgid "days"
+msgstr ""
+
+#: app/Admin/Settings/RecoverySequenceSection.php:150
+msgid "Sends after:"
+msgstr ""
+
+#: app/Admin/Settings/RecoverySequenceSection.php:154
+msgid "Message focus"
+msgstr ""
+
+#: app/Admin/Settings/RecoverySequenceSection.php:165
+#: app/Admin/Settings/TemplatesSection.php:134
+msgid "Coupon"
+msgstr ""
+
+#: app/Admin/Settings/RecoverySequenceSection.php:169
+msgid "Include a recovery coupon"
+msgstr ""
+
+#: app/Admin/Settings/RecoverySequenceSection.php:178
+msgid "CartBay keeps the sequence in order. If a later email is scheduled too close to an earlier one, it will be moved forward automatically."
+msgstr ""
+
+#: app/Admin/Settings/SettingsPage.php:118
+#: app/Admin/Settings/SettingsPage.php:123
+msgid "Cart"
+msgstr ""
+
+#: app/Admin/Settings/SettingsPage.php:504
+msgid "Triggering..."
+msgstr ""
+
+#: app/Admin/Settings/SettingsPage.php:507
+msgid "Test flow triggered."
+msgstr ""
+
+#: app/Admin/Settings/SettingsPage.php:508
+msgid "Failed to trigger the test flow."
+msgstr ""
+
+#: app/Admin/Settings/SettingsPage.php:509
+#: app/Admin/Settings/TemplatesSection.php:169
+#: app/Admin/Settings/TemplatesSection.php:195
+msgid "Trigger Test Flow"
+msgstr ""
+
+#: app/Admin/Settings/SettingsPage.php:510
+msgid "Copied"
+msgstr ""
+
+#: app/Admin/Settings/SettingsPage.php:547
+#: app/Admin/Settings/SettingsPage.php:571
+#: app/Admin/Settings/SettingsPage.php:594
+msgid "Close modal panel"
+msgstr ""
+
+#: app/Admin/Settings/SettingsPage.php:556
+#: app/Admin/Settings/SettingsPage.php:579
+#: app/Admin/Settings/SettingsPage.php:602
+msgid "Close"
+msgstr ""
+
+#: app/Admin/Settings/SettingsPage.php:622
+#: app/Admin/Settings/SettingsPage.php:644
+msgid "You do not have permission to update CartBay settings."
+msgstr ""
+
+#: app/Admin/Settings/SettingsPage.php:632
+msgid "Test mode disabled."
+msgstr ""
+
+#: app/Admin/Settings/SettingsPage.php:659
+msgid "Test mode enabled."
+msgstr ""
+
+#. translators: %s: URL to the Capture settings section.
+#: app/Admin/Settings/SettingsPage.php:683
+#, php-format
+msgid "<strong>CartBay capture is disabled.</strong> CartBay will not capture new abandoned carts until capture is enabled. <a href=\"%s\">Enable Capture</a>."
+msgstr ""
+
+#. translators: %s: URL to disable test mode.
+#: app/Admin/Settings/SettingsPage.php:695
+#, php-format
+msgid "<strong>CartBay Test Mode is active.</strong> Recovery emails use shortened delays. <a href=\"%s\">Disable Test Mode</a> before going live."
+msgstr ""
+
+#: app/Admin/Settings/SettingsPage.php:774
+msgid "CartBay Test Mode is active."
+msgstr ""
+
+#: app/Admin/Settings/SettingsPage.php:775
+msgid "Recovery emails use shortened delays. Disable before going live."
+msgstr ""
+
+#: app/Admin/Settings/SettingsPage.php:776
+msgid "Disable Test Mode"
+msgstr ""
+
+#: app/Admin/Settings/SettingsPage.php:817
+msgid "<strong>An email logging plugin is active, but no SMTP delivery service was detected.</strong> Emails to buyers may not be delivered reliably."
+msgstr ""
+
+#: app/Admin/Settings/SettingsPage.php:820
+msgid "<strong>No SMTP plugin detected.</strong> Without an SMTP service, recovery emails may land in spam. Consider installing an SMTP plugin."
+msgstr ""
+
+#: app/Admin/Settings/SettingsSection.php:37
+#: app/Core/Plugin.php:430
+msgid "Settings"
+msgstr ""
+
+#: app/Admin/Settings/SettingsSection.php:71
+msgid "Data Retention"
+msgstr ""
+
+#: app/Admin/Settings/SettingsSection.php:73
+msgid "Control how long CartBay keeps abandoned cart session data."
+msgstr ""
+
+#: app/Admin/Settings/SettingsSection.php:77
+msgid "Retention Period (days)"
+msgstr ""
+
+#: app/Admin/Settings/SettingsSection.php:78
+msgid "Sessions older than this will be automatically deleted."
+msgstr ""
+
+#: app/Admin/Settings/SettingsSection.php:79
+msgid "Choose how long abandoned cart records remain available for reporting, session review, and cleanup jobs."
+msgstr ""
+
+#: app/Admin/Settings/SettingsSection.php:90
+msgid "Delete Data on Uninstall"
+msgstr ""
+
+#: app/Admin/Settings/SettingsSection.php:91
+msgid "Permanently delete all CartBay data when the plugin is deleted."
+msgstr ""
+
+#: app/Admin/Settings/SettingsSection.php:92
+msgid "When enabled, deleting CartBay removes CartBay settings and recovery data. Leave unchecked to preserve data for reinstalling later."
+msgstr ""
+
+#: app/Admin/Settings/SettingsSection.php:102
+msgid "Admin Navigation"
+msgstr ""
+
+#: app/Admin/Settings/SettingsSection.php:104
+msgid "Control where CartBay appears in the WordPress admin menu."
+msgstr ""
+
+#: app/Admin/Settings/SettingsSection.php:108
+msgid "WooCommerce Menu Shortcut"
+msgstr ""
+
+#: app/Admin/Settings/SettingsSection.php:109
+msgid "Show CartBay under the WooCommerce admin menu."
+msgstr ""
+
+#: app/Admin/Settings/SettingsSection.php:110
+msgid "When enabled, WooCommerce > CartBay opens this CartBay settings area directly."
+msgstr ""
+
+#: app/Admin/Settings/SettingsSection.php:120
+msgid "Debug & Testing"
+msgstr ""
+
+#: app/Admin/Settings/SettingsSection.php:122
+msgid "Developer tools for QA, troubleshooting, and short-cycle testing."
+msgstr ""
+
+#: app/Admin/Settings/SettingsSection.php:126
+msgid "Test Mode"
+msgstr ""
+
+#: app/Admin/Settings/SettingsSection.php:127
+msgid "Enable test mode (shortened email delays, dummy sessions)"
+msgstr ""
+
+#: app/Admin/Settings/SettingsSection.php:128
+msgid "Use this in staging or QA when you want quick feedback loops without waiting for the normal recovery schedule."
+msgstr ""
+
+#: app/Admin/Settings/SettingsSection.php:134
+msgid "WooCommerce Logs"
+msgstr ""
+
+#: app/Admin/Settings/SettingsSection.php:136
+msgid "Open the WooCommerce log viewer filtered to the CartBay source for debugging background jobs and checkout capture."
+msgstr ""
+
+#: app/Admin/Settings/SettingsSection.php:138
+msgid "View Logs"
+msgstr ""
+
+#: app/Admin/Settings/SettingsSection.php:140
+msgid "Logs open in WooCommerce Status and remain filtered to the CartBay log source."
+msgstr ""
+
+#: app/Admin/Settings/SettingsSection.php:144
+msgid "CartBay Logs"
+msgstr ""
+
+#: app/Admin/Settings/SettingsSection.php:146
+msgid "Open CartBay-owned sanitized logs and log configuration."
+msgstr ""
+
+#: app/Admin/Settings/SettingsSection.php:148
+msgid "Open CartBay Logs"
+msgstr ""
+
+#: app/Admin/Settings/SettingsSection.php:150
+msgid "CartBay logs are shown in a separate section so settings remain focused."
+msgstr ""
+
+#: app/Admin/Settings/TemplatesSection.php:77
+#: app/Admin/Settings/TemplatesSection.php:124
+msgid "Templates"
+msgstr ""
+
+#: app/Admin/Settings/TemplatesSection.php:111
+msgid "Recovery Email 1"
+msgstr ""
+
+#: app/Admin/Settings/TemplatesSection.php:112
+msgid "Recovery Email 2"
+msgstr ""
+
+#: app/Admin/Settings/TemplatesSection.php:113
+msgid "Recovery Email 3"
+msgstr ""
+
+#: app/Admin/Settings/TemplatesSection.php:125
+msgid "Each recovery email is edited in WooCommerce Email Settings where you can customize subject, heading, preheader, body, button text, logo, colors, footer, preview, and test-send. Customer recovery emails do not need a fixed recipient because CartBay sends each one to the captured checkout email address."
+msgstr ""
+
+#: app/Admin/Settings/TemplatesSection.php:126
+msgid "Open WooCommerce Email Settings"
+msgstr ""
+
+#: app/Admin/Settings/TemplatesSection.php:131
+msgid "Step"
+msgstr ""
+
+#: app/Admin/Settings/TemplatesSection.php:132
+msgid "Subject"
+msgstr ""
+
+#: app/Admin/Settings/TemplatesSection.php:148
+msgid "Default"
+msgstr ""
+
+#: app/Admin/Settings/TemplatesSection.php:151
+msgid "Edit in Recovery Sequence"
+msgstr ""
+
+#: app/Admin/Settings/TemplatesSection.php:154
+msgid "Yes"
+msgstr ""
+
+#: app/Admin/Settings/TemplatesSection.php:154
+msgid "No"
+msgstr ""
+
+#: app/Admin/Settings/TemplatesSection.php:155
+msgid "Edit in Offers"
+msgstr ""
+
+#: app/Admin/Settings/TemplatesSection.php:159
+msgid "Edit in WooCommerce"
+msgstr ""
+
+#. translators: %s: enable URL
+#: app/Admin/Settings/TemplatesSection.php:181
+#, php-format
+msgid "Test mode is not enabled. <a href=\"%s\">Enable it now</a>."
+msgstr ""
+
+#: app/Admin/Settings/TemplatesSection.php:190
+msgid "Creates a test abandoned session and schedules the first recovery email in about 30 seconds."
+msgstr ""
+
+#: app/Admin/Settings/TemplatesSection.php:210
+msgid "Your store name"
+msgstr ""
+
+#: app/Admin/Settings/TemplatesSection.php:211
+#: app/Admin/Settings/TemplatesSection.php:212
+msgid "Your store name (alias)"
+msgstr ""
+
+#: app/Admin/Settings/TemplatesSection.php:213
+msgid "Customer email address"
+msgstr ""
+
+#: app/Admin/Settings/TemplatesSection.php:214
+msgid "Link to restore the abandoned cart"
+msgstr ""
+
+#: app/Admin/Settings/TemplatesSection.php:215
+msgid "Coupon code (when coupons enabled for this step)"
+msgstr ""
+
+#: app/Admin/Settings/TemplatesSection.php:216
+msgid "Coupon expiry date (when coupons enabled for this step)"
+msgstr ""
+
+#: app/Admin/Settings/TemplatesSection.php:217
+msgid "One-click unsubscribe link"
+msgstr ""
+
+#: app/Admin/Settings/TemplatesSection.php:221
+msgid "Available Placeholders"
+msgstr ""
+
+#: app/Admin/Settings/TemplatesSection.php:222
+msgid "Use these placeholders in subject, heading, preheader, body, and button label fields. Coupon placeholders only resolve when coupons are enabled for that step."
+msgstr ""
+
+#: app/Admin/Settings/TemplatesSection.php:226
+msgid "Placeholder"
+msgstr ""
+
+#: app/Admin/Settings/TemplatesSection.php:227
+msgid "Replaced with"
+msgstr ""
+
+#: app/Admin/Wizard/WizardController.php:70
+msgid "You do not have permission to access CartBay."
+msgstr ""
+
+#: app/Admin/Wizard/WizardController.php:105
+#: app/Core/Plugin.php:404
+msgid "CartBay Setup Wizard"
+msgstr ""
+
+#: app/Admin/Wizard/WizardController.php:107
+msgid "Setup progress"
+msgstr ""
+
+#: app/Admin/Wizard/WizardController.php:115
+msgid "Current"
+msgstr ""
+
+#: app/Admin/Wizard/WizardController.php:115
+msgid "Complete"
+msgstr ""
+
+#: app/Admin/Wizard/WizardController.php:115
+msgid "Upcoming"
+msgstr ""
+
+#: app/Admin/Wizard/WizardController.php:143
+msgid "Back"
+msgstr ""
+
+#: app/Admin/Wizard/WizardController.php:147
+msgid "Finish Setup"
+msgstr ""
+
+#: app/Admin/Wizard/WizardController.php:147
+msgid "Next"
+msgstr ""
+
+#: app/Admin/Wizard/WizardController.php:204
+msgid "Welcome to CartBay!"
+msgstr ""
+
+#: app/Admin/Wizard/WizardController.php:205
+msgid "CartBay helps you recover abandoned carts with a 3-email recovery sequence. Let's set it up in under 5 minutes."
+msgstr ""
+
+#: app/Admin/Wizard/WizardController.php:206
+msgid "Click \"Next\" to get started."
+msgstr ""
+
+#: app/Admin/Wizard/WizardController.php:221
+#: app/Admin/Wizard/WizardController.php:566
+msgid "Consent & Timing"
+msgstr ""
+
+#: app/Admin/Wizard/WizardController.php:226
+msgid "This text appears beside the checkout consent checkbox. It tells shoppers that CartBay may save their email and cart so the store can send recovery reminders if they leave checkout."
+msgstr ""
+
+#: app/Admin/Wizard/WizardController.php:235
+msgid "CartBay waits this long after the shopper last interacts with checkout before marking the cart abandoned. Shorter values start recovery sooner; longer values reduce the chance of emailing someone who is still checking out."
+msgstr ""
+
+#: app/Admin/Wizard/WizardController.php:239
+msgid "How long before a captured cart is considered abandoned."
+msgstr ""
+
+#: app/Admin/Wizard/WizardController.php:243
+msgid "Recovery Email Schedule"
+msgstr ""
+
+#: app/Admin/Wizard/WizardController.php:245
+msgid "Recovery email schedule"
+msgstr ""
+
+#. translators: %d: recovery email step number.
+#: app/Admin/Wizard/WizardController.php:258
+#, php-format
+msgid "Email %d sends after"
+msgstr ""
+
+#: app/Admin/Wizard/WizardController.php:275
+msgid "These starter intervals control when each recovery email is sent after the cart becomes abandoned. You can refine message focus and coupons later in CartBay settings."
+msgstr ""
+
+#: app/Admin/Wizard/WizardController.php:302
+#: app/Admin/Wizard/WizardController.php:567
+msgid "Email Delivery"
+msgstr ""
+
+#: app/Admin/Wizard/WizardController.php:306
+msgid "SMTP delivery detected. Your emails should deliver reliably."
+msgstr ""
+
+#: app/Admin/Wizard/WizardController.php:311
+msgid "An email logging plugin is active, but no SMTP delivery service was detected."
+msgstr ""
+
+#: app/Admin/Wizard/WizardController.php:312
+msgid "Emails to buyers may not be delivered reliably."
+msgstr ""
+
+#: app/Admin/Wizard/WizardController.php:318
+msgid "No SMTP plugin detected."
+msgstr ""
+
+#: app/Admin/Wizard/WizardController.php:319
+msgid "Without an SMTP service, recovery emails may land in spam. Consider installing an SMTP plugin."
+msgstr ""
+
+#: app/Admin/Wizard/WizardController.php:367
+msgid "Launch CartBay"
+msgstr ""
+
+#: app/Admin/Wizard/WizardController.php:370
+msgid "Enable Recovery Emails"
+msgstr ""
+
+#: app/Admin/Wizard/WizardController.php:374
+msgid "Start sending recovery emails to abandoned carts"
+msgstr ""
+
+#: app/Admin/Wizard/WizardController.php:379
+msgid "You can change this and other settings later from the CartBay Settings page."
+msgstr ""
+
+#: app/Admin/Wizard/WizardController.php:548
+msgid "The first recovery email should arrive while the shopper still remembers the cart. Use a shorter delay for a quick reminder without discounting too early."
+msgstr ""
+
+#: app/Admin/Wizard/WizardController.php:549
+msgid "The second email gives shoppers time to compare options before following up. Use this interval to avoid making the sequence feel too aggressive."
+msgstr ""
+
+#: app/Admin/Wizard/WizardController.php:550
+msgid "The final email is the later reminder and usually carries the strongest recovery message. A longer delay keeps it from feeling repetitive."
+msgstr ""
+
+#: app/Admin/Wizard/WizardController.php:565
+msgid "Welcome"
+msgstr ""
+
+#: app/Admin/Wizard/WizardController.php:568
+msgid "Launch"
+msgstr ""
+
+#: app/Api/Routes/AnalyticsRoute.php:82
+msgid "You do not have permission to view analytics."
+msgstr ""
+
+#: app/Api/Routes/CaptureRoute.php:110
+msgid "Too many requests. Please try again later."
+msgstr ""
+
+#: app/Api/Routes/CaptureRoute.php:136
+msgid "A valid email address is required to withdraw consent."
+msgstr ""
+
+#: app/Api/Routes/CaptureRoute.php:156
+msgid "Invalid email address."
+msgstr ""
+
+#: app/Api/Routes/CaptureRoute.php:166
+msgid "Capture disabled."
+msgstr ""
+
+#: app/Api/Routes/TestEmailRoute.php:57
+msgid "You do not have permission to send test emails."
+msgstr ""
+
+#: app/Api/Routes/TestEmailRoute.php:91
+msgid "No email address found or provided."
+msgstr ""
+
+#: app/Api/Routes/TestEmailRoute.php:115
+msgid "Failed to send the preview email. Check your WordPress email configuration."
+msgstr ""
+
+#. translators: %1$d: step number, %2$s: recipient email
+#: app/Api/Routes/TestEmailRoute.php:127
+#, php-format
+msgid "Preview email for step %1$d sent to %2$s."
+msgstr ""
+
+#: app/Api/Routes/TestEmailRoute.php:137
+msgid "CartBay Test Email"
+msgstr ""
+
+#: app/Api/Routes/TestEmailRoute.php:138
+msgid "This is a test email from CartBay. If you received this, your email delivery is working correctly."
+msgstr ""
+
+#: app/Api/Routes/TestEmailRoute.php:146
+msgid "Failed to send test email. Check your WordPress email configuration."
+msgstr ""
+
+#. translators: %s: recipient email address
+#: app/Api/Routes/TestEmailRoute.php:158
+#, php-format
+msgid "Test email sent to %s. Check your inbox."
+msgstr ""
+
+#: app/Api/Routes/TestRoute.php:78
+msgid "You do not have permission to trigger test flows."
+msgstr ""
+
+#: app/Api/Routes/TestRoute.php:87
+msgid "Test mode is not enabled. Enable it in CartBay Settings → Debug."
+msgstr ""
+
+#: app/Api/Routes/TestRoute.php:114
+msgid "Could not determine admin email address."
+msgstr ""
+
+#: app/Api/Routes/TestRoute.php:147
+msgid "Test flow triggered. Email will arrive in ~30 seconds."
+msgstr ""
+
+#: app/Core/CheckoutFields.php:61
+#: app/Core/Installer.php:86
+msgid "Save my email to recover my cart if I leave."
+msgstr ""
+
+#: app/Core/Container.php:66
+msgid "CartBay singleton factories must return an object."
+msgstr ""
+
+#. translators: %s: unresolved service identifier.
+#: app/Core/Container.php:99
+#, php-format
+msgid "CartBay could not resolve the service \"%s\"."
+msgstr ""
+
+#: app/Core/Plugin.php:357
+msgid "CartBay Templates"
+msgstr ""
+
+#: app/Core/Plugin.php:370
+msgid "CartBay Suppressions"
+msgstr ""
+
+#: app/Core/Plugin.php:394
+#: app/Core/Plugin.php:395
+msgid "CartBay"
+msgstr ""
+
+#: app/Core/Plugin.php:405
+msgid "Setup Wizard"
+msgstr ""
+
+#: app/Core/Plugin.php:435
+msgid "Docs"
+msgstr ""
+
+#: app/Core/Plugin.php:452
+msgid "CartBay: Captured"
+msgstr ""
+
+#: app/Core/Plugin.php:453
+msgid "CartBay: Abandoned"
+msgstr ""
+
+#: app/Core/Plugin.php:454
+msgid "CartBay: Recovered"
+msgstr ""
+
+#: app/Core/Plugin.php:455
+msgid "CartBay: Expired"
+msgstr ""
+
+#: app/Core/Plugin.php:456
+msgid "CartBay: Suppressed"
+msgstr ""
+
+#. translators: %s: number of orders currently in the captured CartBay status.
+#: app/Core/Plugin.php:470
+#, php-format
+msgid "CartBay: Captured <span class=\"count\">(%s)</span>"
+msgid_plural "CartBay: Captured <span class=\"count\">(%s)</span>"
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %s: number of orders currently in the abandoned CartBay status.
+#: app/Core/Plugin.php:472
+#, php-format
+msgid "CartBay: Abandoned <span class=\"count\">(%s)</span>"
+msgid_plural "CartBay: Abandoned <span class=\"count\">(%s)</span>"
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %s: number of orders currently in the recovered CartBay status.
+#: app/Core/Plugin.php:474
+#, php-format
+msgid "CartBay: Recovered <span class=\"count\">(%s)</span>"
+msgid_plural "CartBay: Recovered <span class=\"count\">(%s)</span>"
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %s: number of orders currently in the expired CartBay status.
+#: app/Core/Plugin.php:476
+#, php-format
+msgid "CartBay: Expired <span class=\"count\">(%s)</span>"
+msgid_plural "CartBay: Expired <span class=\"count\">(%s)</span>"
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %s: number of orders currently in the suppressed CartBay status.
+#: app/Core/Plugin.php:478
+#, php-format
+msgid "CartBay: Suppressed <span class=\"count\">(%s)</span>"
+msgid_plural "CartBay: Suppressed <span class=\"count\">(%s)</span>"
+msgstr[0] ""
+msgstr[1] ""
+
+#: app/Core/Plugin.php:858
+#: app/Email/AbstractCartBayRecoveryEmail.php:469
+#: app/Email/AbstractCartBayRecoveryEmail.php:541
+msgid "SAVE10"
+msgstr ""
+
+#: app/Core/Plugin.php:999
+msgid "You have been unsubscribed from cart recovery emails."
+msgstr ""
+
+#: app/Core/Plugin.php:1003
+msgid "Invalid unsubscribe link."
+msgstr ""
+
+#: app/Core/Plugin.php:1010
+msgid "This cart recovery link has expired. Please add items to your cart again."
+msgstr ""
+
+#: app/Core/Plugin.php:1014
+msgid "Invalid cart recovery link."
+msgstr ""
+
+#: app/Core/Plugin.php:1018
+msgid "Too many cart recovery attempts. Please wait a moment and try again."
+msgstr ""
+
+#: app/Core/Plugin.php:1022
+#: app/Recovery/RestoreService.php:373
+msgid "We could not restore the items from this recovery link. Please add them to your cart again."
+msgstr ""
+
+#: app/Data/SessionRepository.php:35
+msgid "A valid email address is required to create a CartBay session."
+msgstr ""
+
+#: app/Data/SessionRepository.php:39
+msgid "WooCommerce order creation is unavailable."
+msgstr ""
+
+#: app/Data/SessionRepository.php:46
+msgid "CartBay could not create a session order."
+msgstr ""
+
+#: app/Data/SessionRepository.php:50
+msgid "WooCommerce did not return a valid order object."
+msgstr ""
+
+#. translators: %s: original subject
+#: app/Email/AbstractCartBayRecoveryEmail.php:161
+#, php-format
+msgid "[Preview] %s"
+msgstr ""
+
+#. translators: %s: list of placeholders
+#: app/Email/AbstractCartBayRecoveryEmail.php:260
+#, php-format
+msgid "Available placeholders: %s"
+msgstr ""
+
+#: app/Email/AbstractCartBayRecoveryEmail.php:269
+msgid "Preheader"
+msgstr ""
+
+#: app/Email/AbstractCartBayRecoveryEmail.php:271
+msgid "Shown as preview text in the inbox, next to the subject line."
+msgstr ""
+
+#: app/Email/AbstractCartBayRecoveryEmail.php:278
+msgid "Email body"
+msgstr ""
+
+#: app/Email/AbstractCartBayRecoveryEmail.php:281
+msgid "Main recovery message. Basic HTML is allowed and WooCommerce wraps this content with your store email logo, colors, and footer."
+msgstr ""
+
+#: app/Email/AbstractCartBayRecoveryEmail.php:287
+msgid "Button label"
+msgstr ""
+
+#: app/Email/AbstractCartBayRecoveryEmail.php:289
+msgid "Text for the restore-cart button."
+msgstr ""
+
+#: app/Email/AbstractCartBayRecoveryEmail.php:295
+msgid "Unsubscribe link"
+msgstr ""
+
+#: app/Email/AbstractCartBayRecoveryEmail.php:297
+msgid "Show unsubscribe link"
+msgstr ""
+
+#: app/Email/AbstractCartBayRecoveryEmail.php:298
+msgid "Display a one-click unsubscribe link at the bottom of this email. Recommended for CAN-SPAM compliance."
+msgstr ""
+
+#: app/Email/CartBay_Email_Recovery_1.php:26
+msgid "CartBay: Recovery Email 1"
+msgstr ""
+
+#: app/Email/CartBay_Email_Recovery_1.php:27
+msgid "First abandoned cart recovery email."
+msgstr ""
+
+#: app/Email/CartBay_Email_Recovery_1.php:32
+msgid "[{site_title}] You left something in your cart"
+msgstr ""
+
+#: app/Email/CartBay_Email_Recovery_1.php:33
+msgid "You left something behind"
+msgstr ""
+
+#: app/Email/CartBay_Email_Recovery_1.php:34
+msgid "Pick up where you left off before your cart goes cold."
+msgstr ""
+
+#: app/Email/CartBay_Email_Recovery_1.php:35
+#: templates/emails/recovery-email-1.php:31
+#: templates/emails/recovery-email-2.php:31
+#: templates/emails/recovery-email-3.php:31
+msgid "Return to My Cart"
+msgstr ""
+
+#: app/Email/CartBay_Email_Recovery_2.php:26
+msgid "CartBay: Recovery Email 2"
+msgstr ""
+
+#: app/Email/CartBay_Email_Recovery_2.php:27
+msgid "Second abandoned cart recovery email."
+msgstr ""
+
+#: app/Email/CartBay_Email_Recovery_2.php:32
+msgid "[{site_title}] Your cart is waiting for you"
+msgstr ""
+
+#: app/Email/CartBay_Email_Recovery_2.php:33
+msgid "Still thinking about it?"
+msgstr ""
+
+#: app/Email/CartBay_Email_Recovery_2.php:34
+msgid "Your saved cart is ready whenever you are."
+msgstr ""
+
+#: app/Email/CartBay_Email_Recovery_2.php:35
+msgid "Complete My Order"
+msgstr ""
+
+#: app/Email/CartBay_Email_Recovery_3.php:26
+msgid "CartBay: Recovery Email 3"
+msgstr ""
+
+#: app/Email/CartBay_Email_Recovery_3.php:27
+msgid "Third abandoned cart recovery email."
+msgstr ""
+
+#: app/Email/CartBay_Email_Recovery_3.php:32
+msgid "[{site_title}] Last chance to complete your order"
+msgstr ""
+
+#: app/Email/CartBay_Email_Recovery_3.php:33
+msgid "Your cart is still here"
+msgstr ""
+
+#: app/Email/CartBay_Email_Recovery_3.php:34
+msgid "A final reminder to finish checking out before your cart expires."
+msgstr ""
+
+#: app/Email/CartBay_Email_Recovery_3.php:35
+msgid "Claim My Cart"
+msgstr ""
+
+#: app/Recovery/CaptureService.php:63
+msgid "Capture is disabled."
+msgstr ""
+
+#: app/Recovery/CaptureService.php:70
+msgid "Email is suppressed."
+msgstr ""
+
+#: app/Recovery/EmailSequenceService.php:201
+msgid "Recovery email class is unavailable."
+msgstr ""
+
+#: app/Recovery/EmailSequenceService.php:222
+msgid "WordPress mail did not confirm the email send."
+msgstr ""
+
+#: app/Recovery/RestoreService.php:163
+msgid "Your saved cart has been restored."
+msgstr ""
+
+#: app/Recovery/RestoreService.php:397
+msgid "Some items from your saved cart are no longer available and could not be restored."
+msgstr ""
+
+#: app/Recovery/SequenceSettings.php:79
+msgid "Email 1"
+msgstr ""
+
+#: app/Recovery/SequenceSettings.php:80
+msgid "Initial reminder"
+msgstr ""
+
+#: app/Recovery/SequenceSettings.php:81
+msgid "Sent shortly after abandonment while purchase intent is still fresh."
+msgstr ""
+
+#: app/Recovery/SequenceSettings.php:82
+msgid "Early reminders recover straightforward purchases before shoppers move on or compare alternatives."
+msgstr ""
+
+#: app/Recovery/SequenceSettings.php:83
+msgid "Keep this email concise. Restore the cart, restate the product value, and avoid discounting too early."
+msgstr ""
+
+#: app/Recovery/SequenceSettings.php:84
+msgid "Leave coupons off here unless discounts are part of your standard first-touch strategy."
+msgstr ""
+
+#: app/Recovery/SequenceSettings.php:87
+msgid "Email 2"
+msgstr ""
+
+#: app/Recovery/SequenceSettings.php:88
+msgid "Value follow-up"
+msgstr ""
+
+#: app/Recovery/SequenceSettings.php:89
+msgid "Sent after the shopper has had time to compare options or step away from checkout."
+msgstr ""
+
+#: app/Recovery/SequenceSettings.php:90
+msgid "This follow-up brings the cart back to mind without making the sequence feel aggressive."
+msgstr ""
+
+#: app/Recovery/SequenceSettings.php:91
+msgid "Use this email to reinforce value, answer common objections, and make returning to checkout simple."
+msgstr ""
+
+#: app/Recovery/SequenceSettings.php:92
+msgid "Use a coupon here only when price resistance is a common reason shoppers abandon checkout."
+msgstr ""
+
+#: app/Recovery/SequenceSettings.php:95
+msgid "Email 3"
+msgstr ""
+
+#: app/Recovery/SequenceSettings.php:96
+msgid "Final recovery email"
+msgstr ""
+
+#: app/Recovery/SequenceSettings.php:97
+msgid "Sent later in the sequence when a clearer incentive may be needed to recover the order."
+msgstr ""
+
+#: app/Recovery/SequenceSettings.php:98
+msgid "Final emails work best when they create a clear reason to return now."
+msgstr ""
+
+#: app/Recovery/SequenceSettings.php:99
+msgid "Use this email for the strongest conversion message: urgency, a clear call to action, and an optional coupon."
+msgstr ""
+
+#: app/Recovery/SequenceSettings.php:100
+msgid "This is the strongest place for an incentive if your store uses recovery discounts."
+msgstr ""
+
+#. translators: %d: number of days
+#: app/Recovery/SequenceSettings.php:217
+#, php-format
+msgid "%d day"
+msgid_plural "%d days"
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %d: number of hours
+#: app/Recovery/SequenceSettings.php:222
+#, php-format
+msgid "%d hour"
+msgid_plural "%d hours"
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %d: number of minutes
+#: app/Recovery/SequenceSettings.php:226
+#, php-format
+msgid "%d minute"
+msgid_plural "%d minutes"
+msgstr[0] ""
+msgstr[1] ""
+
+#: cartbay.php:71
+msgid "CartBay requires WooCommerce to be installed and active."
+msgstr ""
+
+#. translators: %1$s: coupon code, %2$s: expiry date
+#: templates/emails/recovery-email-1.php:41
+#: templates/emails/recovery-email-2.php:41
+#: templates/emails/recovery-email-3.php:41
+#, php-format
+msgid "Use coupon code %1$s at checkout. Expires %2$s."
+msgstr ""
+
+#: templates/emails/recovery-email-1.php:58
+#: templates/emails/recovery-email-2.php:58
+#: templates/emails/recovery-email-3.php:58
+msgid "If the button doesn't work, copy and paste this link into your browser:"
+msgstr ""
+
+#: templates/emails/recovery-email-1.php:67
+#: templates/emails/recovery-email-2.php:67
+#: templates/emails/recovery-email-3.php:67
+msgid "Unsubscribe"
+msgstr ""

@@ -1,0 +1,101 @@
+# Wordpress - ignore core, configuration, examples, uploads and logs.
+# https://github.com/github/gitignore/blob/main/WordPress.gitignore
+
+# Core
+#
+# Note: if you want to stage/commit WP core files
+# you can delete this whole section/until Configuration.
+/wp-admin/
+/wp-content/index.php
+/wp-content/languages
+/wp-content/plugins/index.php
+/wp-content/themes/index.php
+/wp-includes/
+/index.php
+/license.txt
+/readme.html
+/wp-*.php
+/xmlrpc.php
+
+# Configuration
+wp-config.php
+
+# Example themes
+/wp-content/themes/twenty*/
+
+# Example plugin
+/wp-content/plugins/hello.php
+
+# Uploads
+/wp-content/uploads/
+
+# Log files
+*.log
+
+# htaccess
+/.htaccess
+
+# All plugins
+#
+# Note: If you wish to whitelist plugins,
+# uncomment the next line
+#/wp-content/plugins
+
+# All themes
+#
+# Note: If you wish to whitelist themes,
+# uncomment the next line
+#/wp-content/themes
+
+# Local items
+.local
+.local.db
+.env
+.env.local
+.env.*.local
+
+# OS cache files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+# Shared config assets
+node_modules/
+**/node_modules/
+*.zip
+*.tar.gz
+vendor/
+dist/
+cache/
+.phpunit.cache/
+.phpunit.cache
+
+# Dot prefixed — managed by config-assets branch
+# Config assets overlay (never tracked on main)
+.agents/
+.codex/
+.gemini/
+.github/
+.history/
+.opencode/
+.commandcode/
+.kilo/
+.letta/
+.playwright/
+.meta/CartBay-Market-Research-v1.md
+.meta/PRDs/
+.meta/WORKPLAN.md
+.meta/architecture/index.md
+.meta/notes/
+.meta/others/
+.meta/tasks/
+.graphifyignore
+graphify-out/
+GEMINI.md
+AGENTS.md
+.meta/
+.antigravitycli
+.generic-ui/

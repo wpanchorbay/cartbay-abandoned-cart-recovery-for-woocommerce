@@ -1,0 +1,10 @@
+parameters:
+    level: 5
+    treatPhpDocTypesAsCertain: false
+    paths:
+        - app
+    bootstrapFiles:
+        - phpstan-bootstrap.php
+    scanFiles:
+        - phpstan-woocommerce-stubs.php
+    ignoreErrors: []
