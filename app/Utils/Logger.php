@@ -37,6 +37,13 @@ class Logger {
 	private const DEFAULT_MAX_SIZE_MB = 5;
 
 	/**
+	 * Transient key that throttles retention-based log pruning.
+	 *
+	 * @since 1.0.0
+	 */
+	private const PRUNE_THROTTLE_KEY = 'cartbay_log_prune_throttle';
+
+	/**
 	 * Log an informational message.
 	 *
 	 * @since 1.0.0
@@ -281,7 +288,7 @@ class Logger {
 			file_put_contents( $index, "<?php\n// Silence is golden." . PHP_EOL );
 		}
 
-		self::prune_file_log( $path );
+		self::maybe_prune_file_log( $path );
 
 		$entry = array(
 			'timestamp' => gmdate( 'c' ),
@@ -298,6 +305,42 @@ class Logger {
 
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
 		file_put_contents( $path, $encoded . PHP_EOL, FILE_APPEND | LOCK_EX );
+	}
+
+	/**
+	 * Prune the log only when the full-file rewrite is warranted.
+	 *
+	 * {@see prune_file_log()} reads, JSON-decodes, and rewrites the entire log
+	 * file. Running that on every write makes each log entry an O(n) operation,
+	 * so it is gated here: the size cap is enforced immediately whenever the file
+	 * grows past it, while the retention sweep runs at most once per hour. Routine
+	 * event logging then just appends instead of rewriting the whole file.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $path Log file path.
+	 *
+	 * @return void
+	 */
+	private static function maybe_prune_file_log( string $path ): void {
+		if ( ! file_exists( $path ) ) {
+			return;
+		}
+
+		$size      = filesize( $path );
+		$max_bytes = self::get_max_size_mb() * MB_IN_BYTES;
+
+		// Always trim when the file has grown past the size cap.
+		if ( false !== $size && $size > $max_bytes ) {
+			self::prune_file_log( $path );
+			return;
+		}
+
+		// Otherwise run the retention sweep at most once per hour.
+		if ( false === get_transient( self::PRUNE_THROTTLE_KEY ) ) {
+			set_transient( self::PRUNE_THROTTLE_KEY, 1, HOUR_IN_SECONDS );
+			self::prune_file_log( $path );
+		}
 	}
 
 	/**
