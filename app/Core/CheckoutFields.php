@@ -75,7 +75,10 @@ class CheckoutFields {
 			)
 		);
 
-		Logger::info( 'Registered CartBay Block Checkout marketing consent field.', array(), 'checkout' );
+		// Registration runs on every `woocommerce_init` (i.e. every request), so
+		// it is not logged: a per-request INFO entry would flood the log and, worse,
+		// force a full log-file rewrite each request. The WARNING above already
+		// surfaces the only failure worth recording.
 	}
 
 	/**
