@@ -2,8 +2,8 @@
  * Release packager for CartBay.
  *
  * Creates:
- * - dist/cartbay/  (staging folder)
- * - cartbay.zip    (or cartbay-<version>.zip with --versioned)
+ * - dist/cartbay-abandoned-cart-recovery-for-woocommerce/  (staging folder)
+ * - cartbay-abandoned-cart-recovery-for-woocommerce.zip    (or -<version>.zip with --versioned)
  */
 
 const path = require('path');
@@ -11,7 +11,7 @@ const fs = require('fs-extra');
 const archiver = require('archiver');
 const { execSync } = require('child_process');
 
-const PLUGIN_SLUG = 'cartbay';
+const PLUGIN_SLUG = 'cartbay-abandoned-cart-recovery-for-woocommerce';
 const ROOT_DIR = path.join(__dirname, '..');
 const DIST_DIR = path.join(ROOT_DIR, 'dist');
 const STAGE_DIR = path.join(DIST_DIR, PLUGIN_SLUG);
@@ -55,15 +55,6 @@ function run_pkg_script(script_name) {
 	execSync(cmd, { stdio: 'inherit', cwd: ROOT_DIR });
 }
 
-async function strip_composer_dev_sections(composer_path) {
-	const composer_data = await fs.readJson(composer_path);
-	delete composer_data['require-dev'];
-	delete composer_data['autoload-dev'];
-	delete composer_data['scripts'];
-	delete composer_data['config'];
-	await fs.writeJson(composer_path, composer_data, { spaces: '\t' });
-}
-
 async function copy_if_exists(src, dest) {
 	if (await fs.pathExists(src)) {
 		await fs.copy(src, dest);
@@ -104,12 +95,13 @@ async function copy_if_exists(src, dest) {
 		await copy_if_exists(path.join(ROOT_DIR, 'languages'), path.join(STAGE_DIR, 'languages'));
 		await copy_if_exists(path.join(ROOT_DIR, 'templates'), path.join(STAGE_DIR, 'templates'));
 
-		await copy_if_exists(path.join(ROOT_DIR, 'cartbay.php'), path.join(STAGE_DIR, 'cartbay.php'));
+		await copy_if_exists(path.join(ROOT_DIR, `${PLUGIN_SLUG}.php`), path.join(STAGE_DIR, `${PLUGIN_SLUG}.php`));
 		await copy_if_exists(path.join(ROOT_DIR, 'uninstall.php'), path.join(STAGE_DIR, 'uninstall.php'));
 		await copy_if_exists(path.join(ROOT_DIR, 'readme.txt'), path.join(STAGE_DIR, 'readme.txt'));
 		await copy_if_exists(path.join(ROOT_DIR, 'LICENSE.txt'), path.join(STAGE_DIR, 'LICENSE.txt'));
 
-		// Composer files (vendor will be generated in staging)
+		// Composer files are staged only so `composer install` can generate
+		// vendor/ below; they are removed again before zipping (see step 5).
 		await copy_if_exists(path.join(ROOT_DIR, 'composer.json'), path.join(STAGE_DIR, 'composer.json'));
 		await copy_if_exists(path.join(ROOT_DIR, 'composer.lock'), path.join(STAGE_DIR, 'composer.lock'));
 
@@ -120,12 +112,16 @@ async function copy_if_exists(src, dest) {
 				stdio: 'inherit',
 				cwd: STAGE_DIR,
 			});
-
-			console.log('📝 Cleaning composer.json for production...');
-			await strip_composer_dev_sections(path.join(STAGE_DIR, 'composer.json'));
 		} else {
 			console.log('↪️  Skipping composer install (--skip-composer).');
 		}
+
+		// Drop dev metadata: composer.json/lock are only needed to build
+		// vendor/ above and are never loaded at runtime, so they must not
+		// ship in the WordPress.org package.
+		console.log('🧽 Removing composer metadata from the package...');
+		await fs.remove(path.join(STAGE_DIR, 'composer.json'));
+		await fs.remove(path.join(STAGE_DIR, 'composer.lock'));
 
 		// 6. Create zip
 		console.log(`🤐 Creating zip: ${zip_name} ...`);
