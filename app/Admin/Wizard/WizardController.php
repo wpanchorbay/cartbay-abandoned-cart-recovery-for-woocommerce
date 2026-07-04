@@ -67,7 +67,7 @@ class WizardController {
 	 */
 	public function render(): void {
 		if ( ! current_user_can( 'manage_woocommerce' ) ) {
-			wp_die( esc_html__( 'You do not have permission to access CartBay.', 'cartbay' ) );
+			wp_die( esc_html__( 'You do not have permission to access CartBay.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) );
 		}
 
 		$steps      = $this->get_steps();
@@ -102,9 +102,9 @@ class WizardController {
 
 		?>
 		<div class="wrap cartbay-wizard">
-			<h1><?php esc_html_e( 'CartBay Setup Wizard', 'cartbay' ); ?></h1>
+			<h1><?php esc_html_e( 'CartBay Setup Wizard', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></h1>
 
-			<ol class="cartbay-wizard__steps" aria-label="<?php esc_attr_e( 'Setup progress', 'cartbay' ); ?>">
+			<ol class="cartbay-wizard__steps" aria-label="<?php esc_attr_e( 'Setup progress', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?>">
 				<?php $step_num = 0; ?>
 				<?php foreach ( $steps as $label ) : ?>
 					<?php
@@ -112,7 +112,7 @@ class WizardController {
 					$is_active   = $step_num === $step;
 					$is_complete = $step_num < $step;
 					$state       = $is_active ? 'active' : ( $is_complete ? 'complete' : 'upcoming' );
-					$status      = $is_active ? __( 'Current', 'cartbay' ) : ( $is_complete ? __( 'Complete', 'cartbay' ) : __( 'Upcoming', 'cartbay' ) );
+					$status      = $is_active ? __( 'Current', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) : ( $is_complete ? __( 'Complete', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) : __( 'Upcoming', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) );
 					$classes     = array(
 						'cartbay-wizard__step',
 						'cartbay-wizard__step--' . $state,
@@ -140,11 +140,11 @@ class WizardController {
 					<p class="cartbay-wizard__actions">
 						<?php if ( $step > 1 ) : ?>
 							<a href="<?php echo esc_url( admin_url( 'admin.php?page=cartbay-wizard&step=' . ( $step - 1 ) ) ); ?>" class="button">
-								<?php esc_html_e( 'Back', 'cartbay' ); ?>
+								<?php esc_html_e( 'Back', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?>
 							</a>
 						<?php endif; ?>
 						<button type="submit" class="button button-primary"<?php echo $is_step_blocked ? ' disabled="disabled"' : ''; ?>>
-							<?php echo $step_count === $step ? esc_html__( 'Finish Setup', 'cartbay' ) : esc_html__( 'Next', 'cartbay' ); ?>
+							<?php echo $step_count === $step ? esc_html__( 'Finish Setup', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) : esc_html__( 'Next', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?>
 						</button>
 					</p>
 				</form>
@@ -156,7 +156,7 @@ class WizardController {
 				rel="noopener noreferrer"
 				style="display: inline-block; margin-top: 12px;"
 			>
-				<?php esc_html_e( 'Documentation', 'cartbay' ); ?>
+				<?php esc_html_e( 'Documentation', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?>
 			</a>
 
 		</div>
@@ -201,9 +201,9 @@ class WizardController {
 	 */
 	private function render_welcome(): void {
 		?>
-		<h2><?php esc_html_e( 'Welcome to CartBay!', 'cartbay' ); ?></h2>
-		<p><?php esc_html_e( 'CartBay helps you recover abandoned carts with a 3-email recovery sequence. Let\'s set it up in under 5 minutes.', 'cartbay' ); ?></p>
-		<p><?php esc_html_e( 'Click "Next" to get started.', 'cartbay' ); ?></p>
+		<h2><?php esc_html_e( 'Welcome to CartBay!', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></h2>
+		<p><?php esc_html_e( 'CartBay helps you recover abandoned carts with a 3-email recovery sequence. Let\'s set it up in under 5 minutes.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></p>
+		<p><?php esc_html_e( 'Click "Next" to get started.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></p>
 		<?php
 	}
 
@@ -218,12 +218,12 @@ class WizardController {
 		$settings = get_option( 'cartbay_settings', array() );
 		$campaign = SequenceSettings::normalize( get_option( 'cartbay_campaign_settings', array() ) );
 		?>
-		<h2><?php esc_html_e( 'Consent & Timing', 'cartbay' ); ?></h2>
+		<h2><?php esc_html_e( 'Consent & Timing', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></h2>
 		<table class="form-table" role="presentation">
 			<tr>
 				<th scope="row">
-					<label for="cartbay_consent_text"><?php esc_html_e( 'Consent Text', 'cartbay' ); ?></label>
-					<?php $this->render_help_tip( __( 'This text appears beside the checkout consent checkbox. It tells shoppers that CartBay may save their email and cart so the store can send recovery reminders if they leave checkout.', 'cartbay' ) ); ?>
+					<label for="cartbay_consent_text"><?php esc_html_e( 'Consent Text', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></label>
+					<?php $this->render_help_tip( __( 'This text appears beside the checkout consent checkbox. It tells shoppers that CartBay may save their email and cart so the store can send recovery reminders if they leave checkout.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) ); ?>
 				</th>
 				<td>
 					<textarea name="cartbay_consent_text" id="cartbay_consent_text" rows="2" class="large-text"><?php echo esc_textarea( $settings['consent_text'] ?? '' ); ?></textarea>
@@ -231,18 +231,18 @@ class WizardController {
 			</tr>
 			<tr>
 				<th scope="row">
-					<label for="cartbay_abandonment_timeout"><?php esc_html_e( 'Abandonment Timeout (minutes)', 'cartbay' ); ?></label>
-					<?php $this->render_help_tip( __( 'CartBay waits this long after the shopper last interacts with checkout before marking the cart abandoned. Shorter values start recovery sooner; longer values reduce the chance of emailing someone who is still checking out.', 'cartbay' ) ); ?>
+					<label for="cartbay_abandonment_timeout"><?php esc_html_e( 'Abandonment Timeout (minutes)', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></label>
+					<?php $this->render_help_tip( __( 'CartBay waits this long after the shopper last interacts with checkout before marking the cart abandoned. Shorter values start recovery sooner; longer values reduce the chance of emailing someone who is still checking out.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) ); ?>
 				</th>
 				<td>
 					<input type="number" name="cartbay_abandonment_timeout" id="cartbay_abandonment_timeout" value="<?php echo esc_attr( $settings['abandonment_timeout'] ?? 30 ); ?>" min="5" max="1440" class="small-text" />
-					<p class="description"><?php esc_html_e( 'How long before a captured cart is considered abandoned.', 'cartbay' ); ?></p>
+					<p class="description"><?php esc_html_e( 'How long before a captured cart is considered abandoned.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></p>
 				</td>
 			</tr>
 			<tr>
-				<th scope="row"><?php esc_html_e( 'Recovery Email Schedule', 'cartbay' ); ?></th>
+				<th scope="row"><?php esc_html_e( 'Recovery Email Schedule', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></th>
 				<td>
-					<div class="cartbay-wizard__schedule" aria-label="<?php esc_attr_e( 'Recovery email schedule', 'cartbay' ); ?>">
+					<div class="cartbay-wizard__schedule" aria-label="<?php esc_attr_e( 'Recovery email schedule', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?>">
 						<?php foreach ( $campaign['steps'] as $index => $sequence_step ) : ?>
 							<?php
 							$delay_parts = SequenceSettings::get_delay_parts( absint( $sequence_step['delay_minutes'] ?? 0 ) );
@@ -255,7 +255,7 @@ class WizardController {
 										echo esc_html(
 											sprintf(
 												/* translators: %d: recovery email step number. */
-												__( 'Email %d sends after', 'cartbay' ),
+												__( 'Email %d sends after', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 												$index + 1
 											)
 										);
@@ -265,14 +265,14 @@ class WizardController {
 								</span>
 								<input type="number" class="small-text" id="cartbay_wizard_delay_value_<?php echo esc_attr( (string) $index ); ?>" name="cartbay_campaign_settings[steps][<?php echo esc_attr( (string) $index ); ?>][delay_value]" min="1" max="999" value="<?php echo esc_attr( (string) $delay_parts['value'] ); ?>" />
 								<select name="cartbay_campaign_settings[steps][<?php echo esc_attr( (string) $index ); ?>][delay_unit]">
-									<option value="minutes" <?php selected( 'minutes', $delay_parts['unit'] ); ?>><?php esc_html_e( 'minutes', 'cartbay' ); ?></option>
-									<option value="hours" <?php selected( 'hours', $delay_parts['unit'] ); ?>><?php esc_html_e( 'hours', 'cartbay' ); ?></option>
-									<option value="days" <?php selected( 'days', $delay_parts['unit'] ); ?>><?php esc_html_e( 'days', 'cartbay' ); ?></option>
+									<option value="minutes" <?php selected( 'minutes', $delay_parts['unit'] ); ?>><?php esc_html_e( 'minutes', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></option>
+									<option value="hours" <?php selected( 'hours', $delay_parts['unit'] ); ?>><?php esc_html_e( 'hours', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></option>
+									<option value="days" <?php selected( 'days', $delay_parts['unit'] ); ?>><?php esc_html_e( 'days', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></option>
 								</select>
 							</div>
 						<?php endforeach; ?>
 					</div>
-					<p class="description"><?php esc_html_e( 'These starter intervals control when each recovery email is sent after the cart becomes abandoned. You can refine message focus and coupons later in CartBay settings.', 'cartbay' ); ?></p>
+					<p class="description"><?php esc_html_e( 'These starter intervals control when each recovery email is sent after the cart becomes abandoned. You can refine message focus and coupons later in CartBay settings.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></p>
 				</td>
 			</tr>
 		</table>
@@ -299,53 +299,53 @@ class WizardController {
 			$target_email = sanitize_email( (string) get_option( 'admin_email' ) );
 		}
 		?>
-		<h2><?php esc_html_e( 'Email Delivery', 'cartbay' ); ?></h2>
+		<h2><?php esc_html_e( 'Email Delivery', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></h2>
 
 		<?php if ( ! empty( $status['has_delivery'] ) ) : ?>
 			<div class="notice notice-success inline is-dismissible cartbay-notice-auto-dismiss">
-				<p><?php esc_html_e( 'SMTP delivery detected. Your emails should deliver reliably.', 'cartbay' ); ?></p>
+				<p><?php esc_html_e( 'SMTP delivery detected. Your emails should deliver reliably.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></p>
 			</div>
 		<?php elseif ( ! empty( $status['has_logger'] ) ) : ?>
 			<div class="notice notice-warning inline is-dismissible cartbay-notice-auto-dismiss">
 				<p>
-					<strong><?php esc_html_e( 'An email logging plugin is active, but no SMTP delivery service was detected.', 'cartbay' ); ?></strong>
-					<?php esc_html_e( 'Emails to buyers may not be delivered reliably.', 'cartbay' ); ?>
+					<strong><?php esc_html_e( 'An email logging plugin is active, but no SMTP delivery service was detected.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></strong>
+					<?php esc_html_e( 'Emails to buyers may not be delivered reliably.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?>
 				</p>
 			</div>
 		<?php else : ?>
 			<div class="notice notice-warning inline is-dismissible cartbay-notice-auto-dismiss">
 				<p>
-					<strong><?php esc_html_e( 'No SMTP plugin detected.', 'cartbay' ); ?></strong>
-					<?php esc_html_e( 'Without an SMTP service, recovery emails may land in spam. Consider installing an SMTP plugin.', 'cartbay' ); ?>
+					<strong><?php esc_html_e( 'No SMTP plugin detected.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></strong>
+					<?php esc_html_e( 'Without an SMTP service, recovery emails may land in spam. Consider installing an SMTP plugin.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?>
 				</p>
 			</div>
 		<?php endif; ?>
 
 		<p class="cartbay-wizard__test-email">
-			<label for="cartbay-test-email-address"><?php esc_html_e( 'Send to:', 'cartbay' ); ?></label>
-			<input type="email" id="cartbay-test-email-address" class="regular-text" value="<?php echo esc_attr( $target_email ); ?>" placeholder="<?php esc_attr_e( 'email@example.com', 'cartbay' ); ?>" />
+			<label for="cartbay-test-email-address"><?php esc_html_e( 'Send to:', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></label>
+			<input type="email" id="cartbay-test-email-address" class="regular-text" value="<?php echo esc_attr( $target_email ); ?>" placeholder="<?php esc_attr_e( 'email@example.com', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?>" />
 			<button type="button" id="cartbay-test-email" class="button">
-				<?php esc_html_e( 'Send Test Email', 'cartbay' ); ?>
+				<?php esc_html_e( 'Send Test Email', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?>
 			</button>
 			<span id="cartbay-test-email-result"></span>
 		</p>
-		<p class="description"><?php esc_html_e( 'Enter an email address and click to send a test email and verify delivery.', 'cartbay' ); ?></p>
+		<p class="description"><?php esc_html_e( 'Enter an email address and click to send a test email and verify delivery.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></p>
 
 		<script>
 		jQuery(function($) {
 			$('#cartbay-test-email').on('click', function() {
 				var btn = $(this);
 				var email = $('#cartbay-test-email-address').val();
-				btn.prop('disabled', true).text('<?php echo esc_js( __( 'Sending...', 'cartbay' ) ); ?>');
+				btn.prop('disabled', true).text('<?php echo esc_js( __( 'Sending...', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) ); ?>');
 				$.post('<?php echo esc_url( rest_url( 'cartbay/v1/test/email' ) ); ?>', {
 					_wpnonce: '<?php echo esc_js( wp_create_nonce( 'wp_rest' ) ); ?>',
 					email: email
 				}).done(function(resp) {
-					$('#cartbay-test-email-result').text(resp.message || '<?php echo esc_js( __( 'Test email sent!', 'cartbay' ) ); ?>');
+					$('#cartbay-test-email-result').text(resp.message || '<?php echo esc_js( __( 'Test email sent!', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) ); ?>');
 				}).fail(function() {
-					$('#cartbay-test-email-result').text('<?php echo esc_js( __( 'Failed to send test email.', 'cartbay' ) ); ?>');
+					$('#cartbay-test-email-result').text('<?php echo esc_js( __( 'Failed to send test email.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) ); ?>');
 				}).always(function() {
-					btn.prop('disabled', false).text('<?php echo esc_js( __( 'Send Test Email', 'cartbay' ) ); ?>');
+					btn.prop('disabled', false).text('<?php echo esc_js( __( 'Send Test Email', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) ); ?>');
 				});
 			});
 		});
@@ -364,19 +364,19 @@ class WizardController {
 		$campaign = get_option( 'cartbay_campaign_settings', array() );
 		$enabled  = ! empty( $campaign['enabled'] );
 		?>
-		<h2><?php esc_html_e( 'Launch CartBay', 'cartbay' ); ?></h2>
+		<h2><?php esc_html_e( 'Launch CartBay', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></h2>
 		<table class="form-table" role="presentation">
 			<tr>
-				<th scope="row"><?php esc_html_e( 'Enable Recovery Emails', 'cartbay' ); ?></th>
+				<th scope="row"><?php esc_html_e( 'Enable Recovery Emails', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></th>
 				<td>
 					<label>
 						<input type="checkbox" name="cartbay_campaign_enabled" value="1" <?php checked( $enabled ); ?> />
-						<?php esc_html_e( 'Start sending recovery emails to abandoned carts', 'cartbay' ); ?>
+						<?php esc_html_e( 'Start sending recovery emails to abandoned carts', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?>
 					</label>
 				</td>
 			</tr>
 		</table>
-		<p class="description"><?php esc_html_e( 'You can change this and other settings later from the CartBay Settings page.', 'cartbay' ); ?></p>
+		<p class="description"><?php esc_html_e( 'You can change this and other settings later from the CartBay Settings page.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></p>
 		<?php
 	}
 
@@ -545,9 +545,9 @@ class WizardController {
 	 */
 	private function recovery_delay_tooltip( int $index ): string {
 		$tooltips = array(
-			__( 'The first recovery email should arrive while the shopper still remembers the cart. Use a shorter delay for a quick reminder without discounting too early.', 'cartbay' ),
-			__( 'The second email gives shoppers time to compare options before following up. Use this interval to avoid making the sequence feel too aggressive.', 'cartbay' ),
-			__( 'The final email is the later reminder and usually carries the strongest recovery message. A longer delay keeps it from feeling repetitive.', 'cartbay' ),
+			__( 'The first recovery email should arrive while the shopper still remembers the cart. Use a shorter delay for a quick reminder without discounting too early.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+			__( 'The second email gives shoppers time to compare options before following up. Use this interval to avoid making the sequence feel too aggressive.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+			__( 'The final email is the later reminder and usually carries the strongest recovery message. A longer delay keeps it from feeling repetitive.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 		);
 
 		return $tooltips[ $index ] ?? $tooltips[0];
@@ -562,10 +562,10 @@ class WizardController {
 	 */
 	private function get_steps(): array {
 		$steps = array(
-			'welcome' => __( 'Welcome', 'cartbay' ),
-			'consent' => __( 'Consent & Timing', 'cartbay' ),
-			'email'   => __( 'Email Delivery', 'cartbay' ),
-			'launch'  => __( 'Launch', 'cartbay' ),
+			'welcome' => __( 'Welcome', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+			'consent' => __( 'Consent & Timing', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+			'email'   => __( 'Email Delivery', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+			'launch'  => __( 'Launch', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 		);
 
 		/**

@@ -79,7 +79,7 @@ class OverviewSection extends AbstractSettingsSection {
 	 * @return string Section label.
 	 */
 	public function label(): string {
-		return __( 'Overview', 'cartbay' );
+		return __( 'Overview', 'cartbay-abandoned-cart-recovery-for-woocommerce' );
 	}
 
 	/**
@@ -112,36 +112,36 @@ class OverviewSection extends AbstractSettingsSection {
 		$revenue         = function_exists( 'wc_price' ) ? wc_price( (float) $data['revenue'] ) : (string) $data['revenue'];
 		$cards           = array(
 			array(
-				'label'   => __( 'Tracked Carts', 'cartbay' ),
+				'label'   => __( 'Tracked Carts', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 				'value'   => (string) $data['tracked'],
-				'tooltip' => __( 'Captured checkout sessions created by CartBay during the selected period.', 'cartbay' ),
+				'tooltip' => __( 'Captured checkout sessions created by CartBay during the selected period.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 			),
 			array(
-				'label'   => __( 'Abandoned Carts', 'cartbay' ),
+				'label'   => __( 'Abandoned Carts', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 				'value'   => (string) $data['abandoned'],
-				'tooltip' => __( 'Tracked carts that passed the inactivity timeout during the selected period.', 'cartbay' ),
+				'tooltip' => __( 'Tracked carts that passed the inactivity timeout during the selected period.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 			),
 			array(
-				'label'   => __( 'Recovered Carts', 'cartbay' ),
+				'label'   => __( 'Recovered Carts', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 				'value'   => (string) $data['recovered'],
-				'tooltip' => __( 'Abandoned CartBay sessions that matched a later WooCommerce order in the selected period.', 'cartbay' ),
+				'tooltip' => __( 'Abandoned CartBay sessions that matched a later WooCommerce order in the selected period.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 			),
 			array(
-				'label'      => __( 'Abandoned Cart Value', 'cartbay' ),
+				'label'      => __( 'Abandoned Cart Value', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 				'value'      => wp_kses_post( $abandoned_value ),
-				'tooltip'    => __( 'Total cart value for sessions that became abandoned during the selected period.', 'cartbay' ),
+				'tooltip'    => __( 'Total cart value for sessions that became abandoned during the selected period.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 				'allow_html' => true,
 			),
 			array(
-				'label'      => __( 'Recovered Revenue', 'cartbay' ),
+				'label'      => __( 'Recovered Revenue', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 				'value'      => wp_kses_post( $revenue ),
-				'tooltip'    => __( 'Revenue from WooCommerce orders matched to recovered CartBay sessions in the selected period.', 'cartbay' ),
+				'tooltip'    => __( 'Revenue from WooCommerce orders matched to recovered CartBay sessions in the selected period.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 				'allow_html' => true,
 			),
 			array(
-				'label'   => __( 'Recovery Rate', 'cartbay' ),
+				'label'   => __( 'Recovery Rate', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 				'value'   => (string) $data['recovery_rate'] . '%',
-				'tooltip' => __( 'Recovered carts divided by abandoned carts for the selected period.', 'cartbay' ),
+				'tooltip' => __( 'Recovered carts divided by abandoned carts for the selected period.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 			),
 		);
 
@@ -169,7 +169,7 @@ class OverviewSection extends AbstractSettingsSection {
 		$base_url = $this->url->section( 'overview' );
 
 		echo '<div class="cartbay-overview-header">';
-		echo '<h2 class="cartbay-overview-title">' . esc_html__( 'CartBay Overview', 'cartbay' ) . '</h2>';
+		echo '<h2 class="cartbay-overview-title">' . esc_html__( 'CartBay Overview', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '</h2>';
 		echo '<div class="cartbay-button-group">';
 		foreach ( $periods as $days => $label ) {
 			$url   = $base_url . '&period=' . $days;
@@ -208,13 +208,13 @@ class OverviewSection extends AbstractSettingsSection {
 
 		echo '<section class="cartbay-help-panel" aria-labelledby="cartbay-help-title">';
 		echo '<div class="cartbay-help-panel__content">';
-		echo '<h3 id="cartbay-help-title">' . esc_html__( 'Help', 'cartbay' ) . '</h3>';
-		echo '<p>' . esc_html__( 'Read the documentation to learn how to get started with CartBay. If you have any questions, please email us.', 'cartbay' ) . '</p>';
+		echo '<h3 id="cartbay-help-title">' . esc_html__( 'Help', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '</h3>';
+		echo '<p>' . esc_html__( 'Read the documentation to learn how to get started with CartBay. If you have any questions, please email us.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '</p>';
 		echo '<a class="" href="' . esc_url( 'mailto:' . $support_email ) . '">' . esc_html( $support_email ) . '</a>';
 		echo '</div>';
 		echo '<div class="cartbay-help-panel__actions">';
-		echo '<a class="button button-secondary" href="' . esc_url( CARTBAY_DOCS_URL ) . '" target="_blank" rel="noopener noreferrer">' . esc_html__( 'Documentation', 'cartbay' ) . '</a>';
-		echo '<a class="button button-primary" href="' . esc_url( $wizard_url ) . '">' . esc_html__( 'Open Setup Wizard', 'cartbay' ) . '</a>';
+		echo '<a class="button button-secondary" href="' . esc_url( CARTBAY_DOCS_URL ) . '" target="_blank" rel="noopener noreferrer">' . esc_html__( 'Documentation', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '</a>';
+		echo '<a class="button button-primary" href="' . esc_url( $wizard_url ) . '">' . esc_html__( 'Open Setup Wizard', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '</a>';
 		echo '</div>';
 		echo '</section>';
 	}
@@ -347,19 +347,19 @@ class OverviewSection extends AbstractSettingsSection {
 			return '<th scope="col" class="manage-column ' . esc_attr( trim( $column_class . ' ' . $sort_class ) ) . '"><a href="' . esc_url( $url ) . '"><span>' . esc_html( $label ) . '</span><span class="sorting-indicators"><span class="sorting-indicator asc" aria-hidden="true"></span><span class="sorting-indicator desc" aria-hidden="true"></span></span></a></th>';
 		};
 
-		echo '<h3>' . esc_html__( 'Sessions', 'cartbay' ) . '</h3>';
+		echo '<h3>' . esc_html__( 'Sessions', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '</h3>';
 
 		echo '<div class="cartbay-session-filters">';
 		echo '<div class="tablenav top"><div class="alignleft actions">';
-		echo '<label class="screen-reader-text" for="cartbay-session-status-filter">' . esc_html__( 'Filter by session status', 'cartbay' ) . '</label>';
+		echo '<label class="screen-reader-text" for="cartbay-session-status-filter">' . esc_html__( 'Filter by session status', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '</label>';
 		echo '<select name="status" id="cartbay-session-status-filter">';
-		echo '<option value=""' . selected( '', $status_filter, false ) . '>' . esc_html__( 'All statuses', 'cartbay' ) . '</option>';
+		echo '<option value=""' . selected( '', $status_filter, false ) . '>' . esc_html__( 'All statuses', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '</option>';
 		foreach ( $status_labels as $slug => $label ) {
 			$short = str_replace( 'wc-cartbay-', '', $slug );
 			echo '<option value="' . esc_attr( $short ) . '"' . selected( $short, $status_filter, false ) . '>' . esc_html( $label ) . '</option>';
 		}
 		echo '</select> ';
-		echo '<button type="button" id="cartbay-session-query-submit" class="button" data-base-url="' . esc_url( $filter_base ) . '">' . esc_html__( 'Filter', 'cartbay' ) . '</button>';
+		echo '<button type="button" id="cartbay-session-query-submit" class="button" data-base-url="' . esc_url( $filter_base ) . '">' . esc_html__( 'Filter', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '</button>';
 		echo '</div>';
 		echo '<div class="alignleft actions">';
 		/**
@@ -385,32 +385,32 @@ class OverviewSection extends AbstractSettingsSection {
 		);
 		echo '</div>';
 		echo '<div class="alignright">';
-		echo '<label class="screen-reader-text" for="cartbay-session-search-input">' . esc_html__( 'Search sessions', 'cartbay' ) . '</label>';
-		echo '<input type="search" id="cartbay-session-search-input" name="s" value="' . esc_attr( $search_query ) . '" placeholder="' . esc_attr__( 'Email or ID', 'cartbay' ) . '" />';
-		echo '<input type="button" id="cartbay-session-search-submit" class="button" value="' . esc_attr__( 'Search', 'cartbay' ) . '" data-base-url="' . esc_url( $filter_base ) . '" />';
+		echo '<label class="screen-reader-text" for="cartbay-session-search-input">' . esc_html__( 'Search sessions', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '</label>';
+		echo '<input type="search" id="cartbay-session-search-input" name="s" value="' . esc_attr( $search_query ) . '" placeholder="' . esc_attr__( 'Email or ID', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '" />';
+		echo '<input type="button" id="cartbay-session-search-submit" class="button" value="' . esc_attr__( 'Search', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '" data-base-url="' . esc_url( $filter_base ) . '" />';
 		echo '</div>';
 		echo '<br class="clear" /></div></div>';
 
 		echo '<table class="wp-list-table widefat fixed striped table-view-list cartbay-sessions-table"><thead><tr>';
-		echo $sort_header( 'session_id', __( 'Session', 'cartbay' ), 'column-primary column-session-id' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		echo '<th scope="col" class="manage-column column-email">' . esc_html__( 'Email', 'cartbay' ) . '</th>';
-		echo '<th scope="col" class="manage-column column-status">' . esc_html__( 'Status', 'cartbay' ) . '</th>';
-		echo $sort_header( 'cart_total', __( 'Cart Total', 'cartbay' ), 'column-cart-total' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		echo $sort_header( 'created', __( 'Created', 'cartbay' ), 'column-created' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		echo $sort_header( 'last_activity', __( 'Last Activity', 'cartbay' ), 'column-last-activity' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		echo $sort_header( 'emails_sent', __( 'Emails Sent', 'cartbay' ), 'column-emails-sent' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		echo $sort_header( 'session_id', __( 'Session', 'cartbay-abandoned-cart-recovery-for-woocommerce' ), 'column-primary column-session-id' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		echo '<th scope="col" class="manage-column column-email">' . esc_html__( 'Email', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '</th>';
+		echo '<th scope="col" class="manage-column column-status">' . esc_html__( 'Status', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '</th>';
+		echo $sort_header( 'cart_total', __( 'Cart Total', 'cartbay-abandoned-cart-recovery-for-woocommerce' ), 'column-cart-total' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		echo $sort_header( 'created', __( 'Created', 'cartbay-abandoned-cart-recovery-for-woocommerce' ), 'column-created' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		echo $sort_header( 'last_activity', __( 'Last Activity', 'cartbay-abandoned-cart-recovery-for-woocommerce' ), 'column-last-activity' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		echo $sort_header( 'emails_sent', __( 'Emails Sent', 'cartbay-abandoned-cart-recovery-for-woocommerce' ), 'column-emails-sent' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo '</tr></thead><tfoot><tr>';
-		echo $sort_header( 'session_id', __( 'Session', 'cartbay' ), 'column-primary column-session-id' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		echo '<th scope="col" class="manage-column column-email">' . esc_html__( 'Email', 'cartbay' ) . '</th>';
-		echo '<th scope="col" class="manage-column column-status">' . esc_html__( 'Status', 'cartbay' ) . '</th>';
-		echo $sort_header( 'cart_total', __( 'Cart Total', 'cartbay' ), 'column-cart-total' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		echo $sort_header( 'created', __( 'Created', 'cartbay' ), 'column-created' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		echo $sort_header( 'last_activity', __( 'Last Activity', 'cartbay' ), 'column-last-activity' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		echo $sort_header( 'emails_sent', __( 'Emails Sent', 'cartbay' ), 'column-emails-sent' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		echo $sort_header( 'session_id', __( 'Session', 'cartbay-abandoned-cart-recovery-for-woocommerce' ), 'column-primary column-session-id' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		echo '<th scope="col" class="manage-column column-email">' . esc_html__( 'Email', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '</th>';
+		echo '<th scope="col" class="manage-column column-status">' . esc_html__( 'Status', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '</th>';
+		echo $sort_header( 'cart_total', __( 'Cart Total', 'cartbay-abandoned-cart-recovery-for-woocommerce' ), 'column-cart-total' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		echo $sort_header( 'created', __( 'Created', 'cartbay-abandoned-cart-recovery-for-woocommerce' ), 'column-created' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		echo $sort_header( 'last_activity', __( 'Last Activity', 'cartbay-abandoned-cart-recovery-for-woocommerce' ), 'column-last-activity' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		echo $sort_header( 'emails_sent', __( 'Emails Sent', 'cartbay-abandoned-cart-recovery-for-woocommerce' ), 'column-emails-sent' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo '</tr></tfoot><tbody>';
 
 		if ( empty( $sessions ) ) {
-			echo '<tr class="no-items"><td class="colspanchange" colspan="7">' . esc_html__( 'No sessions found.', 'cartbay' ) . '</td></tr>';
+			echo '<tr class="no-items"><td class="colspanchange" colspan="7">' . esc_html__( 'No sessions found.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '</td></tr>';
 		} else {
 			foreach ( $sessions as $session ) {
 				$detail_url       = $base_url . '&session_id=' . $session->get_id();
@@ -420,13 +420,13 @@ class OverviewSection extends AbstractSettingsSection {
 				$last_activity_at = absint( $session->get_meta( '_cartbay_last_activity_at', true ) );
 
 				echo '<tr>';
-				echo '<td class="column-primary column-session-id" data-colname="' . esc_attr__( 'Session', 'cartbay' ) . '"><strong><a class="row-title" href="' . esc_url( $detail_url ) . '">' . esc_html( '#' . (string) $session->get_id() ) . '</a></strong><button type="button" class="toggle-row"><span class="screen-reader-text">' . esc_html__( 'Show more details', 'cartbay' ) . '</span></button></td>';
-				echo '<td class="column-email" data-colname="' . esc_attr__( 'Email', 'cartbay' ) . '">' . esc_html( $session->get_billing_email() ) . '</td>';
-				echo '<td class="column-status" data-colname="' . esc_attr__( 'Status', 'cartbay' ) . '">' . esc_html( $status_labels[ 'wc-' . $session->get_status() ] ?? $session->get_status() ) . '</td>';
-				echo '<td class="column-cart-total" data-colname="' . esc_attr__( 'Cart Total', 'cartbay' ) . '">' . wp_kses_post( function_exists( 'wc_price' ) ? wc_price( $cart_total ) : $cart_total ) . '</td>';
-				echo '<td class="column-created" data-colname="' . esc_attr__( 'Created', 'cartbay' ) . '">' . esc_html( $this->format_local_datetime( $created_at ) ) . '</td>';
-				echo '<td class="column-last-activity" data-colname="' . esc_attr__( 'Last Activity', 'cartbay' ) . '">' . esc_html( $this->format_local_datetime( $last_activity_at ) ) . '</td>';
-				echo '<td class="column-emails-sent" data-colname="' . esc_attr__( 'Emails Sent', 'cartbay' ) . '">' . esc_html( (string) $sent_count ) . '</td>';
+				echo '<td class="column-primary column-session-id" data-colname="' . esc_attr__( 'Session', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '"><strong><a class="row-title" href="' . esc_url( $detail_url ) . '">' . esc_html( '#' . (string) $session->get_id() ) . '</a></strong><button type="button" class="toggle-row"><span class="screen-reader-text">' . esc_html__( 'Show more details', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '</span></button></td>';
+				echo '<td class="column-email" data-colname="' . esc_attr__( 'Email', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '">' . esc_html( $session->get_billing_email() ) . '</td>';
+				echo '<td class="column-status" data-colname="' . esc_attr__( 'Status', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '">' . esc_html( $status_labels[ 'wc-' . $session->get_status() ] ?? $session->get_status() ) . '</td>';
+				echo '<td class="column-cart-total" data-colname="' . esc_attr__( 'Cart Total', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '">' . wp_kses_post( function_exists( 'wc_price' ) ? wc_price( $cart_total ) : $cart_total ) . '</td>';
+				echo '<td class="column-created" data-colname="' . esc_attr__( 'Created', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '">' . esc_html( $this->format_local_datetime( $created_at ) ) . '</td>';
+				echo '<td class="column-last-activity" data-colname="' . esc_attr__( 'Last Activity', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '">' . esc_html( $this->format_local_datetime( $last_activity_at ) ) . '</td>';
+				echo '<td class="column-emails-sent" data-colname="' . esc_attr__( 'Emails Sent', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '">' . esc_html( (string) $sent_count ) . '</td>';
 				echo '</tr>';
 			}
 		}
@@ -468,10 +468,10 @@ class OverviewSection extends AbstractSettingsSection {
 	 */
 	private function get_status_labels(): array {
 		return array(
-			'wc-cartbay-captured'   => __( 'Captured', 'cartbay' ),
-			'wc-cartbay-abandoned'  => __( 'Abandoned', 'cartbay' ),
-			'wc-cartbay-recovered'  => __( 'Recovered', 'cartbay' ),
-			'wc-cartbay-suppressed' => __( 'Suppressed', 'cartbay' ),
+			'wc-cartbay-captured'   => __( 'Captured', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+			'wc-cartbay-abandoned'  => __( 'Abandoned', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+			'wc-cartbay-recovered'  => __( 'Recovered', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+			'wc-cartbay-suppressed' => __( 'Suppressed', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 		);
 	}
 
@@ -484,10 +484,10 @@ class OverviewSection extends AbstractSettingsSection {
 	 */
 	private function get_status_descriptions(): array {
 		return array(
-			'wc-cartbay-captured'   => __( 'Shopper email and cart data were captured and the cart is still inside the abandonment timeout.', 'cartbay' ),
-			'wc-cartbay-abandoned'  => __( 'The cart passed the inactivity timeout and is eligible for recovery emails.', 'cartbay' ),
-			'wc-cartbay-recovered'  => __( 'A later WooCommerce order matched this CartBay session.', 'cartbay' ),
-			'wc-cartbay-suppressed' => __( 'The shopper or email is excluded from recovery messaging.', 'cartbay' ),
+			'wc-cartbay-captured'   => __( 'Shopper email and cart data were captured and the cart is still inside the abandonment timeout.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+			'wc-cartbay-abandoned'  => __( 'The cart passed the inactivity timeout and is eligible for recovery emails.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+			'wc-cartbay-recovered'  => __( 'A later WooCommerce order matched this CartBay session.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+			'wc-cartbay-suppressed' => __( 'The shopper or email is excluded from recovery messaging.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 		);
 	}
 
@@ -539,7 +539,7 @@ class OverviewSection extends AbstractSettingsSection {
 
 		echo '<div class="tablenav bottom"><div class="tablenav-pages">';
 		/* translators: %s: number of items */
-		echo '<span class="displaying-num">' . esc_html( sprintf( __( '%s items', 'cartbay' ), number_format_i18n( $total ) ) ) . '</span>';
+		echo '<span class="displaying-num">' . esc_html( sprintf( __( '%s items', 'cartbay-abandoned-cart-recovery-for-woocommerce' ), number_format_i18n( $total ) ) ) . '</span>';
 		echo '<span class="pagination-links">';
 
 		if ( $paged > 1 ) {
@@ -551,7 +551,7 @@ class OverviewSection extends AbstractSettingsSection {
 		}
 
 		/* translators: 1: current page, 2: total pages */
-		echo esc_html( sprintf( __( '%1$d of %2$d', 'cartbay' ), $paged, $total_pages ) );
+		echo esc_html( sprintf( __( '%1$d of %2$d', 'cartbay-abandoned-cart-recovery-for-woocommerce' ), $paged, $total_pages ) );
 
 		if ( $paged < $total_pages ) {
 			echo ' <a class="button" href="' . esc_url( add_query_arg( 'paged', $paged + 1, $pagination_base ) ) . '">&rsaquo;</a>';
@@ -577,12 +577,12 @@ class OverviewSection extends AbstractSettingsSection {
 	 */
 	private function render_status_guide( array $status_labels, array $status_descriptions, array $status_counts ): void {
 		echo '<div class="cartbay-status-guide" style="margin-top:20px;max-width:1100px;">';
-		echo '<h3>' . esc_html__( 'Status Guide', 'cartbay' ) . '</h3>';
-		echo '<p class="description">' . esc_html__( 'Current session counts help explain the table filters. Overview cards above use the selected reporting period.', 'cartbay' ) . '</p>';
+		echo '<h3>' . esc_html__( 'Status Guide', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '</h3>';
+		echo '<p class="description">' . esc_html__( 'Current session counts help explain the table filters. Overview cards above use the selected reporting period.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '</p>';
 		echo '<table class="widefat striped"><thead><tr>';
-		echo '<th scope="col">' . esc_html__( 'Status', 'cartbay' ) . '</th>';
-		echo '<th scope="col">' . esc_html__( 'Current Sessions', 'cartbay' ) . '</th>';
-		echo '<th scope="col">' . esc_html__( 'Meaning', 'cartbay' ) . '</th>';
+		echo '<th scope="col">' . esc_html__( 'Status', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '</th>';
+		echo '<th scope="col">' . esc_html__( 'Current Sessions', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '</th>';
+		echo '<th scope="col">' . esc_html__( 'Meaning', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '</th>';
 		echo '</tr></thead><tbody>';
 
 		foreach ( $status_labels as $status_slug => $status_label ) {

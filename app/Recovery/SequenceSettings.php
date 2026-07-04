@@ -76,28 +76,28 @@ class SequenceSettings {
 	public static function get_step_blueprint(): array {
 		return array(
 			0 => array(
-				'label'             => __( 'Email 1', 'cartbay' ),
-				'name'              => __( 'Initial reminder', 'cartbay' ),
-				'when'              => __( 'Sent shortly after abandonment while purchase intent is still fresh.', 'cartbay' ),
-				'why'               => __( 'Early reminders recover straightforward purchases before shoppers move on or compare alternatives.', 'cartbay' ),
-				'expected_behavior' => __( 'Keep this email concise. Restore the cart, restate the product value, and avoid discounting too early.', 'cartbay' ),
-				'coupon_guidance'   => __( 'Leave coupons off here unless discounts are part of your standard first-touch strategy.', 'cartbay' ),
+				'label'             => __( 'Email 1', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+				'name'              => __( 'Initial reminder', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+				'when'              => __( 'Sent shortly after abandonment while purchase intent is still fresh.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+				'why'               => __( 'Early reminders recover straightforward purchases before shoppers move on or compare alternatives.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+				'expected_behavior' => __( 'Keep this email concise. Restore the cart, restate the product value, and avoid discounting too early.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+				'coupon_guidance'   => __( 'Leave coupons off here unless discounts are part of your standard first-touch strategy.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 			),
 			1 => array(
-				'label'             => __( 'Email 2', 'cartbay' ),
-				'name'              => __( 'Value follow-up', 'cartbay' ),
-				'when'              => __( 'Sent after the shopper has had time to compare options or step away from checkout.', 'cartbay' ),
-				'why'               => __( 'This follow-up brings the cart back to mind without making the sequence feel aggressive.', 'cartbay' ),
-				'expected_behavior' => __( 'Use this email to reinforce value, answer common objections, and make returning to checkout simple.', 'cartbay' ),
-				'coupon_guidance'   => __( 'Use a coupon here only when price resistance is a common reason shoppers abandon checkout.', 'cartbay' ),
+				'label'             => __( 'Email 2', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+				'name'              => __( 'Value follow-up', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+				'when'              => __( 'Sent after the shopper has had time to compare options or step away from checkout.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+				'why'               => __( 'This follow-up brings the cart back to mind without making the sequence feel aggressive.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+				'expected_behavior' => __( 'Use this email to reinforce value, answer common objections, and make returning to checkout simple.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+				'coupon_guidance'   => __( 'Use a coupon here only when price resistance is a common reason shoppers abandon checkout.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 			),
 			2 => array(
-				'label'             => __( 'Email 3', 'cartbay' ),
-				'name'              => __( 'Final recovery email', 'cartbay' ),
-				'when'              => __( 'Sent later in the sequence when a clearer incentive may be needed to recover the order.', 'cartbay' ),
-				'why'               => __( 'Final emails work best when they create a clear reason to return now.', 'cartbay' ),
-				'expected_behavior' => __( 'Use this email for the strongest conversion message: urgency, a clear call to action, and an optional coupon.', 'cartbay' ),
-				'coupon_guidance'   => __( 'This is the strongest place for an incentive if your store uses recovery discounts.', 'cartbay' ),
+				'label'             => __( 'Email 3', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+				'name'              => __( 'Final recovery email', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+				'when'              => __( 'Sent later in the sequence when a clearer incentive may be needed to recover the order.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+				'why'               => __( 'Final emails work best when they create a clear reason to return now.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+				'expected_behavior' => __( 'Use this email for the strongest conversion message: urgency, a clear call to action, and an optional coupon.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+				'coupon_guidance'   => __( 'This is the strongest place for an incentive if your store uses recovery discounts.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 			),
 		);
 	}
@@ -214,16 +214,16 @@ class SequenceSettings {
 
 		if ( 'days' === $unit ) {
 			/* translators: %d: number of days */
-			return sprintf( _n( '%d day', '%d days', $value, 'cartbay' ), $value );
+			return sprintf( _n( '%d day', '%d days', $value, 'cartbay-abandoned-cart-recovery-for-woocommerce' ), $value );
 		}
 
 		if ( 'hours' === $unit ) {
 			/* translators: %d: number of hours */
-			return sprintf( _n( '%d hour', '%d hours', $value, 'cartbay' ), $value );
+			return sprintf( _n( '%d hour', '%d hours', $value, 'cartbay-abandoned-cart-recovery-for-woocommerce' ), $value );
 		}
 
 		/* translators: %d: number of minutes */
-		return sprintf( _n( '%d minute', '%d minutes', $value, 'cartbay' ), $value );
+		return sprintf( _n( '%d minute', '%d minutes', $value, 'cartbay-abandoned-cart-recovery-for-woocommerce' ), $value );
 	}
 
 	/**

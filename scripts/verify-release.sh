@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-ZIP="cartbay.zip"
+ZIP="cartbay-abandoned-cart-recovery-for-woocommerce.zip"
 TMP="/tmp/cartbay-release-verify"
 
 echo "Verifying release ZIP: $ZIP"
@@ -14,11 +14,11 @@ fi
 rm -rf "$TMP" && mkdir -p "$TMP"
 unzip -q "$ZIP" -d "$TMP"
 
-PLUGIN="$TMP/cartbay"
+PLUGIN="$TMP/cartbay-abandoned-cart-recovery-for-woocommerce"
 
 # Required files — representative sample from each ship directory.
 REQUIRED=(
-    "cartbay.php"
+    "cartbay-abandoned-cart-recovery-for-woocommerce.php"
     "uninstall.php"
     "readme.txt"
     "LICENSE.txt"
@@ -35,7 +35,7 @@ REQUIRED=(
     "assets/js/cartbay-block.asset.php"
     "templates/emails/recovery-email-1.php"
     "vendor/autoload.php"
-    "languages/cartbay.pot"
+    "languages/cartbay-abandoned-cart-recovery-for-woocommerce.pot"
 )
 
 for f in "${REQUIRED[@]}"; do
@@ -80,7 +80,7 @@ for f in "${FORBIDDEN[@]}"; do
 done
 
 # Check plugin header version matches CARTBAY_VERSION constant.
-HEADER_VERSION=$(grep "Version:" "$PLUGIN/cartbay.php" | head -1 | awk '{print $NF}' | tr -d '[:space:]')
+HEADER_VERSION=$(grep "Version:" "$PLUGIN/cartbay-abandoned-cart-recovery-for-woocommerce.php" | head -1 | awk '{print $NF}' | tr -d '[:space:]')
 CONST_VERSION=$(grep "define.*CARTBAY_VERSION" "$PLUGIN/app/Core/Constants.php" | grep -o "'[0-9.]*'" | tr -d "'")
 
 if [ "$HEADER_VERSION" != "$CONST_VERSION" ]; then

@@ -354,7 +354,7 @@ class Plugin {
 		register_post_type(
 			'cartbay_template',
 			array(
-				'label'           => __( 'CartBay Templates', 'cartbay' ),
+				'label'           => __( 'CartBay Templates', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 				'public'          => false,
 				'show_in_menu'    => false,
 				'show_in_rest'    => false,
@@ -367,7 +367,7 @@ class Plugin {
 		register_post_type(
 			'cartbay_suppressed',
 			array(
-				'label'           => __( 'CartBay Suppressions', 'cartbay' ),
+				'label'           => __( 'CartBay Suppressions', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 				'public'          => false,
 				'show_in_menu'    => false,
 				'show_in_rest'    => false,
@@ -391,8 +391,8 @@ class Plugin {
 		if ( Settings::is_wc_menu_enabled() ) {
 			add_submenu_page(
 				'woocommerce',
-				__( 'CartBay', 'cartbay' ),
-				__( 'CartBay', 'cartbay' ),
+				__( 'CartBay', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+				__( 'CartBay', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 				'manage_woocommerce',
 				'admin.php?page=wc-settings&tab=cartbay'
 			);
@@ -401,8 +401,8 @@ class Plugin {
 		// Wizard page (not shown in menu).
 		add_submenu_page(
 			'cartbay-wizard',
-			__( 'CartBay Setup Wizard', 'cartbay' ),
-			__( 'Setup Wizard', 'cartbay' ),
+			__( 'CartBay Setup Wizard', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+			__( 'Setup Wizard', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 			'manage_woocommerce',
 			'cartbay-wizard',
 			array( new Wizard\WizardController( $container ), 'render' )
@@ -422,17 +422,17 @@ class Plugin {
 		$overview_link = sprintf(
 			'<a href="%s">%s</a>',
 			esc_url( admin_url( 'admin.php?page=wc-settings&tab=cartbay' ) ),
-			esc_html__( 'Overview', 'cartbay' )
+			esc_html__( 'Overview', 'cartbay-abandoned-cart-recovery-for-woocommerce' )
 		);
 		$settings_link = sprintf(
 			'<a href="%s">%s</a>',
 			esc_url( admin_url( CARTBAY_SETTINGS_URL ) ),
-			esc_html__( 'Settings', 'cartbay' )
+			esc_html__( 'Settings', 'cartbay-abandoned-cart-recovery-for-woocommerce' )
 		);
 		$docs_link     = sprintf(
 			'<a href="%s" target="_blank" rel="noopener noreferrer">%s</a>',
 			esc_url( CARTBAY_DOCS_URL ),
-			esc_html__( 'Docs', 'cartbay' )
+			esc_html__( 'Docs', 'cartbay-abandoned-cart-recovery-for-woocommerce' )
 		);
 
 		array_unshift( $links, $overview_link, $settings_link, $docs_link );
@@ -449,11 +449,11 @@ class Plugin {
 	 */
 	private function get_order_status_labels(): array {
 		return array(
-			'wc-cartbay-captured'   => __( 'CartBay: Captured', 'cartbay' ),
-			'wc-cartbay-abandoned'  => __( 'CartBay: Abandoned', 'cartbay' ),
-			'wc-cartbay-recovered'  => __( 'CartBay: Recovered', 'cartbay' ),
-			'wc-cartbay-expired'    => __( 'CartBay: Expired', 'cartbay' ),
-			'wc-cartbay-suppressed' => __( 'CartBay: Suppressed', 'cartbay' ),
+			'wc-cartbay-captured'   => __( 'CartBay: Captured', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+			'wc-cartbay-abandoned'  => __( 'CartBay: Abandoned', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+			'wc-cartbay-recovered'  => __( 'CartBay: Recovered', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+			'wc-cartbay-expired'    => __( 'CartBay: Expired', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+			'wc-cartbay-suppressed' => __( 'CartBay: Suppressed', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 		);
 	}
 
@@ -467,15 +467,15 @@ class Plugin {
 	private function get_order_status_count_labels(): array {
 		return array(
 			/* translators: %s: number of orders currently in the captured CartBay status. */
-			'wc-cartbay-captured'   => _n_noop( 'CartBay: Captured <span class="count">(%s)</span>', 'CartBay: Captured <span class="count">(%s)</span>', 'cartbay' ),
+			'wc-cartbay-captured'   => _n_noop( 'CartBay: Captured <span class="count">(%s)</span>', 'CartBay: Captured <span class="count">(%s)</span>', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 			/* translators: %s: number of orders currently in the abandoned CartBay status. */
-			'wc-cartbay-abandoned'  => _n_noop( 'CartBay: Abandoned <span class="count">(%s)</span>', 'CartBay: Abandoned <span class="count">(%s)</span>', 'cartbay' ),
+			'wc-cartbay-abandoned'  => _n_noop( 'CartBay: Abandoned <span class="count">(%s)</span>', 'CartBay: Abandoned <span class="count">(%s)</span>', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 			/* translators: %s: number of orders currently in the recovered CartBay status. */
-			'wc-cartbay-recovered'  => _n_noop( 'CartBay: Recovered <span class="count">(%s)</span>', 'CartBay: Recovered <span class="count">(%s)</span>', 'cartbay' ),
+			'wc-cartbay-recovered'  => _n_noop( 'CartBay: Recovered <span class="count">(%s)</span>', 'CartBay: Recovered <span class="count">(%s)</span>', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 			/* translators: %s: number of orders currently in the expired CartBay status. */
-			'wc-cartbay-expired'    => _n_noop( 'CartBay: Expired <span class="count">(%s)</span>', 'CartBay: Expired <span class="count">(%s)</span>', 'cartbay' ),
+			'wc-cartbay-expired'    => _n_noop( 'CartBay: Expired <span class="count">(%s)</span>', 'CartBay: Expired <span class="count">(%s)</span>', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 			/* translators: %s: number of orders currently in the suppressed CartBay status. */
-			'wc-cartbay-suppressed' => _n_noop( 'CartBay: Suppressed <span class="count">(%s)</span>', 'CartBay: Suppressed <span class="count">(%s)</span>', 'cartbay' ),
+			'wc-cartbay-suppressed' => _n_noop( 'CartBay: Suppressed <span class="count">(%s)</span>', 'CartBay: Suppressed <span class="count">(%s)</span>', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 		);
 	}
 
@@ -855,7 +855,7 @@ class Plugin {
 			array(
 				'{store_name}'      => wp_specialchars_decode( get_bloginfo( 'name' ), ENT_QUOTES ),
 				'{restore_url}'     => wc_get_checkout_url(),
-				'{coupon_code}'     => __( 'SAVE10', 'cartbay' ),
+				'{coupon_code}'     => __( 'SAVE10', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 				'{coupon_expiry}'   => date_i18n( get_option( 'date_format' ), time() + DAY_IN_SECONDS * 3 ),
 				'{unsubscribe_url}' => home_url( '/?cartbay_unsubscribe=preview' ),
 				'{customer_email}'  => 'customer@example.com',
@@ -996,30 +996,30 @@ class Plugin {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$unsub = isset( $_GET['cartbay_unsub'] ) ? sanitize_text_field( wp_unslash( $_GET['cartbay_unsub'] ) ) : '';
 		if ( 'success' === $unsub ) {
-			wc_add_notice( __( 'You have been unsubscribed from cart recovery emails.', 'cartbay' ), 'success' );
+			wc_add_notice( __( 'You have been unsubscribed from cart recovery emails.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ), 'success' );
 			return;
 		}
 		if ( 'invalid' === $unsub ) {
-			wc_add_notice( __( 'Invalid unsubscribe link.', 'cartbay' ), 'error' );
+			wc_add_notice( __( 'Invalid unsubscribe link.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ), 'error' );
 			return;
 		}
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$restore_error = isset( $_GET['cartbay_restore_error'] ) ? sanitize_text_field( wp_unslash( $_GET['cartbay_restore_error'] ) ) : '';
 		if ( 'expired' === $restore_error ) {
-			wc_add_notice( __( 'This cart recovery link has expired. Please add items to your cart again.', 'cartbay' ), 'error' );
+			wc_add_notice( __( 'This cart recovery link has expired. Please add items to your cart again.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ), 'error' );
 			return;
 		}
 		if ( 'invalid' === $restore_error ) {
-			wc_add_notice( __( 'Invalid cart recovery link.', 'cartbay' ), 'error' );
+			wc_add_notice( __( 'Invalid cart recovery link.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ), 'error' );
 			return;
 		}
 		if ( 'rate_limited' === $restore_error ) {
-			wc_add_notice( __( 'Too many cart recovery attempts. Please wait a moment and try again.', 'cartbay' ), 'error' );
+			wc_add_notice( __( 'Too many cart recovery attempts. Please wait a moment and try again.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ), 'error' );
 			return;
 		}
 		if ( 'empty' === $restore_error ) {
-			wc_add_notice( __( 'We could not restore the items from this recovery link. Please add them to your cart again.', 'cartbay' ), 'error' );
+			wc_add_notice( __( 'We could not restore the items from this recovery link. Please add them to your cart again.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ), 'error' );
 		}
 	}
 

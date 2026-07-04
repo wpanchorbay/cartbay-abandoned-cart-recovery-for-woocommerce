@@ -32,22 +32,22 @@ class SessionRepository {
 		$sanitized_email = sanitize_email( $email );
 
 		if ( '' === $sanitized_email ) {
-			return new WP_Error( 'cartbay_invalid_email', __( 'A valid email address is required to create a CartBay session.', 'cartbay' ) );
+			return new WP_Error( 'cartbay_invalid_email', __( 'A valid email address is required to create a CartBay session.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) );
 		}
 
 		if ( ! function_exists( 'wc_create_order' ) ) {
-			return new WP_Error( 'cartbay_wc_unavailable', __( 'WooCommerce order creation is unavailable.', 'cartbay' ) );
+			return new WP_Error( 'cartbay_wc_unavailable', __( 'WooCommerce order creation is unavailable.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) );
 		}
 
 		try {
 			$order = wc_create_order();
 		} catch ( \Throwable $throwable ) {
 			unset( $throwable );
-			return new WP_Error( 'cartbay_session_create_failed', __( 'CartBay could not create a session order.', 'cartbay' ) );
+			return new WP_Error( 'cartbay_session_create_failed', __( 'CartBay could not create a session order.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) );
 		}
 
 		if ( ! $order instanceof WC_Order ) {
-			return new WP_Error( 'cartbay_session_create_failed', __( 'WooCommerce did not return a valid order object.', 'cartbay' ) );
+			return new WP_Error( 'cartbay_session_create_failed', __( 'WooCommerce did not return a valid order object.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) );
 		}
 
 		$order->set_status( 'cartbay-captured' );

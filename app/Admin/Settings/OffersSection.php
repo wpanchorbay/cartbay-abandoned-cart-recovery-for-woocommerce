@@ -40,7 +40,7 @@ class OffersSection extends AbstractSettingsSection {
 	 * @return string Section label.
 	 */
 	public function label(): string {
-		return __( 'Offers', 'cartbay' );
+		return __( 'Offers', 'cartbay-abandoned-cart-recovery-for-woocommerce' );
 	}
 
 	/**
@@ -53,24 +53,24 @@ class OffersSection extends AbstractSettingsSection {
 	public function fields(): array {
 		return array(
 			array(
-				'title' => __( 'Recovery Coupon', 'cartbay' ),
+				'title' => __( 'Recovery Coupon', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 				'type'  => 'title',
-				'desc'  => __( 'Reference a coupon you created under WooCommerce &rarr; Marketing &rarr; Coupons. When a recovery email step has its coupon enabled, this code is included in the email as plain text for shoppers to apply at checkout.', 'cartbay' ),
+				'desc'  => __( 'Reference a coupon you created under WooCommerce &rarr; Marketing &rarr; Coupons. When a recovery email step has its coupon enabled, this code is included in the email as plain text for shoppers to apply at checkout.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 				'id'    => 'cartbay_offer_settings',
 			),
 			array(
-				'title'    => __( 'Coupon Code', 'cartbay' ),
-				'desc_tip' => __( 'Enter an existing WooCommerce coupon code. Leave blank to send recovery emails without a discount code.', 'cartbay' ),
-				'desc'     => __( 'CartBay does not create or expire this coupon — manage it in WooCommerce &rarr; Marketing &rarr; Coupons.', 'cartbay' ),
+				'title'    => __( 'Coupon Code', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+				'desc_tip' => __( 'Enter an existing WooCommerce coupon code. Leave blank to send recovery emails without a discount code.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+				'desc'     => __( 'CartBay does not create or expire this coupon — manage it in WooCommerce &rarr; Marketing &rarr; Coupons.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 				'id'       => 'cartbay_settings[static_coupon_code]',
 				'default'  => '',
 				'type'     => 'text',
 				'css'      => 'min-width:220px;',
 			),
 			array(
-				'title' => __( 'Want unique, expiring coupons?', 'cartbay' ),
+				'title' => __( 'Want unique, expiring coupons?', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 				'type'  => 'cartbay_static_row',
-				'value' => esc_html__( 'CartBay Pro generates a unique, single-use coupon per shopper, sets an expiry, and auto-applies it when the cart is restored — so discount codes can\'t leak or be reused.', 'cartbay' ),
+				'value' => esc_html__( 'CartBay Pro generates a unique, single-use coupon per shopper, sets an expiry, and auto-applies it when the cart is restored — so discount codes can\'t leak or be reused.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 				'id'    => 'cartbay_offer_pro_hint',
 			),
 			array(

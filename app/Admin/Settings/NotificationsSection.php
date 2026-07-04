@@ -79,7 +79,7 @@ class NotificationsSection extends AbstractSettingsSection {
 	 * @return string Section label.
 	 */
 	public function label(): string {
-		return __( 'Notifications', 'cartbay' );
+		return __( 'Notifications', 'cartbay-abandoned-cart-recovery-for-woocommerce' );
 	}
 
 	/**
@@ -111,10 +111,10 @@ class NotificationsSection extends AbstractSettingsSection {
 		$analytics = $this->analytics_service->get( $period );
 		$base_url  = $this->url->section( 'notifications' );
 
-		echo '<h2>' . esc_html__( 'Notifications', 'cartbay' ) . '</h2>';
-		echo '<p class="description cartbay-section-description">' . esc_html__( 'Monitor recovery email health: how many emails are queued, sent, and failed, and verify your store can deliver mail. Sent means WordPress/WooCommerce accepted the email; provider-confirmed delivery is reserved for future integrations.', 'cartbay' ) . '</p>';
+		echo '<h2>' . esc_html__( 'Notifications', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '</h2>';
+		echo '<p class="description cartbay-section-description">' . esc_html__( 'Monitor recovery email health: how many emails are queued, sent, and failed, and verify your store can deliver mail. Sent means WordPress/WooCommerce accepted the email; provider-confirmed delivery is reserved for future integrations.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '</p>';
 		$this->render_period_selector( $base_url, $period );
-		echo '<div class="cartbay-card-grid cartbay-notification-stats" aria-label="' . esc_attr__( 'Notification activity summary', 'cartbay' ) . '">';
+		echo '<div class="cartbay-card-grid cartbay-notification-stats" aria-label="' . esc_attr__( 'Notification activity summary', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '">';
 		$this->render_notification_stat_cards( $analytics );
 		echo '</div>';
 
@@ -163,18 +163,18 @@ class NotificationsSection extends AbstractSettingsSection {
 
 		if ( ! empty( $mail_status['has_delivery'] ) ) {
 			$delivery_class = 'notice-success';
-			$delivery_label = __( 'SMTP delivery detected.', 'cartbay' );
+			$delivery_label = __( 'SMTP delivery detected.', 'cartbay-abandoned-cart-recovery-for-woocommerce' );
 			if ( ! empty( $mail_status['delivery']['detail'] ) ) {
 				$delivery_label .= ' ' . $mail_status['delivery']['detail'];
 			}
 		} elseif ( ! empty( $mail_status['has_logger'] ) ) {
-			$delivery_label = __( 'Email logging detected, but no SMTP delivery service. Emails to buyers may not be delivered reliably.', 'cartbay' );
+			$delivery_label = __( 'Email logging detected, but no SMTP delivery service. Emails to buyers may not be delivered reliably.', 'cartbay-abandoned-cart-recovery-for-woocommerce' );
 		} else {
-			$delivery_label = __( 'No SMTP plugin detected. Without an SMTP service, recovery emails may land in spam.', 'cartbay' );
+			$delivery_label = __( 'No SMTP plugin detected. Without an SMTP service, recovery emails may land in spam.', 'cartbay-abandoned-cart-recovery-for-woocommerce' );
 		}
 		?>
 		<div class="cartbay-test-delivery-section">
-			<h3><?php esc_html_e( 'Email Delivery Test', 'cartbay' ); ?></h3>
+			<h3><?php esc_html_e( 'Email Delivery Test', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></h3>
 
 			<div class="notice inline <?php echo esc_attr( $delivery_class ); ?>">
 				<p><?php echo esc_html( $delivery_label ); ?></p>
@@ -183,16 +183,16 @@ class NotificationsSection extends AbstractSettingsSection {
 			<table class="widefat striped" style="margin: 12px 0; max-width: 480px;">
 				<tbody>
 					<tr>
-						<th scope="row"><?php esc_html_e( 'From email', 'cartbay' ); ?></th>
+						<th scope="row"><?php esc_html_e( 'From email', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></th>
 						<td><code><?php echo esc_html( $from_email ); ?></code></td>
 					</tr>
 					<tr>
-						<th scope="row"><?php esc_html_e( 'From name', 'cartbay' ); ?></th>
+						<th scope="row"><?php esc_html_e( 'From name', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></th>
 						<td><?php echo esc_html( $from_name ); ?></td>
 					</tr>
 					<?php if ( ! empty( $mail_status['delivery']['detail'] ) ) : ?>
 					<tr>
-						<th scope="row"><?php esc_html_e( 'Delivery service', 'cartbay' ); ?></th>
+						<th scope="row"><?php esc_html_e( 'Delivery service', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></th>
 						<td><?php echo esc_html( $mail_status['delivery']['detail'] ); ?></td>
 					</tr>
 					<?php endif; ?>
@@ -200,14 +200,14 @@ class NotificationsSection extends AbstractSettingsSection {
 			</table>
 
 			<p>
-				<label for="cartbay-test-email-address"><?php esc_html_e( 'Send to:', 'cartbay' ); ?></label>
-				<input type="email" id="cartbay-test-email-address" class="regular-text" value="<?php echo esc_attr( $admin_email ); ?>" placeholder="<?php esc_attr_e( 'email@example.com', 'cartbay' ); ?>" />
+				<label for="cartbay-test-email-address"><?php esc_html_e( 'Send to:', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></label>
+				<input type="email" id="cartbay-test-email-address" class="regular-text" value="<?php echo esc_attr( $admin_email ); ?>" placeholder="<?php esc_attr_e( 'email@example.com', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?>" />
 				<button type="button" id="cartbay-test-email-notifications" class="button">
-					<?php esc_html_e( 'Send Test Email', 'cartbay' ); ?>
+					<?php esc_html_e( 'Send Test Email', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?>
 				</button>
 				<span id="cartbay-test-email-result" class="cartbay-test-email-result"></span>
 			</p>
-			<p class="description"><?php esc_html_e( 'Enter an email address and click to send a test email and verify delivery.', 'cartbay' ); ?></p>
+			<p class="description"><?php esc_html_e( 'Enter an email address and click to send a test email and verify delivery.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></p>
 		</div>
 
 		<script>
@@ -215,16 +215,16 @@ class NotificationsSection extends AbstractSettingsSection {
 			$( '#cartbay-test-email-notifications' ).on( 'click', function() {
 				var btn  = $( this );
 				var email = $( '#cartbay-test-email-address' ).val();
-				btn.prop( 'disabled', true ).text( '<?php echo esc_js( __( 'Sending...', 'cartbay' ) ); ?>' );
+				btn.prop( 'disabled', true ).text( '<?php echo esc_js( __( 'Sending...', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) ); ?>' );
 				$.post( '<?php echo esc_url( $rest_url ); ?>', {
 					_wpnonce: '<?php echo esc_js( $nonce ); ?>',
 					email: email
 				} ).done( function( resp ) {
-					$( '#cartbay-test-email-result' ).text( resp.message || '<?php echo esc_js( __( 'Test email sent!', 'cartbay' ) ); ?>' );
+					$( '#cartbay-test-email-result' ).text( resp.message || '<?php echo esc_js( __( 'Test email sent!', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) ); ?>' );
 				} ).fail( function() {
-					$( '#cartbay-test-email-result' ).text( '<?php echo esc_js( __( 'Failed to send test email.', 'cartbay' ) ); ?>' );
+					$( '#cartbay-test-email-result' ).text( '<?php echo esc_js( __( 'Failed to send test email.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) ); ?>' );
 				} ).always( function() {
-					btn.prop( 'disabled', false ).text( '<?php echo esc_js( __( 'Send Test Email', 'cartbay' ) ); ?>' );
+					btn.prop( 'disabled', false ).text( '<?php echo esc_js( __( 'Send Test Email', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) ); ?>' );
 				} );
 			} );
 		} );
@@ -244,9 +244,9 @@ class NotificationsSection extends AbstractSettingsSection {
 	 */
 	private function render_period_selector( string $base_url, int $period ): void {
 		$periods = array(
-			7  => __( '7 Days', 'cartbay' ),
-			30 => __( '30 Days', 'cartbay' ),
-			90 => __( '90 Days', 'cartbay' ),
+			7  => __( '7 Days', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+			30 => __( '30 Days', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+			90 => __( '90 Days', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 		);
 
 		echo '<div class="cartbay-button-group">';
@@ -273,24 +273,24 @@ class NotificationsSection extends AbstractSettingsSection {
 	private function render_notification_stat_cards( array $analytics ): void {
 		$cards = array(
 			array(
-				'label'   => __( 'Pending Queue', 'cartbay' ),
+				'label'   => __( 'Pending Queue', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 				'value'   => number_format_i18n( absint( $analytics['emails_queued'] ?? 0 ) ),
-				'tooltip' => __( 'Current pending recovery emails: first-time queued notifications plus retry-queued notifications.', 'cartbay' ),
+				'tooltip' => __( 'Current pending recovery emails: first-time queued notifications plus retry-queued notifications.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 			),
 			array(
-				'label'   => __( 'Emails Sent', 'cartbay' ),
+				'label'   => __( 'Emails Sent', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 				'value'   => number_format_i18n( absint( $analytics['emails_sent'] ?? 0 ) ),
-				'tooltip' => __( 'Accepted or provider-delivered recovery emails tied to sessions in the selected period.', 'cartbay' ),
+				'tooltip' => __( 'Accepted or provider-delivered recovery emails tied to sessions in the selected period.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 			),
 			array(
-				'label'   => __( 'Emails Failed', 'cartbay' ),
+				'label'   => __( 'Emails Failed', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 				'value'   => number_format_i18n( absint( $analytics['emails_failed'] ?? 0 ) ),
-				'tooltip' => __( 'Recovery emails tied to sessions in the selected period that ended in failed status.', 'cartbay' ),
+				'tooltip' => __( 'Recovery emails tied to sessions in the selected period that ended in failed status.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 			),
 			array(
-				'label'   => __( 'Email Acceptance Rate', 'cartbay' ),
+				'label'   => __( 'Email Acceptance Rate', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 				'value'   => (string) ( $analytics['email_send_rate'] ?? 0 ) . '%',
-				'tooltip' => __( 'Accepted or delivered recovery emails divided by attempted recovery email sends.', 'cartbay' ),
+				'tooltip' => __( 'Accepted or delivered recovery emails divided by attempted recovery email sends.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 			),
 		);
 

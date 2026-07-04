@@ -75,7 +75,7 @@ class TestRoute {
 		if ( ! current_user_can( 'manage_woocommerce' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'You do not have permission to trigger test flows.', 'cartbay' ),
+				__( 'You do not have permission to trigger test flows.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 				array( 'status' => 403 )
 			);
 		}
@@ -84,7 +84,7 @@ class TestRoute {
 		if ( empty( $settings['test_mode'] ) ) {
 			return new WP_Error(
 				'test_mode_disabled',
-				__( 'Test mode is not enabled. Enable it in CartBay Settings → Debug.', 'cartbay' ),
+				__( 'Test mode is not enabled. Enable it in CartBay Settings → Debug.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 				array( 'status' => 400 )
 			);
 		}
@@ -111,7 +111,7 @@ class TestRoute {
 			Logger::error( 'Test flow API failed: admin email unavailable.', array(), 'test' );
 			return new WP_Error(
 				'no_admin_email',
-				__( 'Could not determine admin email address.', 'cartbay' ),
+				__( 'Could not determine admin email address.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 				array( 'status' => 400 )
 			);
 		}
@@ -144,7 +144,7 @@ class TestRoute {
 			array(
 				'success'    => true,
 				'session_id' => $session->get_id(),
-				'message'    => __( 'Test flow triggered. Email will arrive in ~30 seconds.', 'cartbay' ),
+				'message'    => __( 'Test flow triggered. Email will arrive in ~30 seconds.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 			),
 			200
 		);

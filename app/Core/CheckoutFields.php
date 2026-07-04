@@ -58,7 +58,7 @@ class CheckoutFields {
 		$settings         = get_option( 'cartbay_settings', array() );
 		$raw_consent_text = isset( $settings['consent_text'] ) && '' !== $settings['consent_text']
 			? (string) $settings['consent_text']
-			: __( 'Save my email to recover my cart if I leave.', 'cartbay' );
+			: __( 'Save my email to recover my cart if I leave.', 'cartbay-abandoned-cart-recovery-for-woocommerce' );
 
 		// This value renders as a checkbox label on the storefront checkout, so
 		// force it to plain text — a stored consent string can never inject

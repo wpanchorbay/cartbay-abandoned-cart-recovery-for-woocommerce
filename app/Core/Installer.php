@@ -83,7 +83,7 @@ class Installer {
 				'abandonment_timeout'      => 30,
 				'data_retention_days'      => 30,
 				'capture_enabled'          => 'yes',
-				'consent_text'             => __( 'Save my email to recover my cart if I leave.', 'cartbay' ),
+				'consent_text'             => __( 'Save my email to recover my cart if I leave.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 				'consent_default_state'    => 'checked',
 				'static_coupon_code'       => '',
 				'remove_data_on_uninstall' => false,

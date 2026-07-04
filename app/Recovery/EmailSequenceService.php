@@ -198,7 +198,7 @@ class EmailSequenceService {
 
 		$emails = WC()->mailer()->get_emails();
 		if ( ! isset( $emails[ $email_class ] ) ) {
-			$this->notifications->mark_failed( $session_id, $notification_id, __( 'Recovery email class is unavailable.', 'cartbay' ) );
+			$this->notifications->mark_failed( $session_id, $notification_id, __( 'Recovery email class is unavailable.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) );
 			Logger::error(
 				'Recovery email class is unavailable.',
 				array(
@@ -219,7 +219,7 @@ class EmailSequenceService {
 		$sent = (bool) $emails[ $email_class ]->trigger( $session_id, $restore_url, $coupon_code, $coupon_expiry, $unsubscribe_url );
 
 		if ( ! $sent ) {
-			$this->notifications->mark_failed( $session_id, $notification_id, __( 'WordPress mail did not confirm the email send.', 'cartbay' ) );
+			$this->notifications->mark_failed( $session_id, $notification_id, __( 'WordPress mail did not confirm the email send.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) );
 			Logger::error(
 				'Recovery email send failed.',
 				array(

@@ -34,7 +34,7 @@ class SettingsSection extends AbstractSettingsSection {
 	 * @return string Section label.
 	 */
 	public function label(): string {
-		return __( 'Settings', 'cartbay' );
+		return __( 'Settings', 'cartbay-abandoned-cart-recovery-for-woocommerce' );
 	}
 
 	/**
@@ -68,15 +68,15 @@ class SettingsSection extends AbstractSettingsSection {
 			apply_filters( 'cartbay_settings_section_pre_fields', array() ),
 			array(
 				array(
-					'title' => __( 'Data Retention', 'cartbay' ),
+					'title' => __( 'Data Retention', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 					'type'  => 'title',
-					'desc'  => __( 'Control how long CartBay keeps abandoned cart session data.', 'cartbay' ),
+					'desc'  => __( 'Control how long CartBay keeps abandoned cart session data.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 					'id'    => 'cartbay_retention_settings',
 				),
 				array(
-					'title'             => __( 'Retention Period (days)', 'cartbay' ),
-					'desc'              => __( 'Sessions older than this will be automatically deleted.', 'cartbay' ),
-					'desc_tip'          => __( 'Choose how long abandoned cart records remain available for reporting, session review, and cleanup jobs.', 'cartbay' ),
+					'title'             => __( 'Retention Period (days)', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+					'desc'              => __( 'Sessions older than this will be automatically deleted.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+					'desc_tip'          => __( 'Choose how long abandoned cart records remain available for reporting, session review, and cleanup jobs.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 					'id'                => 'cartbay_settings[data_retention_days]',
 					'default'           => 30,
 					'type'              => 'number',
@@ -87,9 +87,9 @@ class SettingsSection extends AbstractSettingsSection {
 					),
 				),
 				array(
-					'title'    => __( 'Delete Data on Uninstall', 'cartbay' ),
-					'desc'     => __( 'Permanently delete all CartBay data when the plugin is deleted.', 'cartbay' ),
-					'desc_tip' => __( 'When enabled, deleting CartBay removes CartBay settings and recovery data. Leave unchecked to preserve data for reinstalling later.', 'cartbay' ),
+					'title'    => __( 'Delete Data on Uninstall', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+					'desc'     => __( 'Permanently delete all CartBay data when the plugin is deleted.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+					'desc_tip' => __( 'When enabled, deleting CartBay removes CartBay settings and recovery data. Leave unchecked to preserve data for reinstalling later.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 					'id'       => 'cartbay_settings[remove_data_on_uninstall]',
 					'default'  => 'no',
 					'type'     => 'checkbox',
@@ -99,15 +99,15 @@ class SettingsSection extends AbstractSettingsSection {
 					'id'   => 'cartbay_retention_settings',
 				),
 				array(
-					'title' => __( 'Admin Navigation', 'cartbay' ),
+					'title' => __( 'Admin Navigation', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 					'type'  => 'title',
-					'desc'  => __( 'Control where CartBay appears in the WordPress admin menu.', 'cartbay' ),
+					'desc'  => __( 'Control where CartBay appears in the WordPress admin menu.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 					'id'    => 'cartbay_admin_navigation_settings',
 				),
 				array(
-					'title'    => __( 'WooCommerce Menu Shortcut', 'cartbay' ),
-					'desc'     => __( 'Show CartBay under the WooCommerce admin menu.', 'cartbay' ),
-					'desc_tip' => __( 'When enabled, WooCommerce > CartBay opens this CartBay settings area directly.', 'cartbay' ),
+					'title'    => __( 'WooCommerce Menu Shortcut', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+					'desc'     => __( 'Show CartBay under the WooCommerce admin menu.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+					'desc_tip' => __( 'When enabled, WooCommerce > CartBay opens this CartBay settings area directly.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 					'id'       => 'cartbay_settings[wc_menu_enabled]',
 					'default'  => 'yes',
 					'type'     => 'checkbox',
@@ -117,37 +117,37 @@ class SettingsSection extends AbstractSettingsSection {
 					'id'   => 'cartbay_admin_navigation_settings',
 				),
 				array(
-					'title' => __( 'Debug & Testing', 'cartbay' ),
+					'title' => __( 'Debug & Testing', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 					'type'  => 'title',
-					'desc'  => __( 'Developer tools for QA, troubleshooting, and short-cycle testing.', 'cartbay' ),
+					'desc'  => __( 'Developer tools for QA, troubleshooting, and short-cycle testing.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 					'id'    => 'cartbay_debug_settings',
 				),
 				array(
-					'title'    => __( 'Test Mode', 'cartbay' ),
-					'desc'     => __( 'Enable test mode (shortened email delays, dummy sessions)', 'cartbay' ),
-					'desc_tip' => __( 'Use this in staging or QA when you want quick feedback loops without waiting for the normal recovery schedule.', 'cartbay' ),
+					'title'    => __( 'Test Mode', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+					'desc'     => __( 'Enable test mode (shortened email delays, dummy sessions)', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+					'desc_tip' => __( 'Use this in staging or QA when you want quick feedback loops without waiting for the normal recovery schedule.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 					'id'       => 'cartbay_settings[test_mode]',
 					'default'  => 'no',
 					'type'     => 'checkbox',
 				),
 				array(
-					'title'       => __( 'WooCommerce Logs', 'cartbay' ),
+					'title'       => __( 'WooCommerce Logs', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 					'type'        => 'cartbay_action_row',
-					'tooltip'     => __( 'Open the WooCommerce log viewer filtered to the CartBay source for debugging background jobs and checkout capture.', 'cartbay' ),
+					'tooltip'     => __( 'Open the WooCommerce log viewer filtered to the CartBay source for debugging background jobs and checkout capture.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 					'actions'     => array(
-						'<a href="' . esc_url( admin_url( 'admin.php?page=wc-status&tab=logs&source=cartbay' ) ) . '" class="button" target="_blank" rel="noopener noreferrer">' . esc_html__( 'View Logs', 'cartbay' ) . '</a>',
+						'<a href="' . esc_url( admin_url( 'admin.php?page=wc-status&tab=logs&source=cartbay' ) ) . '" class="button" target="_blank" rel="noopener noreferrer">' . esc_html__( 'View Logs', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '</a>',
 					),
-					'description' => __( 'Logs open in WooCommerce Status and remain filtered to the CartBay log source.', 'cartbay' ),
+					'description' => __( 'Logs open in WooCommerce Status and remain filtered to the CartBay log source.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 					'id'          => 'cartbay_logs_link',
 				),
 				array(
-					'title'       => __( 'CartBay Logs', 'cartbay' ),
+					'title'       => __( 'CartBay Logs', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 					'type'        => 'cartbay_action_row',
-					'tooltip'     => __( 'Open CartBay-owned sanitized logs and log configuration.', 'cartbay' ),
+					'tooltip'     => __( 'Open CartBay-owned sanitized logs and log configuration.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 					'actions'     => array(
-						'<a href="' . esc_url( $logs_url ) . '" class="button">' . esc_html__( 'Open CartBay Logs', 'cartbay' ) . '</a>',
+						'<a href="' . esc_url( $logs_url ) . '" class="button">' . esc_html__( 'Open CartBay Logs', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '</a>',
 					),
-					'description' => __( 'CartBay logs are shown in a separate section so settings remain focused.', 'cartbay' ),
+					'description' => __( 'CartBay logs are shown in a separate section so settings remain focused.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 					'id'          => 'cartbay_file_logs_link',
 				),
 				array(

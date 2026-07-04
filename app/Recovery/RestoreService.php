@@ -160,7 +160,7 @@ class RestoreService {
 		do_action( 'cartbay_restore_apply_discounts', $session );
 
 		if ( $added > 0 ) {
-			wc_add_notice( __( 'Your saved cart has been restored.', 'cartbay' ), 'success' );
+			wc_add_notice( __( 'Your saved cart has been restored.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ), 'success' );
 		}
 
 		Logger::info(
@@ -370,7 +370,7 @@ class RestoreService {
 				),
 				'restore'
 			);
-			wc_add_notice( __( 'We could not restore the items from this recovery link. Please add them to your cart again.', 'cartbay' ), 'error' );
+			wc_add_notice( __( 'We could not restore the items from this recovery link. Please add them to your cart again.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ), 'error' );
 			return;
 		}
 
@@ -394,7 +394,7 @@ class RestoreService {
 				),
 				'restore'
 			);
-			wc_add_notice( __( 'Some items from your saved cart are no longer available and could not be restored.', 'cartbay' ), 'notice' );
+			wc_add_notice( __( 'Some items from your saved cart are no longer available and could not be restored.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ), 'notice' );
 			return;
 		}
 

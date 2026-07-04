@@ -1,5 +1,5 @@
 {
-    "name": "cartbay",
+    "name": "cartbay-abandoned-cart-recovery-for-woocommerce",
     "version": "1.0.0",
     "private": true,
     "license": "GPL-2.0-or-later",
@@ -11,9 +11,9 @@
         "start": "wp-scripts start --webpack-src-dir=src",
         "build": "wp-scripts build --webpack-src-dir=src",
         "dev": "node scripts/dev.js",
-        "plugin-check": "wp plugin check cartbay",
+        "plugin-check": "wp plugin check cartbay-abandoned-cart-recovery-for-woocommerce",
         "release": "node scripts/release.js",
-        "i18n:make-pot": "wp i18n make-pot . languages/cartbay.pot --exclude=vendor,node_modules,dist,src --domain=cartbay --headers='{\"Report-Msgid-Bugs-To\":\"https://wordpress.org/support/plugin/cartbay\"}'",
+        "i18n:make-pot": "wp i18n make-pot . languages/cartbay-abandoned-cart-recovery-for-woocommerce.pot --exclude=vendor,node_modules,dist,src --domain=cartbay-abandoned-cart-recovery-for-woocommerce --headers='{\"Report-Msgid-Bugs-To\":\"https://wordpress.org/support/plugin/cartbay-abandoned-cart-recovery-for-woocommerce\"}'",
         "i18n:make-json": "wp i18n make-json languages/ --no-purge"
     },
     "dependencies": {

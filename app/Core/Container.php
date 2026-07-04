@@ -63,7 +63,7 @@ class Container {
 				$instance = $factory( $this );
 
 				if ( ! is_object( $instance ) ) {
-					throw new \RuntimeException( esc_html__( 'CartBay singleton factories must return an object.', 'cartbay' ) );
+					throw new \RuntimeException( esc_html__( 'CartBay singleton factories must return an object.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) );
 				}
 
 				$this->instances[ $service_id ] = $instance;
@@ -96,7 +96,7 @@ class Container {
 		throw new \InvalidArgumentException(
 			sprintf(
 				/* translators: %s: unresolved service identifier. */
-				esc_html__( 'CartBay could not resolve the service "%s".', 'cartbay' ),
+				esc_html__( 'CartBay could not resolve the service "%s".', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 				esc_html( $service_id )
 			)
 		);

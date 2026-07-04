@@ -115,12 +115,12 @@ class SettingsPage {
 			$new_tabs[ $slug ] = $label;
 
 			if ( 'products' === $slug ) {
-				$new_tabs['cartbay'] = __( 'Cart', 'cartbay' );
+				$new_tabs['cartbay'] = __( 'Cart', 'cartbay-abandoned-cart-recovery-for-woocommerce' );
 			}
 		}
 
 		if ( ! isset( $new_tabs['cartbay'] ) ) {
-			$new_tabs['cartbay'] = __( 'Cart', 'cartbay' );
+			$new_tabs['cartbay'] = __( 'Cart', 'cartbay-abandoned-cart-recovery-for-woocommerce' );
 		}
 
 		return $new_tabs;
@@ -501,14 +501,14 @@ JS;
 				'COPY_ENTRY_TEXT',
 			),
 			array(
-				esc_js( __( 'Triggering...', 'cartbay' ) ),
+				esc_js( __( 'Triggering...', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) ),
 				esc_url( rest_url( 'cartbay/v1/test/trigger' ) ),
 				esc_js( wp_create_nonce( 'wp_rest' ) ),
-				esc_js( __( 'Test flow triggered.', 'cartbay' ) ),
-				esc_js( __( 'Failed to trigger the test flow.', 'cartbay' ) ),
-				esc_js( __( 'Trigger Test Flow', 'cartbay' ) ),
-				esc_js( __( 'Copied', 'cartbay' ) ),
-				esc_js( __( 'Copy Entry', 'cartbay' ) ),
+				esc_js( __( 'Test flow triggered.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) ),
+				esc_js( __( 'Failed to trigger the test flow.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) ),
+				esc_js( __( 'Trigger Test Flow', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) ),
+				esc_js( __( 'Copied', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) ),
+				esc_js( __( 'Copy Entry', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) ),
 			),
 			$script
 		);
@@ -544,7 +544,7 @@ JS;
 						<header class="wc-backbone-modal-header">
 							<h1>{{ data.title }}</h1>
 							<button class="modal-close modal-close-link dashicons dashicons-no-alt">
-								<span class="screen-reader-text"><?php esc_html_e( 'Close modal panel', 'cartbay' ); ?></span>
+								<span class="screen-reader-text"><?php esc_html_e( 'Close modal panel', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></span>
 							</button>
 						</header>
 						<article>
@@ -552,8 +552,8 @@ JS;
 						</article>
 						<footer>
 							<div class="inner">
-								<button type="button" class="button button-large cartbay-copy-log-entry-modal"><?php esc_html_e( 'Copy Entry', 'cartbay' ); ?></button>
-								<button type="button" class="button button-primary button-large modal-close"><?php esc_html_e( 'Close', 'cartbay' ); ?></button>
+								<button type="button" class="button button-large cartbay-copy-log-entry-modal"><?php esc_html_e( 'Copy Entry', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></button>
+								<button type="button" class="button button-primary button-large modal-close"><?php esc_html_e( 'Close', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></button>
 							</div>
 						</footer>
 					</section>
@@ -568,7 +568,7 @@ JS;
 						<header class="wc-backbone-modal-header">
 							<h1>{{ data.title }}</h1>
 							<button class="modal-close modal-close-link dashicons dashicons-no-alt">
-								<span class="screen-reader-text"><?php esc_html_e( 'Close modal panel', 'cartbay' ); ?></span>
+								<span class="screen-reader-text"><?php esc_html_e( 'Close modal panel', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></span>
 							</button>
 						</header>
 						<article>
@@ -576,7 +576,7 @@ JS;
 						</article>
 						<footer>
 							<div class="inner">
-								<button type="button" class="button button-primary button-large modal-close"><?php esc_html_e( 'Close', 'cartbay' ); ?></button>
+								<button type="button" class="button button-primary button-large modal-close"><?php esc_html_e( 'Close', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></button>
 							</div>
 						</footer>
 					</section>
@@ -591,7 +591,7 @@ JS;
 						<header class="wc-backbone-modal-header">
 							<h1>{{ data.title }}</h1>
 							<button class="modal-close modal-close-link dashicons dashicons-no-alt">
-								<span class="screen-reader-text"><?php esc_html_e( 'Close modal panel', 'cartbay' ); ?></span>
+								<span class="screen-reader-text"><?php esc_html_e( 'Close modal panel', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></span>
 							</button>
 						</header>
 						<article>
@@ -599,7 +599,7 @@ JS;
 						</article>
 						<footer>
 							<div class="inner">
-								<button type="button" class="button button-primary button-large modal-close"><?php esc_html_e( 'Close', 'cartbay' ); ?></button>
+								<button type="button" class="button button-primary button-large modal-close"><?php esc_html_e( 'Close', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></button>
 							</div>
 						</footer>
 					</section>
@@ -619,7 +619,7 @@ JS;
 	 */
 	public function handle_disable_test_mode(): void {
 		if ( ! current_user_can( 'manage_woocommerce' ) ) {
-			wp_die( esc_html__( 'You do not have permission to update CartBay settings.', 'cartbay' ) );
+			wp_die( esc_html__( 'You do not have permission to update CartBay settings.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) );
 		}
 
 		check_admin_referer( 'cartbay_disable_test_mode', 'cartbay_nonce' );
@@ -629,7 +629,7 @@ JS;
 		$settings['test_mode'] = false;
 		update_option( 'cartbay_settings', $settings );
 
-		$this->url->redirect_with_notice( 'success', __( 'Test mode disabled.', 'cartbay' ) );
+		$this->url->redirect_with_notice( 'success', __( 'Test mode disabled.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) );
 	}
 
 	/**
@@ -641,7 +641,7 @@ JS;
 	 */
 	public function handle_enable_test_mode(): void {
 		if ( ! current_user_can( 'manage_woocommerce' ) ) {
-			wp_die( esc_html__( 'You do not have permission to update CartBay settings.', 'cartbay' ) );
+			wp_die( esc_html__( 'You do not have permission to update CartBay settings.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) );
 		}
 
 		check_admin_referer( 'cartbay_enable_test_mode', 'cartbay_nonce' );
@@ -656,7 +656,7 @@ JS;
 				'page'       => 'wc-settings',
 				'tab'        => 'cartbay',
 				'section'    => 'templates',
-				'wc_message' => rawurlencode( __( 'Test mode enabled.', 'cartbay' ) ),
+				'wc_message' => rawurlencode( __( 'Test mode enabled.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) ),
 			),
 			admin_url( 'admin.php' )
 		);
@@ -680,7 +680,7 @@ JS;
 				'warning',
 				sprintf(
 					/* translators: %s: URL to the Capture settings section. */
-					__( '<strong>CartBay capture is disabled.</strong> CartBay will not capture new abandoned carts until capture is enabled. <a href="%s">Enable Capture</a>.', 'cartbay' ),
+					__( '<strong>CartBay capture is disabled.</strong> CartBay will not capture new abandoned carts until capture is enabled. <a href="%s">Enable Capture</a>.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 					esc_url( $capture_url )
 				)
 			);
@@ -692,7 +692,7 @@ JS;
 				'warning',
 				sprintf(
 					/* translators: %s: URL to disable test mode. */
-					__( '<strong>CartBay Test Mode is active.</strong> Recovery emails use shortened delays. <a href="%s">Disable Test Mode</a> before going live.', 'cartbay' ),
+					__( '<strong>CartBay Test Mode is active.</strong> Recovery emails use shortened delays. <a href="%s">Disable Test Mode</a> before going live.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 					esc_url( $disable_url )
 				)
 			);
@@ -771,9 +771,9 @@ JS;
 		$disable_url = wp_nonce_url( admin_url( 'admin-post.php?action=cartbay_disable_test_mode' ), 'cartbay_disable_test_mode', 'cartbay_nonce' );
 
 		echo '<div class="notice notice-warning is-dismissible">';
-		echo '<p><strong>' . esc_html__( 'CartBay Test Mode is active.', 'cartbay' ) . '</strong> ';
-		echo esc_html__( 'Recovery emails use shortened delays. Disable before going live.', 'cartbay' );
-		echo ' <a href="' . esc_url( $disable_url ) . '">' . esc_html__( 'Disable Test Mode', 'cartbay' ) . '</a></p>';
+		echo '<p><strong>' . esc_html__( 'CartBay Test Mode is active.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '</strong> ';
+		echo esc_html__( 'Recovery emails use shortened delays. Disable before going live.', 'cartbay-abandoned-cart-recovery-for-woocommerce' );
+		echo ' <a href="' . esc_url( $disable_url ) . '">' . esc_html__( 'Disable Test Mode', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '</a></p>';
 		echo '</div>';
 	}
 
@@ -814,10 +814,10 @@ JS;
 		}
 
 		if ( ! empty( $status['has_logger'] ) ) {
-			return __( '<strong>An email logging plugin is active, but no SMTP delivery service was detected.</strong> Emails to buyers may not be delivered reliably.', 'cartbay' );
+			return __( '<strong>An email logging plugin is active, but no SMTP delivery service was detected.</strong> Emails to buyers may not be delivered reliably.', 'cartbay-abandoned-cart-recovery-for-woocommerce' );
 		}
 
-		return __( '<strong>No SMTP plugin detected.</strong> Without an SMTP service, recovery emails may land in spam. Consider installing an SMTP plugin.', 'cartbay' );
+		return __( '<strong>No SMTP plugin detected.</strong> Without an SMTP service, recovery emails may land in spam. Consider installing an SMTP plugin.', 'cartbay-abandoned-cart-recovery-for-woocommerce' );
 	}
 
 	/**

@@ -13,7 +13,7 @@
  * Stable tag:        1.0.0
  * Author:            WPAnchorBay
  * Author URI:        https://wpanchorbay.com/
- * Text Domain:       cartbay
+ * Text Domain:       cartbay-abandoned-cart-recovery-for-woocommerce
  * Domain Path:       /languages
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
@@ -68,7 +68,7 @@ add_action( 'plugins_loaded', 'cartbay_init' );
  */
 function cartbay_woocommerce_missing_notice(): void {
 	echo '<div class="notice notice-error"><p>' .
-		esc_html__( 'CartBay requires WooCommerce to be installed and active.', 'cartbay' ) .
+		esc_html__( 'CartBay requires WooCommerce to be installed and active.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) .
 		'</p></div>';
 }
 

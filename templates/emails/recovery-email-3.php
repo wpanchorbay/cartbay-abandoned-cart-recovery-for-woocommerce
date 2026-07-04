@@ -28,7 +28,7 @@ do_action( 'woocommerce_email_header', $email_heading, $email ); ?>
 <p style="text-align:center;margin:24px 0;">
 	<a href="<?php echo esc_url( $restore_url ); ?>"
 		style="background:#0f766e;color:#fff;padding:14px 24px;text-decoration:none;border-radius:999px;display:inline-block;font-weight:600;">
-		<?php echo esc_html( ! empty( $cta_label ) ? $cta_label : __( 'Return to My Cart', 'cartbay' ) ); ?>
+		<?php echo esc_html( ! empty( $cta_label ) ? $cta_label : __( 'Return to My Cart', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) ); ?>
 	</a>
 </p>
 <?php endif; ?>
@@ -38,7 +38,7 @@ do_action( 'woocommerce_email_header', $email_heading, $email ); ?>
 	<?php
 	printf(
 		/* translators: %1$s: coupon code, %2$s: expiry date */
-		esc_html__( 'Use coupon code %1$s at checkout. Expires %2$s.', 'cartbay' ),
+		esc_html__( 'Use coupon code %1$s at checkout. Expires %2$s.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 		'<strong>' . esc_html( $coupon_code ) . '</strong>',
 		esc_html( $coupon_expiry )
 	);
@@ -55,7 +55,7 @@ do_action( 'woocommerce_email_header', $email_heading, $email ); ?>
 
 <?php if ( ! empty( $restore_url ) ) : ?>
 <p style="font-size:12px;line-height:1.6;color:#6b7280;margin-top:16px;word-break:break-all;">
-	<?php esc_html_e( "If the button doesn't work, copy and paste this link into your browser:", 'cartbay' ); ?><br>
+	<?php esc_html_e( "If the button doesn't work, copy and paste this link into your browser:", 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?><br>
 	<a href="<?php echo esc_url( $restore_url ); ?>" style="color:#0f766e;">
 		<?php echo esc_html( $restore_url ); ?>
 	</a>
@@ -64,7 +64,7 @@ do_action( 'woocommerce_email_header', $email_heading, $email ); ?>
 
 <?php if ( ! empty( $show_unsubscribe ) ) : ?>
 <p style="font-size:12px;color:#6b7280;margin-top:16px;">
-	<a href="<?php echo esc_url( $unsubscribe_url ); ?>"><?php esc_html_e( 'Unsubscribe', 'cartbay' ); ?></a>
+	<a href="<?php echo esc_url( $unsubscribe_url ); ?>"><?php esc_html_e( 'Unsubscribe', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></a>
 </p>
 <?php endif; ?>
 

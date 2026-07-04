@@ -107,7 +107,7 @@ class CaptureRoute {
 			$response = new WP_REST_Response(
 				array(
 					'code'    => 'rate_limited',
-					'message' => __( 'Too many requests. Please try again later.', 'cartbay' ),
+					'message' => __( 'Too many requests. Please try again later.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 					'data'    => array( 'status' => 429 ),
 				),
 				429
@@ -133,7 +133,7 @@ class CaptureRoute {
 				Logger::error( 'Capture API consent withdrawal rejected: missing or invalid email.', array( 'session_id' => $session_id ), 'capture' );
 				return new WP_Error(
 					'invalid_email',
-					__( 'A valid email address is required to withdraw consent.', 'cartbay' ),
+					__( 'A valid email address is required to withdraw consent.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 					array( 'status' => 422 )
 				);
 			}
@@ -153,7 +153,7 @@ class CaptureRoute {
 			Logger::error( 'Capture API rejected invalid email.', array(), 'capture' );
 			return new WP_Error(
 				'invalid_email',
-				__( 'Invalid email address.', 'cartbay' ),
+				__( 'Invalid email address.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 				array( 'status' => 422 )
 			);
 		}
@@ -163,7 +163,7 @@ class CaptureRoute {
 			return new WP_REST_Response(
 				array(
 					'success' => false,
-					'message' => __( 'Capture disabled.', 'cartbay' ),
+					'message' => __( 'Capture disabled.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 				),
 				200
 			);

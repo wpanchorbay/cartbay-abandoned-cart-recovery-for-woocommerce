@@ -74,7 +74,7 @@ class TemplatesSection extends AbstractSettingsSection {
 	 * @return string Section label.
 	 */
 	public function label(): string {
-		return __( 'Templates', 'cartbay' );
+		return __( 'Templates', 'cartbay-abandoned-cart-recovery-for-woocommerce' );
 	}
 
 	/**
@@ -108,9 +108,9 @@ class TemplatesSection extends AbstractSettingsSection {
 	 */
 	private function render_list(): void {
 		$step_labels = array(
-			__( 'Recovery Email 1', 'cartbay' ),
-			__( 'Recovery Email 2', 'cartbay' ),
-			__( 'Recovery Email 3', 'cartbay' ),
+			__( 'Recovery Email 1', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+			__( 'Recovery Email 2', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+			__( 'Recovery Email 3', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 		);
 
 		$campaign = get_option( 'cartbay_campaign_settings', array() );
@@ -121,18 +121,18 @@ class TemplatesSection extends AbstractSettingsSection {
 		$sequence_url = $this->url->section( 'sequence' );
 		$offers_url   = $this->url->section( 'offers' );
 		?>
-		<h2><?php esc_html_e( 'Templates', 'cartbay' ); ?></h2>
-		<p class="description"><?php esc_html_e( 'Each recovery email is edited in WooCommerce Email Settings where you can customize subject, heading, preheader, body, button text, logo, colors, footer, preview, and test-send. Customer recovery emails do not need a fixed recipient because CartBay sends each one to the captured checkout email address.', 'cartbay' ); ?></p>
-		<p><a href="<?php echo esc_url( admin_url( 'admin.php?page=wc-settings&tab=email' ) ); ?>" class="button button-secondary"><?php esc_html_e( 'Open WooCommerce Email Settings', 'cartbay' ); ?></a></p>
+		<h2><?php esc_html_e( 'Templates', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></h2>
+		<p class="description"><?php esc_html_e( 'Each recovery email is edited in WooCommerce Email Settings where you can customize subject, heading, preheader, body, button text, logo, colors, footer, preview, and test-send. Customer recovery emails do not need a fixed recipient because CartBay sends each one to the captured checkout email address.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></p>
+		<p><a href="<?php echo esc_url( admin_url( 'admin.php?page=wc-settings&tab=email' ) ); ?>" class="button button-secondary"><?php esc_html_e( 'Open WooCommerce Email Settings', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></a></p>
 
 		<table class="wp-list-table widefat fixed striped">
 			<thead>
 				<tr>
-					<th><?php esc_html_e( 'Step', 'cartbay' ); ?></th>
-					<th><?php esc_html_e( 'Subject', 'cartbay' ); ?></th>
-					<th><?php esc_html_e( 'Timing', 'cartbay' ); ?></th>
-					<th><?php esc_html_e( 'Coupon', 'cartbay' ); ?></th>
-					<th><?php esc_html_e( 'Actions', 'cartbay' ); ?></th>
+					<th><?php esc_html_e( 'Step', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></th>
+					<th><?php esc_html_e( 'Subject', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></th>
+					<th><?php esc_html_e( 'Timing', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></th>
+					<th><?php esc_html_e( 'Coupon', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></th>
+					<th><?php esc_html_e( 'Actions', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -145,18 +145,18 @@ class TemplatesSection extends AbstractSettingsSection {
 				?>
 				<tr>
 					<td><strong><?php echo esc_html( $step_labels[ $i ] ); ?></strong></td>
-					<td><?php echo '' !== $subject ? esc_html( $subject ) : '<em>' . esc_html__( 'Default', 'cartbay' ) . '</em>'; ?></td>
+					<td><?php echo '' !== $subject ? esc_html( $subject ) : '<em>' . esc_html__( 'Default', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '</em>'; ?></td>
 					<td>
 						<?php echo esc_html( $delay_label ); ?>
-						<a href="<?php echo esc_url( $sequence_url ); ?>" class="dashicons dashicons-edit" style="text-decoration:none;margin-left:4px;vertical-align:middle;" title="<?php esc_attr_e( 'Edit in Recovery Sequence', 'cartbay' ); ?>"></a>
+						<a href="<?php echo esc_url( $sequence_url ); ?>" class="dashicons dashicons-edit" style="text-decoration:none;margin-left:4px;vertical-align:middle;" title="<?php esc_attr_e( 'Edit in Recovery Sequence', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?>"></a>
 					</td>
 					<td>
-						<?php echo $coupon_enabled ? esc_html__( 'Yes', 'cartbay' ) : esc_html__( 'No', 'cartbay' ); ?>
-						<a href="<?php echo esc_url( $offers_url ); ?>" class="dashicons dashicons-edit" style="text-decoration:none;margin-left:4px;vertical-align:middle;" title="<?php esc_attr_e( 'Edit in Offers', 'cartbay' ); ?>"></a>
+						<?php echo $coupon_enabled ? esc_html__( 'Yes', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) : esc_html__( 'No', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?>
+						<a href="<?php echo esc_url( $offers_url ); ?>" class="dashicons dashicons-edit" style="text-decoration:none;margin-left:4px;vertical-align:middle;" title="<?php esc_attr_e( 'Edit in Offers', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?>"></a>
 					</td>
 					<td>
 						<a href="<?php echo esc_url( $wc_url ); ?>" class="button button-primary button-small">
-							<?php esc_html_e( 'Edit in WooCommerce', 'cartbay' ); ?>
+							<?php esc_html_e( 'Edit in WooCommerce', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?>
 						</a>
 					</td>
 				</tr>
@@ -166,7 +166,7 @@ class TemplatesSection extends AbstractSettingsSection {
 
 		<hr />
 
-		<h3><?php esc_html_e( 'Trigger Test Flow', 'cartbay' ); ?></h3>
+		<h3><?php esc_html_e( 'Trigger Test Flow', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></h3>
 		<?php
 		$settings  = get_option( 'cartbay_settings', array() );
 		$test_mode = ! empty( $settings['test_mode'] );
@@ -178,7 +178,7 @@ class TemplatesSection extends AbstractSettingsSection {
 					<?php
 					printf(
 						/* translators: %s: enable URL */
-						wp_kses_post( __( 'Test mode is not enabled. <a href="%s">Enable it now</a>.', 'cartbay' ) ),
+						wp_kses_post( __( 'Test mode is not enabled. <a href="%s">Enable it now</a>.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) ),
 						esc_url( $enable_url )
 					);
 					?>
@@ -187,12 +187,12 @@ class TemplatesSection extends AbstractSettingsSection {
 			<?php
 		else :
 			?>
-			<p class="description"><?php esc_html_e( 'Creates a test abandoned session and schedules the first recovery email in about 30 seconds.', 'cartbay' ); ?></p>
+			<p class="description"><?php esc_html_e( 'Creates a test abandoned session and schedules the first recovery email in about 30 seconds.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></p>
 			<?php
 		endif;
 		?>
 		<p>
-			<button type="button" id="cartbay-trigger-test" class="button"<?php echo ! $test_mode ? ' disabled' : ''; ?>><?php esc_html_e( 'Trigger Test Flow', 'cartbay' ); ?></button>
+			<button type="button" id="cartbay-trigger-test" class="button"<?php echo ! $test_mode ? ' disabled' : ''; ?>><?php esc_html_e( 'Trigger Test Flow', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></button>
 		</p>
 		<?php
 		$this->render_placeholder_reference();
@@ -207,24 +207,24 @@ class TemplatesSection extends AbstractSettingsSection {
 	 */
 	private function render_placeholder_reference(): void {
 		$placeholders = array(
-			'{site_title}'      => __( 'Your store name', 'cartbay' ),
-			'{site_name}'       => __( 'Your store name (alias)', 'cartbay' ),
-			'{store_name}'      => __( 'Your store name (alias)', 'cartbay' ),
-			'{customer_email}'  => __( 'Customer email address', 'cartbay' ),
-			'{restore_url}'     => __( 'Link to restore the abandoned cart', 'cartbay' ),
-			'{coupon_code}'     => __( 'Coupon code (when coupons enabled for this step)', 'cartbay' ),
-			'{coupon_expiry}'   => __( 'Coupon expiry date (when coupons enabled for this step)', 'cartbay' ),
-			'{unsubscribe_url}' => __( 'One-click unsubscribe link', 'cartbay' ),
+			'{site_title}'      => __( 'Your store name', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+			'{site_name}'       => __( 'Your store name (alias)', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+			'{store_name}'      => __( 'Your store name (alias)', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+			'{customer_email}'  => __( 'Customer email address', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+			'{restore_url}'     => __( 'Link to restore the abandoned cart', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+			'{coupon_code}'     => __( 'Coupon code (when coupons enabled for this step)', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+			'{coupon_expiry}'   => __( 'Coupon expiry date (when coupons enabled for this step)', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+			'{unsubscribe_url}' => __( 'One-click unsubscribe link', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 		);
 		?>
 		<hr />
-		<h3><?php esc_html_e( 'Available Placeholders', 'cartbay' ); ?></h3>
-		<p class="description"><?php esc_html_e( 'Use these placeholders in subject, heading, preheader, body, and button label fields. Coupon placeholders only resolve when coupons are enabled for that step.', 'cartbay' ); ?></p>
+		<h3><?php esc_html_e( 'Available Placeholders', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></h3>
+		<p class="description"><?php esc_html_e( 'Use these placeholders in subject, heading, preheader, body, and button label fields. Coupon placeholders only resolve when coupons are enabled for that step.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></p>
 		<table class="widefat striped" style="max-width:600px;margin-top:8px;">
 			<thead>
 				<tr>
-					<th><?php esc_html_e( 'Placeholder', 'cartbay' ); ?></th>
-					<th><?php esc_html_e( 'Replaced with', 'cartbay' ); ?></th>
+					<th><?php esc_html_e( 'Placeholder', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></th>
+					<th><?php esc_html_e( 'Replaced with', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></th>
 				</tr>
 			</thead>
 			<tbody>

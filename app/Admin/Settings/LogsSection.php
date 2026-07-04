@@ -56,7 +56,7 @@ class LogsSection extends AbstractSettingsSection {
 	 * @return string Section label.
 	 */
 	public function label(): string {
-		return __( 'Logs', 'cartbay' );
+		return __( 'Logs', 'cartbay-abandoned-cart-recovery-for-woocommerce' );
 	}
 
 	/**
@@ -69,22 +69,22 @@ class LogsSection extends AbstractSettingsSection {
 	public function fields(): array {
 		return array(
 			array(
-				'title' => __( 'CartBay Log Configuration', 'cartbay' ),
+				'title' => __( 'CartBay Log Configuration', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 				'type'  => 'title',
-				'desc'  => __( 'Control CartBay-owned troubleshooting logs. WooCommerce native logs remain available separately.', 'cartbay' ),
+				'desc'  => __( 'Control CartBay-owned troubleshooting logs. WooCommerce native logs remain available separately.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 				'id'    => 'cartbay_log_settings',
 			),
 			array(
-				'title'    => __( 'CartBay File Logging', 'cartbay' ),
-				'desc'     => __( 'Enable CartBay-owned troubleshooting log', 'cartbay' ),
-				'desc_tip' => __( 'Keeps a separate CartBay log in addition to WooCommerce native logs. Sensitive values such as emails, license keys, and tokens are redacted.', 'cartbay' ),
+				'title'    => __( 'CartBay File Logging', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+				'desc'     => __( 'Enable CartBay-owned troubleshooting log', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+				'desc_tip' => __( 'Keeps a separate CartBay log in addition to WooCommerce native logs. Sensitive values such as emails, license keys, and tokens are redacted.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 				'id'       => 'cartbay_settings[log_enabled]',
 				'default'  => 'yes',
 				'type'     => 'checkbox',
 			),
 			array(
-				'title'             => __( 'CartBay Log Retention (days)', 'cartbay' ),
-				'desc'              => __( 'CartBay file log entries older than this are removed automatically.', 'cartbay' ),
+				'title'             => __( 'CartBay Log Retention (days)', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+				'desc'              => __( 'CartBay file log entries older than this are removed automatically.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 				'id'                => 'cartbay_settings[log_retention_days]',
 				'default'           => 7,
 				'type'              => 'number',
@@ -95,8 +95,8 @@ class LogsSection extends AbstractSettingsSection {
 				),
 			),
 			array(
-				'title'             => __( 'CartBay Log Size Limit (MB)', 'cartbay' ),
-				'desc'              => __( 'When the log file exceeds this size, older entries are removed first.', 'cartbay' ),
+				'title'             => __( 'CartBay Log Size Limit (MB)', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+				'desc'              => __( 'When the log file exceeds this size, older entries are removed first.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 				'id'                => 'cartbay_settings[log_max_size_mb]',
 				'default'           => 5,
 				'type'              => 'number',
@@ -121,7 +121,7 @@ class LogsSection extends AbstractSettingsSection {
 	 * @return void
 	 */
 	public function render(): void {
-		echo '<p><a class="button" href="' . esc_url( $this->url->section( 'settings' ) ) . '">' . esc_html__( 'Back to Settings', 'cartbay' ) . '</a></p>';
+		echo '<p><a class="button" href="' . esc_url( $this->url->section( 'settings' ) ) . '">' . esc_html__( 'Back to Settings', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '</a></p>';
 		woocommerce_admin_fields( $this->fields() );
 		$this->render_logs_table();
 	}
@@ -195,25 +195,25 @@ class LogsSection extends AbstractSettingsSection {
 		);
 		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 
-		echo '<h2>' . esc_html__( 'CartBay Log Entries', 'cartbay' ) . '</h2>';
-		echo '<p class="description cartbay-section-description">' . esc_html__( 'These entries are sanitized for support. Context values for emails, tokens, and licenses are redacted.', 'cartbay' ) . '</p>';
+		echo '<h2>' . esc_html__( 'CartBay Log Entries', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '</h2>';
+		echo '<p class="description cartbay-section-description">' . esc_html__( 'These entries are sanitized for support. Context values for emails, tokens, and licenses are redacted.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '</p>';
 		echo '<p><code>' . esc_html( $path ) . '</code></p>';
 
 		echo '<div class="cartbay-log-filters">';
 		echo '<div class="tablenav top"><div class="alignleft actions">';
-		echo '<label class="screen-reader-text" for="cartbay-log-level-filter">' . esc_html__( 'Filter by level', 'cartbay' ) . '</label>';
+		echo '<label class="screen-reader-text" for="cartbay-log-level-filter">' . esc_html__( 'Filter by level', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '</label>';
 		echo '<select name="level" id="cartbay-log-level-filter">';
-		echo '<option value=""' . selected( '', $level, false ) . '>' . esc_html__( 'All levels', 'cartbay' ) . '</option>';
+		echo '<option value=""' . selected( '', $level, false ) . '>' . esc_html__( 'All levels', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '</option>';
 		foreach ( $valid_levels as $l ) {
 			echo '<option value="' . esc_attr( $l ) . '"' . selected( $l, $level, false ) . '>' . esc_html( ucfirst( $l ) ) . '</option>';
 		}
 		echo '</select> ';
-		echo '<button type="button" id="cartbay-log-query-submit" class="button" data-base-url="' . esc_url( $filter_base ) . '">' . esc_html__( 'Filter', 'cartbay' ) . '</button>';
+		echo '<button type="button" id="cartbay-log-query-submit" class="button" data-base-url="' . esc_url( $filter_base ) . '">' . esc_html__( 'Filter', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '</button>';
 		echo '</div>';
 		if ( $total > 0 ) {
 			echo '<div class="tablenav-pages one-page">';
 			/* translators: %s: number of items */
-			echo '<span class="displaying-num">' . esc_html( sprintf( __( '%s entries', 'cartbay' ), number_format_i18n( $total ) ) ) . '</span>';
+			echo '<span class="displaying-num">' . esc_html( sprintf( __( '%s entries', 'cartbay-abandoned-cart-recovery-for-woocommerce' ), number_format_i18n( $total ) ) ) . '</span>';
 			echo '</div>';
 		}
 		echo '<br class="clear" /></div></div>';
@@ -221,18 +221,18 @@ class LogsSection extends AbstractSettingsSection {
 		echo '<div class="cartbay-table-wrap"><table class="wp-list-table widefat fixed striped table-view-list cartbay-log-table"><thead><tr>';
 		echo '<th class="manage-column column-primary column-timestamp' . ( 'DESC' === $order ? ' sorted asc' : ' sortable desc' ) . '">';
 		echo '<a href="' . esc_url( add_query_arg( 'order', 'DESC' === $order ? 'asc' : 'desc', $filter_base ) ) . '">';
-		echo '<span>' . esc_html__( 'Time', 'cartbay' ) . '</span>';
+		echo '<span>' . esc_html__( 'Time', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '</span>';
 		echo '<span class="sorting-indicators"><span class="sorting-indicator asc" aria-hidden="true"></span><span class="sorting-indicator desc" aria-hidden="true"></span></span>';
 		echo '</a></th>';
-		echo '<th class="manage-column column-level">' . esc_html__( 'Level', 'cartbay' ) . '</th>';
-		echo '<th class="manage-column column-system">' . esc_html__( 'System', 'cartbay' ) . '</th>';
-		echo '<th class="manage-column column-message">' . esc_html__( 'Message', 'cartbay' ) . '</th>';
-		echo '<th class="manage-column column-context-count">' . esc_html__( 'Context', 'cartbay' ) . '</th>';
-		echo '<th class="manage-column column-actions">' . esc_html__( 'Actions', 'cartbay' ) . '</th>';
+		echo '<th class="manage-column column-level">' . esc_html__( 'Level', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '</th>';
+		echo '<th class="manage-column column-system">' . esc_html__( 'System', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '</th>';
+		echo '<th class="manage-column column-message">' . esc_html__( 'Message', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '</th>';
+		echo '<th class="manage-column column-context-count">' . esc_html__( 'Context', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '</th>';
+		echo '<th class="manage-column column-actions">' . esc_html__( 'Actions', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '</th>';
 		echo '</tr></thead><tbody>';
 
 		if ( empty( $entries ) ) {
-			echo '<tr><td colspan="6">' . esc_html__( 'No log entries found for the selected filter.', 'cartbay' ) . '</td></tr>';
+			echo '<tr><td colspan="6">' . esc_html__( 'No log entries found for the selected filter.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '</td></tr>';
 		} else {
 			foreach ( $entries as $entry ) {
 				$this->render_log_row( $entry );
@@ -263,16 +263,16 @@ class LogsSection extends AbstractSettingsSection {
 		$encoded       = is_string( $encoded ) ? $encoded : '';
 
 		echo '<tr class="cartbay-log-entry">';
-		echo '<td class="column-primary column-timestamp" data-colname="' . esc_attr__( 'Time', 'cartbay' ) . '"><code>' . esc_html( $timestamp ) . '</code></td>';
-		echo '<td class="column-level" data-colname="' . esc_attr__( 'Level', 'cartbay' ) . '"><span class="cartbay-badge cartbay-badge--' . esc_attr( $level ) . '">' . esc_html( ucfirst( $level ) ) . '</span></td>';
-		echo '<td class="column-system" data-colname="' . esc_attr__( 'System', 'cartbay' ) . '">' . esc_html( $system ) . '</td>';
-		echo '<td class="column-message" data-colname="' . esc_attr__( 'Message', 'cartbay' ) . '">' . esc_html( $message ) . '</td>';
+		echo '<td class="column-primary column-timestamp" data-colname="' . esc_attr__( 'Time', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '"><code>' . esc_html( $timestamp ) . '</code></td>';
+		echo '<td class="column-level" data-colname="' . esc_attr__( 'Level', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '"><span class="cartbay-badge cartbay-badge--' . esc_attr( $level ) . '">' . esc_html( ucfirst( $level ) ) . '</span></td>';
+		echo '<td class="column-system" data-colname="' . esc_attr__( 'System', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '">' . esc_html( $system ) . '</td>';
+		echo '<td class="column-message" data-colname="' . esc_attr__( 'Message', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '">' . esc_html( $message ) . '</td>';
 		/* translators: %s: number of context fields recorded for the log entry. */
-		echo '<td class="column-context-count" data-colname="' . esc_attr__( 'Context', 'cartbay' ) . '">' . esc_html( sprintf( _n( '%s item', '%s items', $context_count, 'cartbay' ), number_format_i18n( $context_count ) ) ) . '</td>';
-		echo '<td class="column-actions" data-colname="' . esc_attr__( 'Actions', 'cartbay' ) . '">';
+		echo '<td class="column-context-count" data-colname="' . esc_attr__( 'Context', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '">' . esc_html( sprintf( _n( '%s item', '%s items', $context_count, 'cartbay-abandoned-cart-recovery-for-woocommerce' ), number_format_i18n( $context_count ) ) ) . '</td>';
+		echo '<td class="column-actions" data-colname="' . esc_attr__( 'Actions', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '">';
 		echo '<textarea class="cartbay-log-entry-copy-source screen-reader-text" readonly="readonly">' . esc_textarea( $encoded ) . '</textarea>';
-		echo '<button type="button" class="button cartbay-log-details-trigger" data-modal-title="' . esc_attr__( 'CartBay Log Entry', 'cartbay' ) . '" data-entry="' . esc_attr( $encoded ) . '">' . esc_html__( 'Details', 'cartbay' ) . '</button> ';
-		echo '<button type="button" class="button cartbay-copy-log-entry">' . esc_html__( 'Copy Entry', 'cartbay' ) . '</button>';
+		echo '<button type="button" class="button cartbay-log-details-trigger" data-modal-title="' . esc_attr__( 'CartBay Log Entry', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '" data-entry="' . esc_attr( $encoded ) . '">' . esc_html__( 'Details', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '</button> ';
+		echo '<button type="button" class="button cartbay-copy-log-entry">' . esc_html__( 'Copy Entry', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '</button>';
 		echo '</td>';
 		echo '</tr>';
 	}
@@ -296,7 +296,7 @@ class LogsSection extends AbstractSettingsSection {
 
 		echo '<div class="tablenav bottom"><div class="tablenav-pages">';
 		/* translators: %s: number of items */
-		echo '<span class="displaying-num">' . esc_html( sprintf( __( '%s entries', 'cartbay' ), number_format_i18n( $total ) ) ) . '</span>';
+		echo '<span class="displaying-num">' . esc_html( sprintf( __( '%s entries', 'cartbay-abandoned-cart-recovery-for-woocommerce' ), number_format_i18n( $total ) ) ) . '</span>';
 		echo '<span class="pagination-links">';
 
 		if ( $paged > 1 ) {
@@ -308,7 +308,7 @@ class LogsSection extends AbstractSettingsSection {
 		}
 
 		/* translators: 1: current page, 2: total pages */
-		echo esc_html( sprintf( __( '%1$d of %2$d', 'cartbay' ), $paged, $total_pages ) );
+		echo esc_html( sprintf( __( '%1$d of %2$d', 'cartbay-abandoned-cart-recovery-for-woocommerce' ), $paged, $total_pages ) );
 
 		if ( $paged < $total_pages ) {
 			echo ' <a class="button" href="' . esc_url( add_query_arg( 'paged', $paged + 1, $filter_base ) ) . '">&rsaquo;</a>';

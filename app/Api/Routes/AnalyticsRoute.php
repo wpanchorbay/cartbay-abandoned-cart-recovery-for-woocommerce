@@ -79,7 +79,7 @@ class AnalyticsRoute {
 		if ( ! current_user_can( 'manage_woocommerce' ) ) {
 			return new \WP_Error(
 				'rest_forbidden',
-				__( 'You do not have permission to view analytics.', 'cartbay' ),
+				__( 'You do not have permission to view analytics.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 				array( 'status' => 403 )
 			);
 		}

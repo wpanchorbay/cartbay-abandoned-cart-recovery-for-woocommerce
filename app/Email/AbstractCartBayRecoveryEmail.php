@@ -158,7 +158,7 @@ abstract class AbstractCartBayRecoveryEmail extends WC_Email {
 			$this->get_recipient(),
 			sprintf(
 				/* translators: %s: original subject */
-				__( '[Preview] %s', 'cartbay' ),
+				__( '[Preview] %s', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 				$this->render_tokens( $template_settings['subject'], $context )
 			),
 			$this->build_email_html( $template_settings, $context ),
@@ -257,7 +257,7 @@ abstract class AbstractCartBayRecoveryEmail extends WC_Email {
 
 		$placeholder_text = sprintf(
 			/* translators: %s: list of placeholders */
-			__( 'Available placeholders: %s', 'cartbay' ),
+			__( 'Available placeholders: %s', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 			$placeholder_codes
 		);
 
@@ -266,36 +266,36 @@ abstract class AbstractCartBayRecoveryEmail extends WC_Email {
 
 		if ( ! isset( $this->form_fields['preheader'] ) ) {
 			$this->form_fields['preheader'] = array(
-				'title'       => __( 'Preheader', 'cartbay' ),
+				'title'       => __( 'Preheader', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 				'type'        => 'text',
-				'description' => __( 'Shown as preview text in the inbox, next to the subject line.', 'cartbay' ) . ' ' . $placeholder_text,
+				'description' => __( 'Shown as preview text in the inbox, next to the subject line.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . ' ' . $placeholder_text,
 				'desc_tip'    => true,
 				'default'     => $this->default_preheader,
 			);
 		}
 
 		$this->form_fields['body_content'] = array(
-			'title'       => __( 'Email body', 'cartbay' ),
+			'title'       => __( 'Email body', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 			'type'        => 'textarea',
 			'css'         => 'width:400px; min-height: 180px;',
-			'description' => __( 'Main recovery message. Basic HTML is allowed and WooCommerce wraps this content with your store email logo, colors, and footer.', 'cartbay' ) . ' ' . $placeholder_text,
+			'description' => __( 'Main recovery message. Basic HTML is allowed and WooCommerce wraps this content with your store email logo, colors, and footer.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . ' ' . $placeholder_text,
 			'default'     => $this->get_default_body_content(),
 			'desc_tip'    => true,
 		);
 
 		$this->form_fields['cta_label'] = array(
-			'title'       => __( 'Button label', 'cartbay' ),
+			'title'       => __( 'Button label', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 			'type'        => 'text',
-			'description' => __( 'Text for the restore-cart button.', 'cartbay' ) . ' ' . $placeholder_text,
+			'description' => __( 'Text for the restore-cart button.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . ' ' . $placeholder_text,
 			'default'     => $this->default_cta_label,
 			'desc_tip'    => true,
 		);
 
 		$this->form_fields['show_unsubscribe'] = array(
-			'title'       => __( 'Unsubscribe link', 'cartbay' ),
+			'title'       => __( 'Unsubscribe link', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 			'type'        => 'checkbox',
-			'label'       => __( 'Show unsubscribe link', 'cartbay' ),
-			'description' => __( 'Display a one-click unsubscribe link at the bottom of this email. Recommended for CAN-SPAM compliance.', 'cartbay' ),
+			'label'       => __( 'Show unsubscribe link', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+			'description' => __( 'Display a one-click unsubscribe link at the bottom of this email. Recommended for CAN-SPAM compliance.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 			'default'     => 'yes',
 		);
 
@@ -466,7 +466,7 @@ abstract class AbstractCartBayRecoveryEmail extends WC_Email {
 		if ( $this->step_has_coupon_enabled() ) {
 			$settings    = get_option( 'cartbay_settings', array() );
 			$static_code = is_array( $settings ) && isset( $settings['static_coupon_code'] ) ? sanitize_text_field( (string) $settings['static_coupon_code'] ) : '';
-			$coupon_code = '' !== $static_code ? $static_code : __( 'SAVE10', 'cartbay' );
+			$coupon_code = '' !== $static_code ? $static_code : __( 'SAVE10', 'cartbay-abandoned-cart-recovery-for-woocommerce' );
 		}
 
 		return array(
@@ -538,7 +538,7 @@ abstract class AbstractCartBayRecoveryEmail extends WC_Email {
 		if ( $this->step_has_coupon_enabled() ) {
 			$settings    = get_option( 'cartbay_settings', array() );
 			$static_code = is_array( $settings ) && isset( $settings['static_coupon_code'] ) ? sanitize_text_field( (string) $settings['static_coupon_code'] ) : '';
-			$coupon_code = '' !== $static_code ? $static_code : __( 'SAVE10', 'cartbay' );
+			$coupon_code = '' !== $static_code ? $static_code : __( 'SAVE10', 'cartbay-abandoned-cart-recovery-for-woocommerce' );
 		}
 
 		return array(

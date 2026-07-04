@@ -60,14 +60,14 @@ class CaptureService {
 		if ( ! Settings::is_capture_enabled() ) {
 			return new WP_Error(
 				'capture_disabled',
-				__( 'Capture is disabled.', 'cartbay' ),
+				__( 'Capture is disabled.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 				array( 'status' => 403 )
 			);
 		}
 
 		// 1. Check suppression.
 		if ( $this->is_suppressed( $email ) ) {
-			return new WP_Error( 'suppressed', __( 'Email is suppressed.', 'cartbay' ) );
+			return new WP_Error( 'suppressed', __( 'Email is suppressed.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) );
 		}
 
 		// 2. Get settings.

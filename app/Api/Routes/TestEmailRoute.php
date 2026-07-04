@@ -54,7 +54,7 @@ class TestEmailRoute {
 		if ( ! current_user_can( 'manage_woocommerce' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'You do not have permission to send test emails.', 'cartbay' ),
+				__( 'You do not have permission to send test emails.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 				array( 'status' => 403 )
 			);
 		}
@@ -88,7 +88,7 @@ class TestEmailRoute {
 			Logger::error( 'Test email API failed: target email unavailable.', array(), 'test' );
 			return new WP_Error(
 				'no_email',
-				__( 'No email address found or provided.', 'cartbay' ),
+				__( 'No email address found or provided.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 				array( 'status' => 400 )
 			);
 		}
@@ -112,7 +112,7 @@ class TestEmailRoute {
 					Logger::error( 'Test email API failed to send preview email.', array( 'step' => $step_index ), 'test' );
 					return new WP_Error(
 						'email_failed',
-						__( 'Failed to send the preview email. Check your WordPress email configuration.', 'cartbay' ),
+						__( 'Failed to send the preview email. Check your WordPress email configuration.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 						array( 'status' => 500 )
 					);
 				}
@@ -124,7 +124,7 @@ class TestEmailRoute {
 						'success' => true,
 						'message' => sprintf(
 							/* translators: %1$d: step number, %2$s: recipient email */
-							__( 'Preview email for step %1$d sent to %2$s.', 'cartbay' ),
+							__( 'Preview email for step %1$d sent to %2$s.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 							$step_index + 1,
 							$target_email
 						),
@@ -134,8 +134,8 @@ class TestEmailRoute {
 			}
 		}
 
-		$subject = __( 'CartBay Test Email', 'cartbay' );
-		$message = __( 'This is a test email from CartBay. If you received this, your email delivery is working correctly.', 'cartbay' );
+		$subject = __( 'CartBay Test Email', 'cartbay-abandoned-cart-recovery-for-woocommerce' );
+		$message = __( 'This is a test email from CartBay. If you received this, your email delivery is working correctly.', 'cartbay-abandoned-cart-recovery-for-woocommerce' );
 
 		$sent = wp_mail( $target_email, $subject, $message );
 
@@ -143,7 +143,7 @@ class TestEmailRoute {
 			Logger::error( 'Test email API failed to send basic test email.', array(), 'test' );
 			return new WP_Error(
 				'email_failed',
-				__( 'Failed to send test email. Check your WordPress email configuration.', 'cartbay' ),
+				__( 'Failed to send test email. Check your WordPress email configuration.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 				array( 'status' => 500 )
 			);
 		}
@@ -155,7 +155,7 @@ class TestEmailRoute {
 				'success' => true,
 				'message' => sprintf(
 					/* translators: %s: recipient email address */
-					__( 'Test email sent to %s. Check your inbox.', 'cartbay' ),
+					__( 'Test email sent to %s. Check your inbox.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 					$target_email
 				),
 			),

@@ -10,7 +10,7 @@ if ( ! defined( 'CARTBAY_VERSION' ) ) {
 }
 
 if ( ! defined( 'CARTBAY_SLUG' ) ) {
-	define( 'CARTBAY_SLUG', 'cartbay' );
+	define( 'CARTBAY_SLUG', 'cartbay-abandoned-cart-recovery-for-woocommerce' );
 }
 
 if ( ! defined( 'CARTBAY_DIR' ) ) {
@@ -18,11 +18,11 @@ if ( ! defined( 'CARTBAY_DIR' ) ) {
 }
 
 if ( ! defined( 'CARTBAY_URL' ) ) {
-	define( 'CARTBAY_URL', 'https://example.com/wp-content/plugins/cartbay/' );
+	define( 'CARTBAY_URL', 'https://example.com/wp-content/plugins/cartbay-abandoned-cart-recovery-for-woocommerce/' );
 }
 
 if ( ! defined( 'CARTBAY_BASENAME' ) ) {
-	define( 'CARTBAY_BASENAME', 'cartbay/cartbay.php' );
+	define( 'CARTBAY_BASENAME', 'cartbay-abandoned-cart-recovery-for-woocommerce/cartbay-abandoned-cart-recovery-for-woocommerce.php' );
 }
 
 if ( ! defined( 'CARTBAY_PLUGIN_URL' ) ) {

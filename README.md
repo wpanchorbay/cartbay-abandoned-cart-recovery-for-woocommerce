@@ -116,7 +116,7 @@ bun install
 
 ```bash
 bun run build           # compile src/ → assets/
-bun run i18n:make-pot   # update languages/cartbay.pot
+bun run i18n:make-pot   # update languages/cartbay-abandoned-cart-recovery-for-woocommerce.pot
 ```
 
 ### Code quality
@@ -149,6 +149,6 @@ tests/              — PHPUnit tests
 - **Background jobs:** Action Scheduler for abandonment detection and email scheduling.
 - **Capture:** REST endpoint `cartbay/v1/capture`, shared by classic and block checkout.
 - **Free/Pro:** This free plugin owns the host recovery engine and extension points; CartBay Pro owns licensing and private updates.
-- **i18n:** Text domain `cartbay`; run `bun run i18n:make-pot` after adding translatable strings.
+- **i18n:** Text domain `cartbay-abandoned-cart-recovery-for-woocommerce` (must match the wp.org slug); run `bun run i18n:make-pot` after adding translatable strings.
 
 </details>
