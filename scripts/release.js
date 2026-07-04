@@ -55,6 +55,15 @@ function run_pkg_script(script_name) {
 	execSync(cmd, { stdio: 'inherit', cwd: ROOT_DIR });
 }
 
+async function strip_composer_dev_sections(composer_path) {
+	const composer_data = await fs.readJson(composer_path);
+	delete composer_data['require-dev'];
+	delete composer_data['autoload-dev'];
+	delete composer_data['scripts'];
+	delete composer_data['config'];
+	await fs.writeJson(composer_path, composer_data, { spaces: '\t' });
+}
+
 async function copy_if_exists(src, dest) {
 	if (await fs.pathExists(src)) {
 		await fs.copy(src, dest);
@@ -100,8 +109,8 @@ async function copy_if_exists(src, dest) {
 		await copy_if_exists(path.join(ROOT_DIR, 'readme.txt'), path.join(STAGE_DIR, 'readme.txt'));
 		await copy_if_exists(path.join(ROOT_DIR, 'LICENSE.txt'), path.join(STAGE_DIR, 'LICENSE.txt'));
 
-		// Composer files are staged only so `composer install` can generate
-		// vendor/ below; they are removed again before zipping (see step 5).
+		// Composer files: both needed to build vendor/, only composer.json
+		// ships in the final package (stripped of dev sections).
 		await copy_if_exists(path.join(ROOT_DIR, 'composer.json'), path.join(STAGE_DIR, 'composer.json'));
 		await copy_if_exists(path.join(ROOT_DIR, 'composer.lock'), path.join(STAGE_DIR, 'composer.lock'));
 
@@ -112,15 +121,17 @@ async function copy_if_exists(src, dest) {
 				stdio: 'inherit',
 				cwd: STAGE_DIR,
 			});
+
+			console.log('📝 Stripping dev sections from composer.json for production...');
+			await strip_composer_dev_sections(path.join(STAGE_DIR, 'composer.json'));
 		} else {
 			console.log('↪️  Skipping composer install (--skip-composer).');
 		}
 
-		// Drop dev metadata: composer.json/lock are only needed to build
-		// vendor/ above and are never loaded at runtime, so they must not
-		// ship in the WordPress.org package.
-		console.log('🧽 Removing composer metadata from the package...');
-		await fs.remove(path.join(STAGE_DIR, 'composer.json'));
+		// Remove composer.lock: it is only used for local reproducible builds
+		// and is not needed in the WordPress.org release package. The stripped
+		// composer.json remains to document declared dependencies.
+		console.log('🧹 Removing composer.lock from the package...');
 		await fs.remove(path.join(STAGE_DIR, 'composer.lock'));
 
 		// 6. Create zip
