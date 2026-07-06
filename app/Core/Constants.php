@@ -36,6 +36,7 @@ class Constants {
 		self::define( 'CARTBAY_AUTHOR_URL', 'https://wpanchorbay.com/' );
 		self::define( 'CARTBAY_GET_PRO_URL', 'https://wpanchorbay.com/plugins/cartbay/' );
 		self::define( 'CARTBAY_DOCS_URL', 'https://docs.wpanchorbay.com/cartbay' );
+		self::define( 'CARTBAY_DOCS_EMAIL_SETUP_URL', 'https://docs.wpanchorbay.com/cartbay/getting-started/email-delivery-setup/' );
 
 		// Internal URLs.
 		self::define( 'CARTBAY_SETTINGS_URL', 'admin.php?page=wc-settings&tab=cartbay&section=settings' );
