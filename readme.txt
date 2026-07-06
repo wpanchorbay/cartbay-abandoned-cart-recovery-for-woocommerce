@@ -72,6 +72,10 @@ Enable Test Mode in **WooCommerce > CartBay > Settings**. You can then trigger a
 
 The free plugin does not contact WPAnchorBay licensing services. CartBay sends recovery emails through your WordPress/WooCommerce mail setup and sends capture requests only to your own site's local REST API endpoint at `/wp-json/cartbay/v1/capture`.
 
+= Why didn't my recovery email send? =
+
+CartBay hands recovery emails to WordPress and WooCommerce for delivery — it does not send email itself. If a send fails, the cause is almost always your site's mail configuration (no SMTP plugin, misconfigured SMTP credentials, or your host blocking PHP mail()), not CartBay. Use the built-in "Send Test Email" tool in the setup wizard or under WooCommerce > CartBay > Notifications to check your configuration, and see https://docs.wpanchorbay.com/cartbay/getting-started/email-delivery-setup/ for help setting up reliable email delivery.
+
 = What personal data does CartBay store? =
 
 When a shopper gives consent at checkout, CartBay stores the email address, cart snapshot, checkout source, timestamps, notification history, and recovery metadata in WooCommerce-native order records. This data stays on your WordPress site unless your mail provider processes outgoing recovery emails.
