@@ -289,6 +289,22 @@ class WizardControllerTest extends TestCase {
 	}
 
 	/**
+	 * get_steps() must stay public and static: SettingsPage::is_wizard_email_step()
+	 * calls it directly to resolve the current step key without depending on a
+	 * hardcoded step number, since Pro shifts the order by injecting its own step.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return void
+	 */
+	public function test_get_steps_is_public_static_and_ordered(): void {
+		self::assertSame(
+			array( 'welcome', 'consent', 'email', 'launch' ),
+			array_keys( WizardController::get_steps() )
+		);
+	}
+
+	/**
 	 * Render a wizard step.
 	 *
 	 * @since 1.0.0
