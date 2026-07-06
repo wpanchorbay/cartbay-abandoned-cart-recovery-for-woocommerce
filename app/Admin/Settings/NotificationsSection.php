@@ -161,6 +161,12 @@ class NotificationsSection extends AbstractSettingsSection {
 			$admin_email = sanitize_email( (string) get_option( 'admin_email' ) );
 		}
 
+		$learn_more_link = sprintf(
+			' <a href="%1$s" target="_blank" rel="noopener noreferrer">%2$s</a>',
+			esc_url( CARTBAY_DOCS_EMAIL_SETUP_URL ),
+			esc_html__( 'Learn how to set up reliable email delivery', 'cartbay-abandoned-cart-recovery-for-woocommerce' )
+		);
+
 		if ( ! empty( $mail_status['has_delivery'] ) ) {
 			$delivery_class = 'notice-success';
 			$delivery_label = __( 'SMTP delivery detected.', 'cartbay-abandoned-cart-recovery-for-woocommerce' );
@@ -168,16 +174,18 @@ class NotificationsSection extends AbstractSettingsSection {
 				$delivery_label .= ' ' . $mail_status['delivery']['detail'];
 			}
 		} elseif ( ! empty( $mail_status['has_logger'] ) ) {
-			$delivery_label = __( 'Email logging detected, but no SMTP delivery service. Emails to buyers may not be delivered reliably.', 'cartbay-abandoned-cart-recovery-for-woocommerce' );
+			$delivery_label = __( 'Email logging detected, but no SMTP delivery service. Emails to buyers may not be delivered reliably.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . $learn_more_link;
 		} else {
-			$delivery_label = __( 'No SMTP plugin detected. Without an SMTP service, recovery emails may land in spam.', 'cartbay-abandoned-cart-recovery-for-woocommerce' );
+			$delivery_label = __( 'No SMTP plugin detected. Without an SMTP service, recovery emails may land in spam.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . $learn_more_link;
 		}
 		?>
 		<div class="cartbay-test-delivery-section">
 			<h3><?php esc_html_e( 'Email Delivery Test', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></h3>
 
+			<p class="description"><?php esc_html_e( 'CartBay hands recovery emails to WordPress and WooCommerce for delivery — it does not send email itself. If sending is unreliable, the fix is your site\'s mail setup, not CartBay.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></p>
+
 			<div class="notice inline <?php echo esc_attr( $delivery_class ); ?>">
-				<p><?php echo esc_html( $delivery_label ); ?></p>
+				<p><?php echo wp_kses_post( $delivery_label ); ?></p>
 			</div>
 
 			<table class="widefat striped" style="margin: 12px 0; max-width: 480px;">
@@ -221,8 +229,10 @@ class NotificationsSection extends AbstractSettingsSection {
 					email: email
 				} ).done( function( resp ) {
 					$( '#cartbay-test-email-result' ).text( resp.message || '<?php echo esc_js( __( 'Test email sent!', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) ); ?>' );
-				} ).fail( function() {
-					$( '#cartbay-test-email-result' ).text( '<?php echo esc_js( __( 'Failed to send test email.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) ); ?>' );
+				} ).fail( function( jqXHR ) {
+					var base = '<?php echo esc_js( __( 'Failed to send test email.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) ); ?>';
+					var reason = jqXHR.responseJSON && jqXHR.responseJSON.data && jqXHR.responseJSON.data.reason;
+					$( '#cartbay-test-email-result' ).text( reason ? base + ' ' + reason : base );
 				} ).always( function() {
 					btn.prop( 'disabled', false ).text( '<?php echo esc_js( __( 'Send Test Email', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) ); ?>' );
 				} );
