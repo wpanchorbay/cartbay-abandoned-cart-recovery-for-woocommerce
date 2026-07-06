@@ -7,6 +7,7 @@
 
 namespace WPAnchorBay\CartBay\Admin\Settings;
 
+use WPAnchorBay\CartBay\Admin\Wizard\WizardController;
 use WPAnchorBay\CartBay\Analytics\AnalyticsService;
 use WPAnchorBay\CartBay\Core\Container;
 use WPAnchorBay\CartBay\Core\Settings;
@@ -789,6 +790,10 @@ JS;
 			return;
 		}
 
+		if ( ! $this->is_wizard_email_step() ) {
+			return;
+		}
+
 		$mail_warning = $this->get_mail_warning_message();
 
 		if ( '' === $mail_warning ) {
@@ -797,6 +802,34 @@ JS;
 
 		echo '<div class="notice notice-warning is-dismissible">';
 		echo '<p>' . wp_kses_post( $mail_warning ) . '</p></div>';
+	}
+
+	/**
+	 * Determine whether the current request is the wizard's Email Delivery step.
+	 *
+	 * `is_cartbay_admin_page()` only checks `page=cartbay-wizard`, not the current
+	 * step, so without this the global SMTP notice would duplicate on every wizard
+	 * step instead of just the one that already shows it inline. Resolves the step
+	 * key the same way WizardController::render() does, rather than a hardcoded
+	 * step number, since Pro injects its own step via `cartbay_wizard_steps`.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return bool Whether the current wizard step is the Email Delivery step.
+	 */
+	private function is_wizard_email_step(): bool {
+		$page = isset( $_GET['page'] ) ? sanitize_key( wp_unslash( $_GET['page'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+
+		if ( 'cartbay-wizard' !== $page ) {
+			return false;
+		}
+
+		$step_keys  = array_keys( WizardController::get_steps() );
+		$step_count = count( $step_keys );
+		$step       = isset( $_GET['step'] ) ? absint( $_GET['step'] ) : 1; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$step       = max( 1, min( $step, $step_count ) );
+
+		return 'email' === ( $step_keys[ $step - 1 ] ?? '' );
 	}
 
 	/**
@@ -814,10 +847,19 @@ JS;
 		}
 
 		if ( ! empty( $status['has_logger'] ) ) {
-			return __( '<strong>An email logging plugin is active, but no SMTP delivery service was detected.</strong> Emails to buyers may not be delivered reliably.', 'cartbay-abandoned-cart-recovery-for-woocommerce' );
+			$message = __( '<strong>An email logging plugin is active, but no SMTP delivery service was detected.</strong> Emails to buyers may not be delivered reliably.', 'cartbay-abandoned-cart-recovery-for-woocommerce' );
+		} else {
+			$message = __( '<strong>No SMTP plugin detected.</strong> Without an SMTP service, recovery emails may land in spam. Consider installing an SMTP plugin.', 'cartbay-abandoned-cart-recovery-for-woocommerce' );
 		}
 
-		return __( '<strong>No SMTP plugin detected.</strong> Without an SMTP service, recovery emails may land in spam. Consider installing an SMTP plugin.', 'cartbay-abandoned-cart-recovery-for-woocommerce' );
+		$message .= ' ' . __( 'CartBay does not send email itself — this depends on your site\'s mail setup.', 'cartbay-abandoned-cart-recovery-for-woocommerce' );
+		$message .= sprintf(
+			' <a href="%1$s" target="_blank" rel="noopener noreferrer">%2$s</a>',
+			esc_url( CARTBAY_DOCS_EMAIL_SETUP_URL ),
+			esc_html__( 'Learn how to set up reliable email delivery', 'cartbay-abandoned-cart-recovery-for-woocommerce' )
+		);
+
+		return $message;
 	}
 
 	/**
