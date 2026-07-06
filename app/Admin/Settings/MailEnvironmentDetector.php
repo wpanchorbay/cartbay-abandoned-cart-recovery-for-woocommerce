@@ -195,7 +195,7 @@ class MailEnvironmentDetector {
 	private function get_delivery_plugins(): array {
 		$plugins = array(
 			'wp-mail-smtp/wp_mail_smtp.php'     => 'WP Mail SMTP',
-			'postman-smtp/postman-smtp.php'     => 'Post SMTP',
+			'postman-smtp/postman-smtp.php'     => 'Postman SMTP',
 			'post-smtp/postman-smtp.php'        => 'Post SMTP',
 			'easy-wp-smtp/easy-wp-smtp.php'     => 'Easy WP SMTP',
 			'fluent-smtp/fluent-smtp.php'       => 'FluentSMTP',
