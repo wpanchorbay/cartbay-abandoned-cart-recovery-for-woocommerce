@@ -11,7 +11,6 @@ use WPAnchorBay\CartBay\Admin\Wizard\WizardController;
 use WPAnchorBay\CartBay\Analytics\AnalyticsService;
 use WPAnchorBay\CartBay\Core\Container;
 use WPAnchorBay\CartBay\Core\Settings;
-use WPAnchorBay\CartBay\Data\SessionRepository;
 use WPAnchorBay\CartBay\Recovery\NotificationService;
 
 defined( 'ABSPATH' ) || exit;
@@ -228,6 +227,30 @@ class SettingsPage {
 
 		$script = <<<'JS'
 jQuery( function( $ ) {
+	// Test-email button — present on both the wizard Email step and the
+	// Notifications section, so bind it before the wc-settings-only handlers.
+	$( document.body ).on( 'click', '#cartbay-test-email, #cartbay-test-email-notifications', function( event ) {
+		event.preventDefault();
+
+		var btn     = $( this );
+		var email   = $( '#cartbay-test-email-address' ).val();
+		var $result = $( '#cartbay-test-email-result' );
+
+		btn.prop( 'disabled', true ).text( 'TEST_EMAIL_SENDING_TEXT' );
+		$.post( 'TEST_EMAIL_URL', {
+			_wpnonce: 'REST_NONCE',
+			email: email
+		} ).done( function( resp ) {
+			$result.text( resp.message || 'TEST_EMAIL_SUCCESS_TEXT' );
+		} ).fail( function( jqXHR ) {
+			var base = 'TEST_EMAIL_FAILURE_TEXT';
+			var reason = jqXHR.responseJSON && jqXHR.responseJSON.data && jqXHR.responseJSON.data.reason;
+			$result.text( reason ? base + ' ' + reason : base );
+		} ).always( function() {
+			btn.prop( 'disabled', false ).text( 'TEST_EMAIL_BUTTON_TEXT' );
+		} );
+	} );
+
 	if ( ! $( 'body' ).hasClass( 'woocommerce_page_wc-settings' ) ) {
 		window.setTimeout( function() {
 			$( '.cartbay-notice-auto-dismiss.is-dismissible:visible' ).each( function() {
@@ -267,40 +290,6 @@ jQuery( function( $ ) {
 	}
 
 	$( document.body ).on( 'click', '#cartbay-session-query-submit, #cartbay-session-search-submit', handleSessionQuery );
-
-	function handleNotificationQuery( event ) {
-		event.preventDefault();
-		window.onbeforeunload = null;
-
-		var $button = $( event.currentTarget );
-		var url = $button.data( 'baseUrl' ) || $( '#cartbay-notification-search-submit' ).data( 'baseUrl' );
-		var status = $( '#cartbay_notification_status' ).val();
-		var search = $( '#cartbay_notification_search' ).val();
-
-		if ( ! url ) {
-			return;
-		}
-
-		if ( status ) {
-			url += '&notification_status=' + encodeURIComponent( status );
-		}
-
-		if ( search ) {
-			url += '&notification_search=' + encodeURIComponent( search );
-		}
-
-		window.location = url;
-	}
-
-	$( document.body ).on( 'click', '#cartbay-notification-query-submit, #cartbay-notification-search-submit', handleNotificationQuery );
-
-	$( document.body ).on( 'keydown', '#cartbay_notification_search', function( event ) {
-		if ( 13 === event.which ) { // Enter key
-			event.preventDefault();
-			window.onbeforeunload = null;
-			handleNotificationQuery( event );
-		}
-	} );
 
 	$( document.body ).on( 'keydown', '#cartbay-session-search-input', function( event ) {
 		if ( 13 === event.which ) { // Enter key
@@ -350,50 +339,6 @@ jQuery( function( $ ) {
 		}
 
 		window.alert( modalData.entry );
-	} );
-
-	$( document.body ).on( 'click', '.cartbay-notification-more-trigger', function( event ) {
-		event.preventDefault();
-
-		var $trigger = $( this );
-		var contentSelector = $trigger.data( 'content' );
-		var content = contentSelector ? $( contentSelector ).html() : '';
-		var modalData = {
-			title: $trigger.data( 'modalTitle' ),
-			content: content || ''
-		};
-
-		if ( $.fn.WCBackboneModal ) {
-			$trigger.WCBackboneModal( {
-				template: 'cartbay-notification-stats-modal',
-				variable: modalData
-			} );
-			return;
-		}
-
-		window.alert( $( '<div>' + modalData.content + '</div>' ).text() );
-	} );
-
-	$( document.body ).on( 'click', '.cartbay-notification-details-trigger', function( event ) {
-		event.preventDefault();
-
-		var $trigger = $( this );
-		var contentSelector = $trigger.data( 'content' );
-		var content = contentSelector ? $( contentSelector ).html() : '';
-		var modalData = {
-			title: $trigger.data( 'modalTitle' ),
-			content: content || ''
-		};
-
-		if ( $.fn.WCBackboneModal ) {
-			$trigger.WCBackboneModal( {
-				template: 'cartbay-notification-details-modal',
-				variable: modalData
-			} );
-			return;
-		}
-
-		window.alert( $( '<div>' + modalData.content + '</div>' ).text() );
 	} );
 
 	$( document.body ).on( 'click', '#cartbay-log-query-submit', function( event ) {
@@ -500,6 +445,11 @@ JS;
 				'TRIGGER_BUTTON_TEXT',
 				'COPIED_TEXT',
 				'COPY_ENTRY_TEXT',
+				'TEST_EMAIL_URL',
+				'TEST_EMAIL_SENDING_TEXT',
+				'TEST_EMAIL_SUCCESS_TEXT',
+				'TEST_EMAIL_FAILURE_TEXT',
+				'TEST_EMAIL_BUTTON_TEXT',
 			),
 			array(
 				esc_js( __( 'Triggering...', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) ),
@@ -510,6 +460,11 @@ JS;
 				esc_js( __( 'Trigger Test Flow', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) ),
 				esc_js( __( 'Copied', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) ),
 				esc_js( __( 'Copy Entry', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) ),
+				esc_url( rest_url( 'cartbay/v1/test/email' ) ),
+				esc_js( __( 'Sending...', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) ),
+				esc_js( __( 'Test email sent!', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) ),
+				esc_js( __( 'Failed to send test email.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) ),
+				esc_js( __( 'Send Test Email', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) ),
 			),
 			$script
 		);
@@ -554,52 +509,6 @@ JS;
 						<footer>
 							<div class="inner">
 								<button type="button" class="button button-large cartbay-copy-log-entry-modal"><?php esc_html_e( 'Copy Entry', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></button>
-								<button type="button" class="button button-primary button-large modal-close"><?php esc_html_e( 'Close', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></button>
-							</div>
-						</footer>
-					</section>
-				</div>
-			</div>
-			<div class="wc-backbone-modal-backdrop modal-close"></div>
-		</script>
-		<script type="text/template" id="tmpl-cartbay-notification-stats-modal">
-			<div class="wc-backbone-modal cartbay-notification-stats-modal">
-				<div class="wc-backbone-modal-content">
-					<section class="wc-backbone-modal-main" role="main">
-						<header class="wc-backbone-modal-header">
-							<h1>{{ data.title }}</h1>
-							<button class="modal-close modal-close-link dashicons dashicons-no-alt">
-								<span class="screen-reader-text"><?php esc_html_e( 'Close modal panel', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></span>
-							</button>
-						</header>
-						<article>
-							{{{ data.content }}}
-						</article>
-						<footer>
-							<div class="inner">
-								<button type="button" class="button button-primary button-large modal-close"><?php esc_html_e( 'Close', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></button>
-							</div>
-						</footer>
-					</section>
-				</div>
-			</div>
-			<div class="wc-backbone-modal-backdrop modal-close"></div>
-		</script>
-		<script type="text/template" id="tmpl-cartbay-notification-details-modal">
-			<div class="wc-backbone-modal cartbay-notification-details-modal">
-				<div class="wc-backbone-modal-content">
-					<section class="wc-backbone-modal-main" role="main">
-						<header class="wc-backbone-modal-header">
-							<h1>{{ data.title }}</h1>
-							<button class="modal-close modal-close-link dashicons dashicons-no-alt">
-								<span class="screen-reader-text"><?php esc_html_e( 'Close modal panel', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></span>
-							</button>
-						</header>
-						<article>
-							{{{ data.content }}}
-						</article>
-						<footer>
-							<div class="inner">
 								<button type="button" class="button button-primary button-large modal-close"><?php esc_html_e( 'Close', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></button>
 							</div>
 						</footer>

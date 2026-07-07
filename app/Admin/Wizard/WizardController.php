@@ -334,28 +334,6 @@ class WizardController {
 			<span id="cartbay-test-email-result"></span>
 		</p>
 		<p class="description"><?php esc_html_e( 'Enter an email address and click to send a test email and verify delivery.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></p>
-
-		<script>
-		jQuery(function($) {
-			$('#cartbay-test-email').on('click', function() {
-				var btn = $(this);
-				var email = $('#cartbay-test-email-address').val();
-				btn.prop('disabled', true).text('<?php echo esc_js( __( 'Sending...', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) ); ?>');
-				$.post('<?php echo esc_url( rest_url( 'cartbay/v1/test/email' ) ); ?>', {
-					_wpnonce: '<?php echo esc_js( wp_create_nonce( 'wp_rest' ) ); ?>',
-					email: email
-				}).done(function(resp) {
-					$('#cartbay-test-email-result').text(resp.message || '<?php echo esc_js( __( 'Test email sent!', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) ); ?>');
-				}).fail(function(jqXHR) {
-					var base = '<?php echo esc_js( __( 'Failed to send test email.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) ); ?>';
-					var reason = jqXHR.responseJSON && jqXHR.responseJSON.data && jqXHR.responseJSON.data.reason;
-					$('#cartbay-test-email-result').text(reason ? base + ' ' + reason : base);
-				}).always(function() {
-					btn.prop('disabled', false).text('<?php echo esc_js( __( 'Send Test Email', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) ); ?>');
-				});
-			});
-		});
-		</script>
 		<?php
 	}
 
@@ -474,6 +452,10 @@ class WizardController {
 
 	/**
 	 * Queue a wizard action notice for the next redirect.
+	 *
+	 * Part of the wizard's public extension API: the controller instance is
+	 * passed to the `cartbay_wizard_process_step` filter so extensions that add
+	 * their own wizard steps can surface a success or error notice on redirect.
 	 *
 	 * @since 1.0.0
 	 *
