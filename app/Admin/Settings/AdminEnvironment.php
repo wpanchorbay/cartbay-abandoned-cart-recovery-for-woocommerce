@@ -69,26 +69,4 @@ class AdminEnvironment {
 	public function get_mail_environment_status(): array {
 		return $this->mail_environment->detect();
 	}
-
-	/**
-	 * Determine whether a mail delivery service is detected.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return bool Whether a mail delivery service is detected.
-	 */
-	public function has_mail_delivery(): bool {
-		return $this->mail_environment->has_delivery();
-	}
-
-	/**
-	 * Determine whether only an email logger is detected.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return bool Whether an email logger exists without mail delivery detection.
-	 */
-	public function has_email_logger_only(): bool {
-		return $this->mail_environment->has_logger_only();
-	}
 }
