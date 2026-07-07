@@ -228,7 +228,10 @@ class WizardControllerTest extends TestCase {
 
 		self::assertStringContainsString( 'id="cartbay-test-email-address"', $html );
 		self::assertStringContainsString( 'value="owner@example.test"', $html );
-		self::assertStringContainsString( 'email: email', $html );
+		// The send button is rendered here; its click handler is enqueued via
+		// wp_add_inline_script rather than printed inline in the page markup.
+		self::assertStringContainsString( 'id="cartbay-test-email"', $html );
+		self::assertStringNotContainsString( '<script>', $html );
 	}
 
 	/**
