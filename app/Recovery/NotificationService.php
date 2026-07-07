@@ -13,7 +13,15 @@ use WPAnchorBay\CartBay\Data\SessionRepository;
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Tracks recovery email notification lifecycle states on each session order.
+ * Tracks the core recovery-email notification state on each session order.
+ *
+ * The free plugin stores only the state a recovery email needs to be sent,
+ * retried, cancelled, and counted (queued / attempted / sent / failed /
+ * retry_queued / canceled, plus the attempt count and last error). Every state
+ * change fires the `cartbay_notification_state_changed` action so extensions can
+ * maintain their own richer per-notification history (lifecycle logs, retry
+ * analytics, provider delivery, etc.) without the free plugin storing data it
+ * does not itself use.
  *
  * @since 1.0.0
  */
@@ -54,32 +62,21 @@ class NotificationService {
 	public function queue( int $session_id, int $step_index, int $scheduled_at, string $trigger_source, string $notification_id = '' ): string {
 		$notification_id = '' !== $notification_id ? sanitize_key( $notification_id ) : sanitize_key( wp_generate_password( 12, false, false ) );
 
-		$session = $this->sessions->get( $session_id );
-		$email   = $session ? sanitize_email( $session->get_billing_email() ) : '';
-
 		$this->update_notification(
 			$session_id,
 			$notification_id,
-			function ( array $notification ) use ( $step_index, $scheduled_at, $trigger_source, $notification_id, $email, $session_id ): array {
+			function ( array $notification ) use ( $step_index, $scheduled_at, $trigger_source, $notification_id, $session_id ): array {
 				$notification['id']             = $notification_id;
 				$notification['session_id']     = absint( $session_id );
 				$notification['step_index']     = absint( $step_index );
 				$notification['email_type']     = 'recovery_' . ( absint( $step_index ) + 1 );
-				$notification['recipient_hash'] = '' !== $email ? hash( 'sha256', strtolower( trim( $email ) ) ) : '';
-				$notification['recipient_mask'] = $this->mask_email( $email );
 				$notification['trigger_source'] = sanitize_key( $trigger_source );
 				$notification['status']         = 'queued';
 				$notification['queued_at']      = absint( $notification['queued_at'] ?? time() );
 				$notification['scheduled_at']   = absint( $scheduled_at );
 				$notification['last_error']     = '';
 				$notification['updated_at']     = time();
-				$notification['events']         = isset( $notification['events'] ) && is_array( $notification['events'] ) ? $notification['events'] : array();
-				$notification['events'][]       = array(
-					'status'    => 'queued',
-					'timestamp' => time(),
-				);
 				$notification['attempts']       = absint( $notification['attempts'] ?? 0 );
-				$notification['retry_count']    = absint( $notification['retry_count'] ?? 0 );
 
 				return $notification;
 			}
@@ -109,11 +106,6 @@ class NotificationService {
 				$notification['attempted_at'] = time();
 				$notification['updated_at']   = time();
 				$notification['attempts']     = absint( $notification['attempts'] ?? 0 ) + 1;
-				$notification['events']       = isset( $notification['events'] ) && is_array( $notification['events'] ) ? $notification['events'] : array();
-				$notification['events'][]     = array(
-					'status'    => 'attempted',
-					'timestamp' => time(),
-				);
 
 				return $notification;
 			}
@@ -142,11 +134,6 @@ class NotificationService {
 				$notification['status']     = 'sent';
 				$notification['sent_at']    = time();
 				$notification['updated_at'] = time();
-				$notification['events']     = isset( $notification['events'] ) && is_array( $notification['events'] ) ? $notification['events'] : array();
-				$notification['events'][]   = array(
-					'status'    => 'sent',
-					'timestamp' => time(),
-				);
 
 				return $notification;
 			}
@@ -177,12 +164,6 @@ class NotificationService {
 				$notification['failed_at']  = time();
 				$notification['updated_at'] = time();
 				$notification['last_error'] = sanitize_text_field( $error_message );
-				$notification['events']     = isset( $notification['events'] ) && is_array( $notification['events'] ) ? $notification['events'] : array();
-				$notification['events'][]   = array(
-					'status'    => 'failed',
-					'timestamp' => time(),
-					'message'   => sanitize_text_field( $error_message ),
-				);
 
 				return $notification;
 			}
@@ -208,12 +189,6 @@ class NotificationService {
 				$notification['status']       = 'retry_queued';
 				$notification['scheduled_at'] = absint( $scheduled_at );
 				$notification['updated_at']   = time();
-				$notification['retry_count']  = absint( $notification['retry_count'] ?? 0 ) + 1;
-				$notification['events']       = isset( $notification['events'] ) && is_array( $notification['events'] ) ? $notification['events'] : array();
-				$notification['events'][]     = array(
-					'status'    => 'retry_queued',
-					'timestamp' => time(),
-				);
 
 				return $notification;
 			}
@@ -221,7 +196,7 @@ class NotificationService {
 	}
 
 	/**
-	 * Mark a queued notification as canceled.
+	 * Mark all pending notifications for a session as canceled.
 	 *
 	 * @since 1.0.0
 	 *
@@ -247,12 +222,6 @@ class NotificationService {
 					$entry['cancel_reason'] = sanitize_key( $reason );
 					$entry['canceled_at']   = time();
 					$entry['updated_at']    = time();
-					$entry['events']        = isset( $entry['events'] ) && is_array( $entry['events'] ) ? $entry['events'] : array();
-					$entry['events'][]      = array(
-						'status'    => 'canceled',
-						'timestamp' => time(),
-						'message'   => sanitize_key( $reason ),
-					);
 
 					return $entry;
 				}
@@ -261,47 +230,19 @@ class NotificationService {
 	}
 
 	/**
-	 * Mark a notification as delivered by a provider integration.
+	 * Resolve the most recent successfully-sent notification for a session.
 	 *
-	 * @since 1.0.0
-	 *
-	 * @param int    $session_id      Session order ID.
-	 * @param string $notification_id Notification identifier.
-	 * @param string $provider        Provider slug.
-	 *
-	 * @return void
-	 */
-	public function mark_delivered( int $session_id, string $notification_id, string $provider = '' ): void {
-		$this->update_notification(
-			$session_id,
-			$notification_id,
-			function ( array $notification ) use ( $provider ): array {
-				$notification['status']       = 'delivered';
-				$notification['delivered_at'] = time();
-				$notification['updated_at']   = time();
-				$notification['provider']     = sanitize_key( $provider );
-				$notification['events']       = isset( $notification['events'] ) && is_array( $notification['events'] ) ? $notification['events'] : array();
-				$notification['events'][]     = array(
-					'status'    => 'delivered',
-					'timestamp' => time(),
-					'message'   => sanitize_key( $provider ),
-				);
-
-				return $notification;
-			}
-		);
-	}
-
-	/**
-	 * Link a restore click to the latest sent notification for a session.
+	 * Used to attribute a restore-link click or a recovered order back to the
+	 * recovery email that most likely drove it. This is a read-only lookup; it
+	 * does not mutate the notification record.
 	 *
 	 * @since 1.0.0
 	 *
 	 * @param int $session_id Session order ID.
 	 *
-	 * @return string Notification ID when one was linked.
+	 * @return string Notification ID, or an empty string when none is sent.
 	 */
-	public function mark_restore_clicked( int $session_id ): string {
+	public function latest_sent_notification_id( int $session_id ): string {
 		$notifications = array_reverse( $this->get_session_notifications( $session_id ) );
 
 		foreach ( $notifications as $notification ) {
@@ -309,60 +250,7 @@ class NotificationService {
 				continue;
 			}
 
-			$notification_id = sanitize_key( (string) ( $notification['id'] ?? '' ) );
-			$this->update_notification(
-				$session_id,
-				$notification_id,
-				static function ( array $entry ): array {
-					$entry['restore_clicked_at'] = time();
-					$entry['updated_at']         = time();
-					$entry['events']             = isset( $entry['events'] ) && is_array( $entry['events'] ) ? $entry['events'] : array();
-					$entry['events'][]           = array(
-						'status'    => 'restore_clicked',
-						'timestamp' => time(),
-					);
-
-					return $entry;
-				}
-			);
-
-			return $notification_id;
-		}
-
-		return '';
-	}
-
-	/**
-	 * Link a recovered order to the latest sent notification for a session.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param int $session_id Session order ID.
-	 * @param int $order_id   Recovered WooCommerce order ID.
-	 *
-	 * @return string Notification ID when one was linked.
-	 */
-	public function mark_recovered( int $session_id, int $order_id ): string {
-		$notifications = array_reverse( $this->get_session_notifications( $session_id ) );
-
-		foreach ( $notifications as $notification ) {
-			if ( ! is_array( $notification ) || ! in_array( sanitize_key( (string) ( $notification['status'] ?? '' ) ), array( 'sent', 'delivered' ), true ) ) {
-				continue;
-			}
-
-			$notification_id = sanitize_key( (string) ( $notification['id'] ?? '' ) );
-			$this->update_notification(
-				$session_id,
-				$notification_id,
-				static function ( array $entry ) use ( $order_id ): array {
-					$entry['recovered_order_id'] = absint( $order_id );
-					$entry['updated_at']         = time();
-
-					return $entry;
-				}
-			);
-
-			return $notification_id;
+			return sanitize_key( (string) ( $notification['id'] ?? '' ) );
 		}
 
 		return '';
@@ -453,6 +341,7 @@ class NotificationService {
 		$notifications = $session->get_meta( '_cartbay_notifications', true );
 		$notifications = is_array( $notifications ) ? array_values( $notifications ) : array();
 		$updated       = false;
+		$entry         = array();
 
 		foreach ( $notifications as $index => $notification ) {
 			if ( ! is_array( $notification ) ) {
@@ -463,18 +352,42 @@ class NotificationService {
 				continue;
 			}
 
-			$notifications[ $index ] = $callback( $notification );
+			$entry                   = $callback( $notification );
+			$notifications[ $index ] = $entry;
 			$updated                 = true;
 			break;
 		}
 
 		if ( ! $updated ) {
-			$notifications[] = $callback( array() );
+			$entry           = $callback( array() );
+			$notifications[] = $entry;
 		}
 
 		$session->update_meta_data( '_cartbay_notifications', $notifications );
 		$session->save();
 		AnalyticsService::invalidate_cache();
+
+		/**
+		 * Fires after a recovery-email notification changes state.
+		 *
+		 * Extensions can use this to maintain their own richer per-notification
+		 * history (lifecycle logs, retry analytics, provider delivery, etc.)
+		 * without the free plugin having to store data it does not use itself.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param int                  $session_id      Session order ID.
+		 * @param string               $notification_id Notification identifier.
+		 * @param string               $status          Current notification status.
+		 * @param array<string, mixed> $notification    Full notification entry after the change.
+		 */
+		do_action(
+			'cartbay_notification_state_changed',
+			$session_id,
+			$notification_id,
+			sanitize_key( (string) ( $entry['status'] ?? '' ) ),
+			$entry
+		);
 	}
 
 	/**
@@ -489,25 +402,5 @@ class NotificationService {
 		$retention_days = max( 1, absint( $settings['data_retention_days'] ?? 30 ) );
 
 		return $retention_days * DAY_IN_SECONDS;
-	}
-
-	/**
-	 * Mask an email address for admin display.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param string $email Email address.
-	 *
-	 * @return string Masked email.
-	 */
-	private function mask_email( string $email ): string {
-		if ( '' === $email || false === strpos( $email, '@' ) ) {
-			return '';
-		}
-
-		list( $local, $domain ) = explode( '@', $email, 2 );
-		$local_prefix           = substr( $local, 0, 2 );
-
-		return $local_prefix . '***@' . $domain;
 	}
 }

@@ -182,18 +182,16 @@ class RecoveryMatcher {
 
 		$notification_id = sanitize_key( (string) $order->get_meta( '_cartbay_notification_id', true ) );
 		if ( '' === $notification_id ) {
-			$notification_id = $this->notifications->mark_recovered( $session->get_id(), $order->get_id() );
+			$notification_id = $this->notifications->latest_sent_notification_id( $session->get_id() );
 		}
 
-		// Mark as recovered.
+		// Mark as recovered. Attribution details (source, matched notification)
+		// are passed to the `cartbay_session_event` hook below so extensions can
+		// record them; the free plugin persists only what its own reporting uses.
 		$session->set_status( 'wc-cartbay-recovered' );
 		$session->update_meta_data( '_cartbay_recovered_at', time() );
 		$session->update_meta_data( '_cartbay_recovered_order_id', $order->get_id() );
 		$session->update_meta_data( '_cartbay_recovered_revenue', floatval( $order->get_total() ) );
-		$session->update_meta_data( '_cartbay_attribution_source', $attribution_source );
-		$session->update_meta_data( '_cartbay_matched_email_hash', hash( 'sha256', strtolower( trim( sanitize_email( $email ) ) ) ) );
-		$session->update_meta_data( '_cartbay_recovered_notification_id', $notification_id );
-		$session->update_meta_data( '_cartbay_restored', (bool) $session->get_meta( '_cartbay_restore_clicked_at', true ) );
 		$session->save();
 
 		// Cancel pending email jobs for this session.

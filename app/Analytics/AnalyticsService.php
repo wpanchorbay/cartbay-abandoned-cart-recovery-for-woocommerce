@@ -12,7 +12,15 @@ use WC_Order;
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Builds and caches CartBay analytics aggregates.
+ * Builds and caches CartBay's core recovery analytics aggregates.
+ *
+ * This service intentionally computes only the headline recovery metrics that
+ * the free plugin renders (tracked, abandoned, recovered, abandoned value,
+ * recovered revenue, recovery rate, and the basic email-delivery counts).
+ * Deeper reporting (per-step performance, restore-click funnels, shopper
+ * behaviour, etc.) is provided by extensions through the documented
+ * `cartbay_overview_metric_cards` and `cartbay_notifications_after_summary`
+ * hooks, which receive the raw session data and compute their own figures.
  *
  * @since 1.0.0
  */
@@ -104,9 +112,6 @@ class AnalyticsService {
 			'_cartbay_recovered_at',
 			$since_timestamp
 		);
-		$event_sessions     = $this->get_sessions_by_statuses(
-			array( 'wc-cartbay-captured', 'wc-cartbay-abandoned', 'wc-cartbay-recovered', 'wc-cartbay-suppressed' )
-		);
 
 		// Count tracked carts on the same CartBay meta-timestamp basis as the
 		// abandoned/recovered funnel (capture time), rather than order
@@ -123,65 +128,38 @@ class AnalyticsService {
 		$abandoned_value = $this->sum_abandoned_value( $abandoned_sessions );
 		$revenue         = $this->sum_recovered_revenue( $recovered_sessions );
 		$rate            = $abandoned > 0 ? round( ( $recovered / $abandoned ) * 100, 1 ) : 0.0;
-		$email_funnel    = $this->build_email_funnel( $abandoned_sessions, $recovered_sessions );
-		$restore_clicks  = $this->count_events_since( $event_sessions, 'restore_clicked', $since_timestamp );
-		$failed_restores = $this->count_events_since( $event_sessions, 'cart_restore_failed', $since_timestamp );
-		$restored        = $this->count_restored_sessions( $recovered_sessions );
-		$pre_abandonment = $this->count_events( $this->get_sessions_by_meta_timestamp( array( 'wc-cartbay-captured' ), '_cartbay_captured_at', $since_timestamp ), 'completed_before_abandonment' );
-		$click_rate      = $restore_clicks > 0 ? round( ( $restored / $restore_clicks ) * 100, 1 ) : 0.0;
+		$email_funnel    = $this->build_email_funnel( $abandoned_sessions );
 		$send_rate       = $email_funnel['attempted'] > 0 ? round( ( $email_funnel['sent'] / $email_funnel['attempted'] ) * 100, 1 ) : 0.0;
 
 		return array(
-			'tracked'                        => $captured,
-			'abandoned'                      => $abandoned,
-			'recovered'                      => $recovered,
-			'restored'                       => $restored,
-			'completed_before_abandonment'   => $pre_abandonment,
-			'abandoned_value'                => $abandoned_value,
-			'revenue'                        => $revenue,
-			'recovery_rate'                  => $rate,
-			'restore_clicks'                 => $restore_clicks,
-			'click_to_recovery_rate'         => $click_rate,
-			'emails_queued'                  => $email_funnel['queued'],
-			'emails_sent'                    => $email_funnel['sent'],
-			'emails_failed'                  => $email_funnel['failed'],
-			'email_send_rate'                => $send_rate,
-			'revenue_by_step'                => $email_funnel['revenue_by_step'],
-			'recoveries_by_step'             => $email_funnel['recoveries_by_step'],
-			'best_step'                      => $email_funnel['best_step'],
-			'average_time_to_recovery'       => $this->average_time_to_recovery( $recovered_sessions ),
-			'returning_shopper_count'        => $this->count_returning_shoppers( $abandoned_sessions ),
-			'repeat_abandoned_shopper_count' => $this->count_repeat_abandoned_shoppers( $abandoned_sessions ),
-			'failed_restore_count'           => $failed_restores,
-			'period_days'                    => $days,
+			'tracked'         => $captured,
+			'abandoned'       => $abandoned,
+			'recovered'       => $recovered,
+			'abandoned_value' => $abandoned_value,
+			'revenue'         => $revenue,
+			'recovery_rate'   => $rate,
+			'emails_queued'   => $email_funnel['queued'],
+			'emails_sent'     => $email_funnel['sent'],
+			'emails_failed'   => $email_funnel['failed'],
+			'email_send_rate' => $send_rate,
+			'period_days'     => $days,
 		);
 	}
 
 	/**
-	 * Build email funnel and sequence performance metrics.
+	 * Build the basic recovery-email delivery counts for a period.
 	 *
 	 * @since 1.0.0
 	 *
 	 * @param array<int, WC_Order> $abandoned_sessions Abandoned sessions.
-	 * @param array<int, WC_Order> $recovered_sessions Recovered sessions.
 	 *
-	 * @return array<string, mixed> Funnel data.
+	 * @return array<string, int> Funnel counts: queued, attempted, sent, failed.
 	 */
-	private function build_email_funnel( array $abandoned_sessions, array $recovered_sessions ): array {
-		$queued             = 0;
-		$attempted          = 0;
-		$sent               = 0;
-		$failed             = 0;
-		$revenue_by_step    = array(
-			0 => 0.0,
-			1 => 0.0,
-			2 => 0.0,
-		);
-		$recoveries_by_step = array(
-			0 => 0,
-			1 => 0,
-			2 => 0,
-		);
+	private function build_email_funnel( array $abandoned_sessions ): array {
+		$queued    = 0;
+		$attempted = 0;
+		$sent      = 0;
+		$failed    = 0;
 
 		foreach ( $abandoned_sessions as $session ) {
 			foreach ( $this->get_notifications( $session ) as $notification ) {
@@ -204,26 +182,11 @@ class AnalyticsService {
 			}
 		}
 
-		foreach ( $recovered_sessions as $session ) {
-			$step    = $this->get_recovery_step( $session );
-			$revenue = floatval( $session->get_meta( '_cartbay_recovered_revenue', true ) );
-
-			$revenue_by_step[ $step ]    = ( $revenue_by_step[ $step ] ?? 0 ) + $revenue;
-			$recoveries_by_step[ $step ] = ( $recoveries_by_step[ $step ] ?? 0 ) + 1;
-		}
-
-		arsort( $revenue_by_step );
-		$best_step = key( $revenue_by_step );
-		ksort( $revenue_by_step );
-
 		return array(
-			'queued'             => $queued,
-			'attempted'          => $attempted,
-			'sent'               => $sent,
-			'failed'             => $failed,
-			'revenue_by_step'    => $revenue_by_step,
-			'recoveries_by_step' => $recoveries_by_step,
-			'best_step'          => absint( $best_step ) + 1,
+			'queued'    => $queued,
+			'attempted' => $attempted,
+			'sent'      => $sent,
+			'failed'    => $failed,
 		);
 	}
 
@@ -322,144 +285,6 @@ class AnalyticsService {
 	}
 
 	/**
-	 * Count event occurrences in session logs.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param array<int, WC_Order> $sessions Sessions.
-	 * @param string               $event    Event name.
-	 *
-	 * @return int Event count.
-	 */
-	private function count_events( array $sessions, string $event ): int {
-		$count = 0;
-		foreach ( $sessions as $session ) {
-			foreach ( $this->get_events( $session ) as $entry ) {
-				if ( sanitize_key( (string) ( $entry['event'] ?? '' ) ) === $event ) {
-					++$count;
-				}
-			}
-		}
-
-		return $count;
-	}
-
-	/**
-	 * Count event occurrences inside the reporting period.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param array<int, WC_Order> $sessions        Sessions.
-	 * @param string               $event           Event name.
-	 * @param int                  $since_timestamp Period start timestamp.
-	 *
-	 * @return int Event count.
-	 */
-	private function count_events_since( array $sessions, string $event, int $since_timestamp ): int {
-		$count = 0;
-		foreach ( $sessions as $session ) {
-			foreach ( $this->get_events( $session ) as $entry ) {
-				if ( sanitize_key( (string) ( $entry['event'] ?? '' ) ) !== $event ) {
-					continue;
-				}
-
-				if ( absint( $entry['timestamp'] ?? 0 ) < $since_timestamp ) {
-					continue;
-				}
-
-				++$count;
-			}
-		}
-
-		return $count;
-	}
-
-	/**
-	 * Count sessions restored before recovery.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param array<int, WC_Order> $sessions Sessions.
-	 *
-	 * @return int Restored session count.
-	 */
-	private function count_restored_sessions( array $sessions ): int {
-		$count = 0;
-		foreach ( $sessions as $session ) {
-			if ( $session->get_meta( '_cartbay_restore_clicked_at', true ) ) {
-				++$count;
-			}
-		}
-
-		return $count;
-	}
-
-	/**
-	 * Calculate average seconds from abandonment to recovery.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param array<int, WC_Order> $sessions Sessions.
-	 *
-	 * @return int Average seconds.
-	 */
-	private function average_time_to_recovery( array $sessions ): int {
-		$total = 0;
-		$count = 0;
-		foreach ( $sessions as $session ) {
-			$abandoned_at = absint( $session->get_meta( '_cartbay_abandoned_at', true ) );
-			$recovered_at = absint( $session->get_meta( '_cartbay_recovered_at', true ) );
-			if ( $abandoned_at > 0 && $recovered_at > $abandoned_at ) {
-				$total += $recovered_at - $abandoned_at;
-				++$count;
-			}
-		}
-
-		return $count > 0 ? absint( round( $total / $count ) ) : 0;
-	}
-
-	/**
-	 * Count shoppers with more than one activity event.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param array<int, WC_Order> $sessions Sessions.
-	 *
-	 * @return int Returning shopper count.
-	 */
-	private function count_returning_shoppers( array $sessions ): int {
-		$count = 0;
-		foreach ( $sessions as $session ) {
-			if ( count( $this->get_events( $session ) ) > 1 ) {
-				++$count;
-			}
-		}
-
-		return $count;
-	}
-
-	/**
-	 * Count email hashes with repeated abandoned sessions.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param array<int, WC_Order> $sessions Sessions.
-	 *
-	 * @return int Repeat abandoned shopper count.
-	 */
-	private function count_repeat_abandoned_shoppers( array $sessions ): int {
-		$hashes = array();
-		foreach ( $sessions as $session ) {
-			$hash = sanitize_text_field( (string) $session->get_meta( '_cartbay_email_hash', true ) );
-			if ( '' !== $hash ) {
-				$hashes[ $hash ] = ( $hashes[ $hash ] ?? 0 ) + 1;
-			}
-		}
-
-		return count( array_filter( $hashes, static fn ( int $count ): bool => $count > 1 ) );
-	}
-
-	/**
 	 * Get notifications from a session.
 	 *
 	 * @since 1.0.0
@@ -472,45 +297,5 @@ class AnalyticsService {
 		$notifications = $session->get_meta( '_cartbay_notifications', true );
 
 		return is_array( $notifications ) ? array_values( array_filter( $notifications, 'is_array' ) ) : array();
-	}
-
-	/**
-	 * Get events from a session.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param WC_Order $session Session order.
-	 *
-	 * @return array<int, array<string, mixed>> Events.
-	 */
-	private function get_events( WC_Order $session ): array {
-		$events = $session->get_meta( '_cartbay_events', true );
-
-		return is_array( $events ) ? array_values( array_filter( $events, 'is_array' ) ) : array();
-	}
-
-	/**
-	 * Resolve the email step that most likely recovered the session.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param WC_Order $session Session order.
-	 *
-	 * @return int Zero-based step index.
-	 */
-	private function get_recovery_step( WC_Order $session ): int {
-		$notification_id = sanitize_key( (string) $session->get_meta( '_cartbay_recovered_notification_id', true ) );
-		foreach ( $this->get_notifications( $session ) as $notification ) {
-			if ( sanitize_key( (string) ( $notification['id'] ?? '' ) ) !== $notification_id ) {
-				continue;
-			}
-
-			return absint( $notification['step_index'] ?? 0 );
-		}
-
-		$sent_steps = (array) $session->get_meta( '_cartbay_sent_steps', true );
-		$sent_steps = array_map( 'absint', $sent_steps );
-
-		return empty( $sent_steps ) ? 0 : max( $sent_steps );
 	}
 }

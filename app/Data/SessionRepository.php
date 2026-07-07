@@ -54,7 +54,6 @@ class SessionRepository {
 		$order->set_billing_email( $sanitized_email );
 		$order->set_created_via( 'cartbay' );
 		$order->update_meta_data( '_cartbay_session_id', $order->get_id() );
-		$order->update_meta_data( '_cartbay_email_hash', hash( 'sha256', strtolower( trim( $sanitized_email ) ) ) );
 
 		$default_meta = array(
 			'email'            => $sanitized_email,
@@ -122,50 +121,6 @@ class SessionRepository {
 		$order = wc_get_order( absint( $session_id ) );
 
 		return $order instanceof WC_Order ? $order : null;
-	}
-
-	/**
-	 * Get sessions by status.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param string $status CartBay status slug with or without wc- prefix.
-	 * @param int    $limit  Maximum results.
-	 * @param int    $offset Result offset.
-	 *
-	 * @return array<int, WC_Order>
-	 */
-	public function get_by_status( string $status, int $limit = 50, int $offset = 0 ): array {
-		return $this->query_orders(
-			array(
-				'status' => array( $this->normalize_status( $status ) ),
-				'limit'  => absint( $limit ),
-				'offset' => absint( $offset ),
-			)
-		);
-	}
-
-	/**
-	 * Get all CartBay-managed sessions across the active lifecycle statuses.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param int $limit Maximum results. Use -1 for all sessions.
-	 *
-	 * @return array<int, WC_Order>
-	 */
-	public function get_all_sessions( int $limit = -1 ): array {
-		return $this->query_orders(
-			array(
-				'status' => array(
-					'wc-cartbay-captured',
-					'wc-cartbay-abandoned',
-					'wc-cartbay-recovered',
-					'wc-cartbay-suppressed',
-				),
-				'limit'  => $limit,
-			)
-		);
 	}
 
 	/**
@@ -363,33 +318,35 @@ class SessionRepository {
 	}
 
 	/**
-	 * Append an event to a session's event log.
+	 * Record a session lifecycle event by firing the `cartbay_session_event` hook.
 	 *
 	 * @since 1.0.0
 	 *
 	 * @param int    $session_id WC order ID.
-	 * @param string $event       Event name (e.g. 'captured', 'abandoned', 'email_sent').
+	 * @param string $event       Event name (e.g. 'captured', 'abandoned', 'recovered').
 	 * @param array  $data        Optional event data.
 	 *
-	 * @return bool
+	 * @return bool True when the session exists and the event was dispatched.
 	 */
 	public function add_event( int $session_id, string $event, array $data = array() ): bool {
-		$order = $this->get( $session_id );
-
-		if ( ! $order instanceof WC_Order ) {
+		if ( ! $this->get( $session_id ) instanceof WC_Order ) {
 			return false;
 		}
 
-		$events   = $order->get_meta( '_cartbay_events', true );
-		$events   = is_array( $events ) ? $events : array();
-		$events[] = array(
-			'timestamp' => time(),
-			'event'     => $event,
-			'data'      => $data,
-		);
-
-		$order->update_meta_data( '_cartbay_events', $events );
-		$order->save();
+		/**
+		 * Fires when a CartBay session records a lifecycle event.
+		 *
+		 * The free plugin does not itself persist a per-session event history;
+		 * extensions can hook this to maintain their own audit trail or activity
+		 * analytics from the raw event stream.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param int                  $session_id Session order ID.
+		 * @param string               $event      Event name (e.g. 'captured', 'abandoned', 'recovered').
+		 * @param array<string, mixed> $data       Optional event payload.
+		 */
+		do_action( 'cartbay_session_event', $session_id, sanitize_key( $event ), $data );
 
 		return true;
 	}
@@ -468,25 +425,6 @@ class SessionRepository {
 		);
 
 		return array_values( $orders );
-	}
-
-	/**
-	 * Normalize a CartBay order status slug.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param string $status Status slug.
-	 *
-	 * @return string
-	 */
-	private function normalize_status( string $status ): string {
-		$sanitized_status = sanitize_key( $status );
-
-		if ( str_starts_with( $sanitized_status, 'wc-' ) ) {
-			return $sanitized_status;
-		}
-
-		return 'wc-' . ltrim( $sanitized_status, '-' );
 	}
 
 	/**
