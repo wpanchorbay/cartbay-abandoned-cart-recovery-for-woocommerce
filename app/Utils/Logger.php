@@ -44,6 +44,19 @@ class Logger {
 	private const PRUNE_THROTTLE_KEY = 'cartbay_log_prune_throttle';
 
 	/**
+	 * First line written to the log file to block direct web access.
+	 *
+	 * The log lives under wp-content/uploads and could otherwise be fetched
+	 * directly. Giving the file a `.php` extension and a leading `exit` guard
+	 * means any direct HTTP request is executed as PHP and stops immediately,
+	 * on Apache and nginx alike. The line is not valid JSON, so the log readers
+	 * (which json_decode each line) skip it automatically.
+	 *
+	 * @since 1.0.0
+	 */
+	private const FILE_GUARD = '<?php exit; // CartBay log — direct access is denied.';
+
+	/**
 	 * Log an informational message.
 	 *
 	 * @since 1.0.0
@@ -217,7 +230,7 @@ class Logger {
 			return '';
 		}
 
-		return trailingslashit( $base_dir ) . 'cartbay/cartbay.log';
+		return trailingslashit( $base_dir ) . 'cartbay/cartbay.log.php';
 	}
 
 	/**
@@ -280,12 +293,13 @@ class Logger {
 			return;
 		}
 
-		// Protect directory from browsing.
-		$index = trailingslashit( $directory ) . 'index.php';
-		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_is_readable
-		if ( ! file_exists( $index ) ) {
+		self::protect_log_directory( $directory );
+
+		// Seed the log file with the PHP access guard so a fresh file can never
+		// be fetched and read directly, even before the first entry is appended.
+		if ( ! file_exists( $path ) ) {
 			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
-			file_put_contents( $index, "<?php\n// Silence is golden." . PHP_EOL );
+			file_put_contents( $path, self::FILE_GUARD . PHP_EOL, LOCK_EX );
 		}
 
 		self::maybe_prune_file_log( $path );
@@ -305,6 +319,36 @@ class Logger {
 
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
 		file_put_contents( $path, $encoded . PHP_EOL, FILE_APPEND | LOCK_EX );
+	}
+
+	/**
+	 * Drop hardening files into the CartBay log directory.
+	 *
+	 * Writes an index.php (blocks directory listing) and a version-agnostic
+	 * .htaccess deny rule (blocks direct access on Apache) alongside the
+	 * PHP-guarded log file. Together these protect the log on Apache and nginx.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $directory Log directory path.
+	 *
+	 * @return void
+	 */
+	private static function protect_log_directory( string $directory ): void {
+		$index = trailingslashit( $directory ) . 'index.php';
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_is_readable
+		if ( ! file_exists( $index ) ) {
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
+			file_put_contents( $index, "<?php\n// Silence is golden." . PHP_EOL );
+		}
+
+		$htaccess = trailingslashit( $directory ) . '.htaccess';
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_is_readable
+		if ( ! file_exists( $htaccess ) ) {
+			$rules = "<IfModule mod_authz_core.c>\nRequire all denied\n</IfModule>\n<IfModule !mod_authz_core.c>\nOrder deny,allow\nDeny from all\n</IfModule>\n";
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
+			file_put_contents( $htaccess, $rules );
+		}
 	}
 
 	/**
@@ -366,8 +410,13 @@ class Logger {
 		$kept   = array();
 
 		foreach ( $lines as $line ) {
-			$data      = json_decode( $line, true );
-			$timestamp = is_array( $data ) && isset( $data['timestamp'] ) ? strtotime( (string) $data['timestamp'] ) : false;
+			$data = json_decode( $line, true );
+			// Skip any non-JSON line (e.g. the PHP access guard); it is
+			// re-added below so the rewritten file stays protected.
+			if ( ! is_array( $data ) ) {
+				continue;
+			}
+			$timestamp = isset( $data['timestamp'] ) ? strtotime( (string) $data['timestamp'] ) : false;
 			if ( false === $timestamp || $timestamp >= $cutoff ) {
 				$kept[] = $line;
 			}
@@ -383,8 +432,13 @@ class Logger {
 			$line_count = count( $kept );
 		}
 
+		$contents = self::FILE_GUARD . PHP_EOL;
+		if ( ! empty( $kept ) ) {
+			$contents .= implode( PHP_EOL, $kept ) . PHP_EOL;
+		}
+
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
-		file_put_contents( $path, empty( $kept ) ? '' : implode( PHP_EOL, $kept ) . PHP_EOL, LOCK_EX );
+		file_put_contents( $path, $contents, LOCK_EX );
 	}
 
 	/**

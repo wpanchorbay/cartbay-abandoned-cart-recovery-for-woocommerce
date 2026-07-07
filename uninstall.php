@@ -209,8 +209,10 @@ function cartbay_uninstall_delete_file_logs(): void {
 	}
 
 	$files = array(
+		trailingslashit( $base_dir ) . 'cartbay/cartbay.log.php',
 		trailingslashit( $base_dir ) . 'cartbay/cartbay.log',
 		trailingslashit( $base_dir ) . 'cartbay/index.php',
+		trailingslashit( $base_dir ) . 'cartbay/.htaccess',
 	);
 
 	foreach ( $files as $file ) {
