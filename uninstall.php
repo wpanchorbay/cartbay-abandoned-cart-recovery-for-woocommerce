@@ -47,12 +47,12 @@ cartbay_uninstall_remove_capabilities();
 $cartbay_settings = get_option( 'cartbay_settings', array() );
 $cartbay_settings = is_array( $cartbay_settings ) ? $cartbay_settings : array();
 
-$remove_data_on_uninstall = $cartbay_settings['remove_data_on_uninstall'] ?? false;
-if ( is_string( $remove_data_on_uninstall ) ) {
-	$remove_data_on_uninstall = in_array( strtolower( trim( $remove_data_on_uninstall ) ), array( '1', 'true', 'yes', 'on' ), true );
+$cartbay_remove_data_on_uninstall = $cartbay_settings['remove_data_on_uninstall'] ?? false;
+if ( is_string( $cartbay_remove_data_on_uninstall ) ) {
+	$cartbay_remove_data_on_uninstall = in_array( strtolower( trim( $cartbay_remove_data_on_uninstall ) ), array( '1', 'true', 'yes', 'on' ), true );
 }
 
-if ( ! $remove_data_on_uninstall ) {
+if ( ! $cartbay_remove_data_on_uninstall ) {
 	return;
 }
 
