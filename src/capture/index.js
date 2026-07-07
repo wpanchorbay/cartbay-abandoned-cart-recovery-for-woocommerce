@@ -85,6 +85,13 @@
 	}
 
 	/**
+	 * Get the REST nonce localized alongside the capture endpoint.
+	 */
+	function getNonce() {
+		return cartbayCapture.nonce ? cartbayCapture.nonce : '';
+	}
+
+	/**
 	 * Get the current billing email value.
 	 */
 	function getEmail() {
@@ -163,7 +170,10 @@
 
 		fetch(cartbayCapture.endpoint, {
 			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
+			headers: {
+				'Content-Type': 'application/json',
+				'X-WP-Nonce': getNonce(),
+			},
 			credentials: 'same-origin',
 			body: JSON.stringify(data),
 		}).then(function (response) {
@@ -207,7 +217,10 @@
 
 		fetch(cartbayCapture.endpoint, {
 			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
+			headers: {
+				'Content-Type': 'application/json',
+				'X-WP-Nonce': getNonce(),
+			},
 			credentials: 'same-origin',
 			body: JSON.stringify(data),
 		}).catch(function () {

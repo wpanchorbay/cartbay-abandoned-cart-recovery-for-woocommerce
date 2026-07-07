@@ -59,7 +59,7 @@ class CaptureRoute {
 			array(
 				'methods'             => WP_REST_Server::CREATABLE,
 				'callback'            => array( $this, 'handle' ),
-				'permission_callback' => '__return_true',
+				'permission_callback' => array( $this, 'check_permission' ),
 				'args'                => array(
 					'email'      => array(
 						'required'          => false,
@@ -89,6 +89,41 @@ class CaptureRoute {
 				),
 			)
 		);
+	}
+
+	/**
+	 * Authorize the capture request.
+	 *
+	 * The capture endpoint is intentionally reachable by unauthenticated
+	 * storefront shoppers (there is no logged-in user during guest checkout), so
+	 * it cannot gate on a capability. Instead it verifies the WordPress REST
+	 * nonce that is printed into the checkout page and sent back with the
+	 * request, which proves the caller actually loaded a CartBay checkout page
+	 * rather than hitting the endpoint blind from off-site. This is combined with
+	 * the per-IP rate limiter, the explicit consent requirement, and (for
+	 * deletion) proof-of-ownership by matching email in the handler below.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param WP_REST_Request $request Full request data.
+	 *
+	 * @return true|WP_Error True when the request carries a valid nonce.
+	 */
+	public function check_permission( WP_REST_Request $request ) {
+		$nonce = $request->get_header( 'X-WP-Nonce' );
+		if ( empty( $nonce ) ) {
+			$nonce = $request->get_param( '_wpnonce' );
+		}
+
+		if ( ! is_string( $nonce ) || ! wp_verify_nonce( $nonce, 'wp_rest' ) ) {
+			return new WP_Error(
+				'cartbay_invalid_nonce',
+				__( 'Invalid or expired request. Please reload the checkout page and try again.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+				array( 'status' => 403 )
+			);
+		}
+
+		return true;
 	}
 
 	/**

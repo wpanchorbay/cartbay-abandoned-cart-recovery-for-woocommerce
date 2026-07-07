@@ -115,6 +115,16 @@ import apiFetch from '@wordpress/api-fetch';
 	}
 
 	/**
+	 * Get the REST nonce localized alongside the capture endpoint.
+	 */
+	function getNonce() {
+		if (typeof cartbayCapture !== 'undefined' && cartbayCapture.nonce) {
+			return cartbayCapture.nonce;
+		}
+		return '';
+	}
+
+	/**
 	 * Get stored session ID from sessionStorage.
 	 */
 	function getStoredSessionId() {
@@ -186,6 +196,7 @@ import apiFetch from '@wordpress/api-fetch';
 			return apiFetch({
 				url: getEndpoint(),
 				method: 'POST',
+				headers: { 'X-WP-Nonce': getNonce() },
 				data: {
 					email: email,
 					consent: true,
@@ -228,6 +239,7 @@ import apiFetch from '@wordpress/api-fetch';
 		apiFetch({
 			url: getEndpoint(),
 			method: 'POST',
+			headers: { 'X-WP-Nonce': getNonce() },
 			data: {
 				email: captureEmail,
 				consent: false,

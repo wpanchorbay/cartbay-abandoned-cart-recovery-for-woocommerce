@@ -267,7 +267,6 @@ class Plugin {
 		$this->settings_page()->register_hooks();
 		add_action( 'wp_mail_failed', array( $this, 'handle_wp_mail_failed' ) );
 		add_action( 'wp_mail_succeeded', array( $this, 'handle_wp_mail_succeeded' ) );
-		add_action( 'cartbay_mark_notification_delivered', array( $this, 'handle_notification_delivered' ), 10, 3 );
 		add_action( 'cartbay_detect_abandonment', array( $this->abandonment_scheduler(), 'run' ) );
 		add_action( 'cartbay_detect_session_abandonment', array( $this->abandonment_scheduler(), 'run_for_session' ) );
 		add_action( 'cartbay_send_recovery_email', array( $this->email_sequence_service(), 'send_step' ), 10, 2 );
@@ -538,6 +537,7 @@ class Plugin {
 			'cartbayCapture',
 			array(
 				'endpoint'         => rest_url( 'cartbay/v1/capture' ),
+				'nonce'            => wp_create_nonce( 'wp_rest' ),
 				'cart'             => $this->get_localized_cart_data(),
 				'restored_session' => $this->has_restored_session_identity(),
 				'settings'         => array(
@@ -575,6 +575,7 @@ class Plugin {
 			'cartbayCapture',
 			array(
 				'endpoint'         => rest_url( 'cartbay/v1/capture' ),
+				'nonce'            => wp_create_nonce( 'wp_rest' ),
 				'cart'             => $this->get_localized_cart_data(),
 				'restored_session' => $this->has_restored_session_identity(),
 				'settings'         => array(
@@ -775,21 +776,6 @@ class Plugin {
 		}
 
 		$this->notification_service()->mark_sent( absint( $notification_ctx['session_id'] ?? 0 ), $notification_id );
-	}
-
-	/**
-	 * Allow external providers to mark a notification as delivered.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param string $notification_id Notification identifier.
-	 * @param int    $session_id      Session order ID.
-	 * @param string $provider        Provider slug.
-	 *
-	 * @return void
-	 */
-	public function handle_notification_delivered( string $notification_id, int $session_id, string $provider = '' ): void {
-		$this->notification_service()->mark_delivered( $session_id, $notification_id, $provider );
 	}
 
 	/**
