@@ -104,6 +104,13 @@ async function copy_if_exists(src, dest) {
 		await copy_if_exists(path.join(ROOT_DIR, 'languages'), path.join(STAGE_DIR, 'languages'));
 		await copy_if_exists(path.join(ROOT_DIR, 'templates'), path.join(STAGE_DIR, 'templates'));
 
+		// Ship the un-minified JavaScript sources and the build tooling so the
+		// compiled assets in assets/js remain fully reproducible and reviewable,
+		// as required by WordPress.org guidelines 1 & 4.
+		await copy_if_exists(path.join(ROOT_DIR, 'src'), path.join(STAGE_DIR, 'src'));
+		await copy_if_exists(path.join(ROOT_DIR, 'package.json'), path.join(STAGE_DIR, 'package.json'));
+		await copy_if_exists(path.join(ROOT_DIR, 'webpack.config.js'), path.join(STAGE_DIR, 'webpack.config.js'));
+
 		await copy_if_exists(path.join(ROOT_DIR, `${PLUGIN_SLUG}.php`), path.join(STAGE_DIR, `${PLUGIN_SLUG}.php`));
 		await copy_if_exists(path.join(ROOT_DIR, 'uninstall.php'), path.join(STAGE_DIR, 'uninstall.php'));
 		await copy_if_exists(path.join(ROOT_DIR, 'readme.txt'), path.join(STAGE_DIR, 'readme.txt'));
