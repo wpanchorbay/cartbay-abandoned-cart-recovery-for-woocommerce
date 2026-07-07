@@ -627,7 +627,7 @@ JS;
 
 		$settings              = get_option( 'cartbay_settings', array() );
 		$settings              = is_array( $settings ) ? $settings : array();
-		$settings['test_mode'] = false;
+		$settings['test_mode'] = 'no';
 		update_option( 'cartbay_settings', $settings );
 
 		$this->url->redirect_with_notice( 'success', __( 'Test mode disabled.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) );
@@ -649,7 +649,7 @@ JS;
 
 		$settings              = get_option( 'cartbay_settings', array() );
 		$settings              = is_array( $settings ) ? $settings : array();
-		$settings['test_mode'] = true;
+		$settings['test_mode'] = 'yes';
 		update_option( 'cartbay_settings', $settings );
 
 		$redirect_url = add_query_arg(
@@ -673,8 +673,6 @@ JS;
 	 * @return void
 	 */
 	public function render_wc_settings_context_notices(): void {
-		$settings = get_option( 'cartbay_settings', array() );
-
 		if ( ! Settings::is_capture_enabled() ) {
 			$capture_url = $this->url->section( 'capture' );
 			$this->render_wc_settings_inline_notice(
@@ -687,7 +685,7 @@ JS;
 			);
 		}
 
-		if ( ! empty( $settings['test_mode'] ) ) {
+		if ( Settings::is_test_mode_enabled() ) {
 			$disable_url = wp_nonce_url( admin_url( 'admin-post.php?action=cartbay_disable_test_mode' ), 'cartbay_disable_test_mode', 'cartbay_nonce' );
 			$this->render_wc_settings_inline_notice(
 				'warning',
@@ -764,8 +762,7 @@ JS;
 			return;
 		}
 
-		$settings = get_option( 'cartbay_settings', array() );
-		if ( empty( $settings['test_mode'] ) ) {
+		if ( ! Settings::is_test_mode_enabled() ) {
 			return;
 		}
 

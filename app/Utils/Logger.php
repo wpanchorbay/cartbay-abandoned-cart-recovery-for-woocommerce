@@ -398,7 +398,25 @@ class Logger {
 		$settings = get_option( 'cartbay_settings', array() );
 		$settings = is_array( $settings ) ? $settings : array();
 
-		return ! array_key_exists( 'log_enabled', $settings ) || ! empty( $settings['log_enabled'] );
+		if ( ! array_key_exists( 'log_enabled', $settings ) ) {
+			return true;
+		}
+
+		$value = $settings['log_enabled'];
+
+		if ( is_bool( $value ) ) {
+			return $value;
+		}
+
+		if ( is_numeric( $value ) ) {
+			return 1 === absint( $value );
+		}
+
+		if ( is_string( $value ) ) {
+			return in_array( strtolower( trim( $value ) ), array( '1', 'true', 'yes', 'on' ), true );
+		}
+
+		return false;
 	}
 
 	/**

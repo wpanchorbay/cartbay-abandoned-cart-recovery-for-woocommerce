@@ -139,7 +139,7 @@ class LogsSection extends AbstractSettingsSection {
 		$settings           = get_option( 'cartbay_settings', array() );
 		$settings           = is_array( $settings ) ? $settings : array();
 
-		$settings['log_enabled'] = ( 'yes' === $posted_log_enabled );
+		$settings['log_enabled'] = $posted_log_enabled;
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce handled by Woo settings save.
 		$settings['log_retention_days'] = isset( $_POST['cartbay_settings']['log_retention_days'] ) ? max( 1, min( 30, absint( wp_unslash( $_POST['cartbay_settings']['log_retention_days'] ) ) ) ) : 7;
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce handled by Woo settings save.

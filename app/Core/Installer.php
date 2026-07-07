@@ -33,6 +33,9 @@ class Installer {
 		self::maybe_upgrade_template_content();
 		self::maybe_upgrade_capture_setting();
 		self::maybe_upgrade_wc_menu_setting();
+		self::maybe_upgrade_test_mode_setting();
+		self::maybe_upgrade_remove_data_on_uninstall_setting();
+		self::maybe_upgrade_log_enabled_setting();
 		self::schedule_recurring_jobs();
 	}
 
@@ -86,9 +89,9 @@ class Installer {
 				'consent_text'             => __( 'Save my email to recover my cart if I leave.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 				'consent_default_state'    => 'checked',
 				'static_coupon_code'       => '',
-				'remove_data_on_uninstall' => false,
+				'remove_data_on_uninstall' => 'no',
 				'wc_menu_enabled'          => 'yes',
-				'log_enabled'              => true,
+				'log_enabled'              => 'yes',
 				'log_retention_days'       => 7,
 				'log_max_size_mb'          => 5,
 			)
@@ -350,6 +353,75 @@ class Installer {
 
 		if ( is_bool( $settings['wc_menu_enabled'] ) ) {
 			$settings['wc_menu_enabled'] = $settings['wc_menu_enabled'] ? 'yes' : 'no';
+			update_option( 'cartbay_settings', $settings );
+		}
+	}
+
+	/**
+	 * Migrate boolean test_mode values to WC-compatible strings.
+	 *
+	 * The same stripslashes() coercion that affects capture_enabled also
+	 * affects test_mode when stored as a PHP boolean. This migration
+	 * converts existing boolean values to 'yes'/'no' strings.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return void
+	 */
+	private static function maybe_upgrade_test_mode_setting(): void {
+		$settings = get_option( 'cartbay_settings', array() );
+		if ( ! is_array( $settings ) || ! array_key_exists( 'test_mode', $settings ) ) {
+			return;
+		}
+
+		if ( is_bool( $settings['test_mode'] ) ) {
+			$settings['test_mode'] = $settings['test_mode'] ? 'yes' : 'no';
+			update_option( 'cartbay_settings', $settings );
+		}
+	}
+
+	/**
+	 * Migrate boolean remove_data_on_uninstall values to WC-compatible strings.
+	 *
+	 * The same stripslashes() coercion that affects capture_enabled also
+	 * affects remove_data_on_uninstall when stored as a PHP boolean. This
+	 * migration converts existing boolean values to 'yes'/'no' strings.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return void
+	 */
+	private static function maybe_upgrade_remove_data_on_uninstall_setting(): void {
+		$settings = get_option( 'cartbay_settings', array() );
+		if ( ! is_array( $settings ) || ! array_key_exists( 'remove_data_on_uninstall', $settings ) ) {
+			return;
+		}
+
+		if ( is_bool( $settings['remove_data_on_uninstall'] ) ) {
+			$settings['remove_data_on_uninstall'] = $settings['remove_data_on_uninstall'] ? 'yes' : 'no';
+			update_option( 'cartbay_settings', $settings );
+		}
+	}
+
+	/**
+	 * Migrate boolean log_enabled values to WC-compatible strings.
+	 *
+	 * The same stripslashes() coercion that affects capture_enabled also
+	 * affects log_enabled when stored as a PHP boolean. This migration
+	 * converts existing boolean values to 'yes'/'no' strings.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return void
+	 */
+	private static function maybe_upgrade_log_enabled_setting(): void {
+		$settings = get_option( 'cartbay_settings', array() );
+		if ( ! is_array( $settings ) || ! array_key_exists( 'log_enabled', $settings ) ) {
+			return;
+		}
+
+		if ( is_bool( $settings['log_enabled'] ) ) {
+			$settings['log_enabled'] = $settings['log_enabled'] ? 'yes' : 'no';
 			update_option( 'cartbay_settings', $settings );
 		}
 	}
