@@ -52,7 +52,7 @@ abstract class AbstractSettingsSection implements SettingsSectionInterface {
 	 * @param string $label      Metric label.
 	 * @param string $value      Metric value.
 	 * @param string $tooltip    Tooltip text.
-	 * @param bool   $allow_html Whether the value contains safe HTML.
+	 * @param bool   $allow_html When true the value may contain HTML and is sanitized with wp_kses_post at output; otherwise it is escaped with esc_html.
 	 * @param string $class_name Extra CSS classes for the card.
 	 *
 	 * @return void
@@ -67,7 +67,7 @@ abstract class AbstractSettingsSection implements SettingsSectionInterface {
 			echo '<span class="cartbay-metric-card__help">' . wp_kses_post( wc_help_tip( $tooltip, false ) ) . '</span>';
 		}
 
-		echo '<div class="cartbay-metric-card__value">' . ( $allow_html ? $value : esc_html( $value ) ) . '</div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		echo '<div class="cartbay-metric-card__value">' . ( $allow_html ? wp_kses_post( $value ) : esc_html( $value ) ) . '</div>';
 		echo '<div class="cartbay-metric-card__label">' . esc_html( $label ) . '</div>';
 		echo '</div>';
 	}
