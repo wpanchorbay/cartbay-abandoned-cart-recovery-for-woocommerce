@@ -76,6 +76,7 @@ cache/
 # Dot prefixed — managed by config-assets branch
 # Config assets overlay (never tracked on main)
 .agents/
+.claude/
 .codex/
 .gemini/
 .github/
