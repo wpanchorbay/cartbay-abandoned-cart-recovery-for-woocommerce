@@ -80,6 +80,24 @@ CartBay hands recovery emails to WordPress and WooCommerce for delivery — it d
 
 When a shopper gives consent at checkout, CartBay stores the email address, cart snapshot, checkout source, timestamps, notification history, and recovery metadata in WooCommerce-native order records. This data stays on your WordPress site unless your mail provider processes outgoing recovery emails.
 
+== Source Code ==
+
+CartBay is fully open source under GPL-2.0-or-later, with no minified or obfuscated code that lacks a readable source.
+
+The plugin's JavaScript is authored in an un-minified, human-readable form and compiled with the official WordPress build tooling (@wordpress/scripts, which uses webpack):
+
+* Sources (shipped in the plugin package): `src/capture/index.js` (classic checkout capture) and `src/block/index.js` (block checkout capture).
+* Compiled output: `assets/js/cartbay-capture.js` and `assets/js/cartbay-block.js`.
+* Build configuration: `package.json` and `webpack.config.js` (also shipped in the package).
+
+To rebuild the compiled assets from source, run `npm install` and then `npm run build`.
+
+The complete source code and build tooling are included in the plugin package and are also maintained publicly at https://github.com/wpanchorbay/cartbay-abandoned-cart-recovery-for-woocommerce
+
+== CartBay Pro ==
+
+CartBay is fully functional on its own. A separately distributed premium add-on, CartBay Pro, adds features that are not required for basic cart recovery — automatically generated single-use coupons that auto-apply when a cart is restored, plus extended analytics and notification reporting. CartBay Pro is not hosted on WordPress.org and is not required to use CartBay.
+
 == Changelog ==
 
 = 1.0.0 =
