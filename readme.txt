@@ -82,21 +82,17 @@ When a shopper gives consent at checkout, CartBay stores the email address, cart
 
 == Source Code ==
 
-CartBay is fully open source under GPL-2.0-or-later, with no minified or obfuscated code that lacks a readable source.
+CartBay is fully open source under GPL-2.0-or-later and contains no obfuscated code. The plugin's JavaScript is written in an un-minified, human-readable form and is **included in this package** under the `src/` directory:
 
-The plugin's JavaScript is authored in an un-minified, human-readable form and compiled with the official WordPress build tooling (@wordpress/scripts, which uses webpack):
+* `src/capture/index.js` — classic checkout capture (compiled to `assets/js/cartbay-capture.js`).
+* `src/block/index.js` — block checkout capture (compiled to `assets/js/cartbay-block.js`).
 
-* Sources (shipped in the plugin package): `src/capture/index.js` (classic checkout capture) and `src/block/index.js` (block checkout capture).
-* Compiled output: `assets/js/cartbay-capture.js` and `assets/js/cartbay-block.js`.
-* Build configuration: `package.json` and `webpack.config.js` (also shipped in the package).
+The compiled files in `assets/js/` are generated from these sources with the official WordPress build tooling (@wordpress/scripts, which uses webpack). The build tooling and configuration are also included in this package as `package.json` and `webpack.config.js`.
 
-To rebuild the compiled assets from source, run `npm install` and then `npm run build`.
+To regenerate the compiled assets from source, run these commands in the plugin directory:
 
-The complete source code and build tooling are included in the plugin package and are also maintained publicly at https://github.com/wpanchorbay/cartbay-abandoned-cart-recovery-for-woocommerce
-
-== CartBay Pro ==
-
-CartBay is fully functional on its own. A separately distributed premium add-on, CartBay Pro, adds features that are not required for basic cart recovery — automatically generated single-use coupons that auto-apply when a cart is restored, plus extended analytics and notification reporting. CartBay Pro is not hosted on WordPress.org and is not required to use CartBay.
+`npm install`
+`npm run build`
 
 == Changelog ==
 
