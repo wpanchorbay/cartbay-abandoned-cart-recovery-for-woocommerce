@@ -25,7 +25,7 @@
 		cartbayCapture.settings &&
 		cartbayCapture.settings.consent_default_state
 			? cartbayCapture.settings.consent_default_state
-			: 'checked';
+			: 'unchecked';
 
 	var lastCapturedEmail = '';
 	var captureInFlight = false;

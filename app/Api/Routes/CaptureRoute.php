@@ -59,7 +59,20 @@ class CaptureRoute {
 			array(
 				'methods'             => WP_REST_Server::CREATABLE,
 				'callback'            => array( $this, 'handle' ),
-				'permission_callback' => array( $this, 'check_permission' ),
+				// Intentionally public. This endpoint lets an anonymous guest opt
+				// their OWN checkout cart into recovery emails during guest
+				// checkout, where there is no logged-in user to authorize — the
+				// same model as the WooCommerce Store API cart routes, which are
+				// also public. It is therefore not gated by a capability or a
+				// nonce (a REST nonce is not meaningful authorization for a
+				// logged-out shopper). Instead the endpoint protects the DATA:
+				// creating a session requires a genuine server-side WooCommerce
+				// cart (the client-supplied cart is not trusted, so a request
+				// carrying no active cart cannot enroll anything) plus explicit
+				// consent and a valid email; updating or deleting a session
+				// additionally requires proof of email ownership; and every
+				// request is per-IP rate limited. See handle() and CaptureService.
+				'permission_callback' => '__return_true',
 				'args'                => array(
 					'email'      => array(
 						'required'          => false,
@@ -92,38 +105,28 @@ class CaptureRoute {
 	}
 
 	/**
-	 * Authorize the capture request.
+	 * Verify the request originated from a CartBay storefront page (CSRF guard).
 	 *
-	 * The capture endpoint is intentionally reachable by unauthenticated
-	 * storefront shoppers (there is no logged-in user during guest checkout), so
-	 * it cannot gate on a capability. Instead it verifies the WordPress REST
-	 * nonce that is printed into the checkout page and sent back with the
-	 * request, which proves the caller actually loaded a CartBay checkout page
-	 * rather than hitting the endpoint blind from off-site. This is combined with
-	 * the per-IP rate limiter, the explicit consent requirement, and (for
-	 * deletion) proof-of-ownership by matching email in the handler below.
+	 * This is defense-in-depth, NOT authorization: the endpoint is public by
+	 * design (guest checkout). A wp_rest nonce is printed onto the checkout page
+	 * and sent back with the request; verifying it blunts blind off-site POSTs
+	 * without pretending to authenticate the shopper. The meaningful protection
+	 * is in the handler and capture service (consent, server-side cart,
+	 * email-ownership for mutations, rate limiting).
 	 *
 	 * @since 1.0.0
 	 *
 	 * @param WP_REST_Request $request Full request data.
 	 *
-	 * @return true|WP_Error True when the request carries a valid nonce.
+	 * @return bool True when the request carries a valid same-origin nonce.
 	 */
-	public function check_permission( WP_REST_Request $request ) {
+	private function has_valid_origin( WP_REST_Request $request ): bool {
 		$nonce = $request->get_header( 'X-WP-Nonce' );
 		if ( empty( $nonce ) ) {
 			$nonce = $request->get_param( '_wpnonce' );
 		}
 
-		if ( ! is_string( $nonce ) || ! wp_verify_nonce( $nonce, 'wp_rest' ) ) {
-			return new WP_Error(
-				'cartbay_invalid_nonce',
-				__( 'Invalid or expired request. Please reload the checkout page and try again.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
-				array( 'status' => 403 )
-			);
-		}
-
-		return true;
+		return is_string( $nonce ) && (bool) wp_verify_nonce( $nonce, 'wp_rest' );
 	}
 
 	/**
@@ -136,6 +139,15 @@ class CaptureRoute {
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function handle( WP_REST_Request $request ): WP_REST_Response|WP_Error {
+		// CSRF/origin guard (defense-in-depth for this public endpoint).
+		if ( ! $this->has_valid_origin( $request ) ) {
+			return new WP_Error(
+				'cartbay_invalid_origin',
+				__( 'Invalid or expired request. Please reload the checkout page and try again.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+				array( 'status' => 403 )
+			);
+		}
+
 		// Rate limit check.
 		if ( ! RateLimiter::check( 'capture' ) ) {
 			Logger::warning( 'Capture API rate limit exceeded.', array( 'endpoint' => 'capture' ), 'capture' );

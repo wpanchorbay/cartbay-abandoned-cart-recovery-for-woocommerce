@@ -279,18 +279,14 @@ class RecoveryMatcher {
 	 * @return void
 	 */
 	private function cancel_pending_email_jobs( int $session_id ): void {
-		global $wpdb;
+		if ( ! function_exists( 'as_unschedule_all_actions' ) ) {
+			return;
+		}
 
-		$pattern = '%' . $wpdb->esc_like( '[' . $session_id . ',' ) . '%';
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		$wpdb->query(
-			$wpdb->prepare(
-				"UPDATE {$wpdb->prefix}actionscheduler_actions SET status = %s WHERE hook = %s AND status = %s AND args LIKE %s",
-				'canceled',
-				'cartbay_send_recovery_email',
-				'pending',
-				$pattern
-			)
-		);
+		// Recovery emails are scheduled per step with args [session_id, step_index]
+		// for the three recovery emails; cancel each pending step via the API.
+		for ( $step = 0; $step < 3; $step++ ) {
+			as_unschedule_all_actions( 'cartbay_send_recovery_email', array( $session_id, $step ), 'cartbay' );
+		}
 	}
 }

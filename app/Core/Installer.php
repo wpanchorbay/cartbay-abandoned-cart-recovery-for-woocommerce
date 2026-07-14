@@ -29,6 +29,30 @@ class Installer {
 	 * @return void
 	 */
 	public static function maybe_schedule_recurring_jobs(): void {
+		self::maybe_run_migrations();
+		self::schedule_recurring_jobs();
+	}
+
+	/**
+	 * Run one-time data migrations, gated by the stored schema version.
+	 *
+	 * This runs on `init` on every request, so the migration routines — some of
+	 * which query the database (e.g. get_posts for template backfill) — are
+	 * gated behind a stored version so they execute at most once per plugin
+	 * version instead of on every page load.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return void
+	 */
+	private static function maybe_run_migrations(): void {
+		$code_version = defined( 'CARTBAY_VERSION' ) ? (string) CARTBAY_VERSION : '';
+		$db_version   = (string) get_option( 'cartbay_db_version', '' );
+
+		if ( '' !== $code_version && '' !== $db_version && version_compare( $db_version, $code_version, '>=' ) ) {
+			return;
+		}
+
 		self::maybe_upgrade_campaign_settings();
 		self::maybe_upgrade_template_content();
 		self::maybe_upgrade_capture_setting();
@@ -36,7 +60,10 @@ class Installer {
 		self::maybe_upgrade_test_mode_setting();
 		self::maybe_upgrade_remove_data_on_uninstall_setting();
 		self::maybe_upgrade_log_enabled_setting();
-		self::schedule_recurring_jobs();
+
+		if ( '' !== $code_version ) {
+			update_option( 'cartbay_db_version', $code_version, false );
+		}
 	}
 
 	/**
@@ -87,13 +114,12 @@ class Installer {
 				'data_retention_days'      => 30,
 				'capture_enabled'          => 'yes',
 				'consent_text'             => __( 'Save my email to recover my cart if I leave.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
-				'consent_default_state'    => 'checked',
+				'consent_default_state'    => 'unchecked',
 				'static_coupon_code'       => '',
 				'remove_data_on_uninstall' => 'no',
 				'wc_menu_enabled'          => 'yes',
 				'log_enabled'              => 'yes',
 				'log_retention_days'       => 7,
-				'log_max_size_mb'          => 5,
 			)
 		);
 

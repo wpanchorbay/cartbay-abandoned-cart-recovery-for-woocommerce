@@ -1,11 +1,11 @@
 === CartBay — Abandoned Cart Recovery for WooCommerce ===
 Contributors: wpanchorbay, forhadkhan
-Tags: abandoned cart, cart recovery, woocommerce, boost sales, cart abandonment
+Tags: abandoned cart, cart recovery, cart abandonment, boost sales, email reminder
 Requires at least: 6.9
 Tested up to: 7.0
 Requires PHP: 8.2
 WC requires at least: 10.7
-WC tested up to: 10.7
+WC tested up to: 10.8
 Stable tag: 1.0.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html

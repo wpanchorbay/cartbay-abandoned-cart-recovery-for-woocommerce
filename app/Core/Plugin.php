@@ -30,6 +30,7 @@ use WPAnchorBay\CartBay\Recovery\NotificationService;
 use WPAnchorBay\CartBay\Recovery\RecoveryMatcher;
 use WPAnchorBay\CartBay\Recovery\RestoreService;
 use WPAnchorBay\CartBay\Utils\Logger;
+use WPAnchorBay\CartBay\Utils\RateLimiter;
 use WPAnchorBay\CartBay\Utils\TokenHelper;
 use WPAnchorBay\CartBay\Admin\Wizard;
 
@@ -259,11 +260,16 @@ class Plugin {
 		add_action( 'init', array( $this, 'register_order_statuses' ) );
 		add_filter( 'woocommerce_register_shop_order_statuses', array( $this, 'add_wc_order_statuses' ) );
 		add_filter( 'wc_order_statuses', array( $this, 'add_wc_order_statuses' ) );
+		// Keep CartBay session records out of the merchant's real order reporting
+		// surfaces: they are recovery-tracking rows, not purchases.
+		add_filter( 'woocommerce_analytics_excluded_order_statuses', array( $this, 'exclude_sessions_from_analytics' ) );
+		add_filter( 'woocommerce_rest_orders_prepare_object_query', array( $this, 'exclude_sessions_from_rest_orders' ), 10, 2 );
 		add_action( 'init', array( $this, 'register_cpts' ) );
 		add_action( 'init', array( Installer::class, 'maybe_schedule_recurring_jobs' ), 20 );
 		add_action( 'action_scheduler_init', array( Installer::class, 'maybe_schedule_recurring_jobs' ) );
 		add_action( 'admin_menu', array( $this, 'register_admin_menu' ) );
 		add_filter( 'plugin_action_links_' . CARTBAY_BASENAME, array( $this, 'add_plugin_action_links' ) );
+		( new Privacy() )->register_hooks();
 		$this->settings_page()->register_hooks();
 		add_action( 'wp_mail_failed', array( $this, 'handle_wp_mail_failed' ) );
 		add_action( 'wp_mail_succeeded', array( $this, 'handle_wp_mail_succeeded' ) );
@@ -440,6 +446,73 @@ class Plugin {
 	}
 
 	/**
+	 * The CartBay session order statuses, with the wc- prefix.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array<int, string> Prefixed status slugs.
+	 */
+	private function get_session_statuses(): array {
+		return array_keys( $this->get_order_status_labels() );
+	}
+
+	/**
+	 * Exclude CartBay session statuses from WooCommerce Analytics reports.
+	 *
+	 * CartBay stores each abandoned-cart session as a WooCommerce order with a
+	 * custom status. Those are recovery-tracking records, not sales, so they are
+	 * excluded from Analytics revenue/order reporting. WooCommerce compares the
+	 * un-prefixed status, so the wc- prefix is stripped here.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array<int, string> $statuses Excluded statuses (un-prefixed).
+	 *
+	 * @return array<int, string> Statuses with CartBay sessions appended.
+	 */
+	public function exclude_sessions_from_analytics( array $statuses ): array {
+		foreach ( $this->get_session_statuses() as $status ) {
+			$statuses[] = str_replace( 'wc-', '', $status );
+		}
+
+		return array_values( array_unique( $statuses ) );
+	}
+
+	/**
+	 * Keep CartBay session records out of the default WooCommerce orders REST feed.
+	 *
+	 * When a REST orders request does not ask for a specific status (the default
+	 * is `any`, which would include CartBay's private session statuses), restrict
+	 * the query to the real WooCommerce order statuses so integrations reading
+	 * /wc/v3/orders do not see recovery-tracking records as orders. Explicit
+	 * status requests are left untouched.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array<string, mixed> $args    Query args passed to the order query.
+	 * @param \WP_REST_Request     $request REST request.
+	 *
+	 * @return array<string, mixed> Adjusted query args.
+	 */
+	public function exclude_sessions_from_rest_orders( array $args, $request ): array {
+		unset( $request );
+
+		if ( ! isset( $args['post_status'] ) || 'any' !== $args['post_status'] ) {
+			return $args;
+		}
+
+		$sessions            = $this->get_session_statuses();
+		$args['post_status'] = array_values(
+			array_filter(
+				array_keys( wc_get_order_statuses() ),
+				static fn ( string $status ): bool => ! in_array( $status, $sessions, true )
+			)
+		);
+
+		return $args;
+	}
+
+	/**
 	 * Get CartBay status labels keyed by slug.
 	 *
 	 * @since 1.0.0
@@ -542,7 +615,7 @@ class Plugin {
 				'restored_session' => $this->has_restored_session_identity(),
 				'settings'         => array(
 					'consent_text'          => isset( $settings['consent_text'] ) ? esc_html( $settings['consent_text'] ) : '',
-					'consent_default_state' => isset( $settings['consent_default_state'] ) ? sanitize_key( $settings['consent_default_state'] ) : 'checked',
+					'consent_default_state' => isset( $settings['consent_default_state'] ) ? sanitize_key( $settings['consent_default_state'] ) : 'unchecked',
 				),
 			)
 		);
@@ -580,7 +653,7 @@ class Plugin {
 				'restored_session' => $this->has_restored_session_identity(),
 				'settings'         => array(
 					'consent_text'          => isset( $settings['consent_text'] ) ? esc_html( $settings['consent_text'] ) : '',
-					'consent_default_state' => isset( $settings['consent_default_state'] ) ? sanitize_key( $settings['consent_default_state'] ) : 'checked',
+					'consent_default_state' => isset( $settings['consent_default_state'] ) ? sanitize_key( $settings['consent_default_state'] ) : 'unchecked',
 				),
 			)
 		);
@@ -919,6 +992,13 @@ class Plugin {
 			return;
 		}
 
+		// Rate limit the public unsubscribe flow before any database work.
+		if ( ! RateLimiter::check( 'unsubscribe' ) ) {
+			Logger::warning( 'Unsubscribe link rate limit exceeded.', array(), 'unsubscribe' );
+			wp_safe_redirect( home_url( '/?cartbay_unsub=rate_limited' ) );
+			exit;
+		}
+
 		$token_hash = TokenHelper::hash( $token );
 		// phpcs:disable WordPress.DB.SlowDBQuery.slow_db_query_meta_key, WordPress.DB.SlowDBQuery.slow_db_query_meta_value -- WC CRUD lookup by CartBay-owned unsubscribe token hash.
 		$sessions = wc_get_orders(
@@ -989,6 +1069,10 @@ class Plugin {
 			wc_add_notice( __( 'Invalid unsubscribe link.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ), 'error' );
 			return;
 		}
+		if ( 'rate_limited' === $unsub ) {
+			wc_add_notice( __( 'Too many unsubscribe attempts. Please wait a moment and try again.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ), 'error' );
+			return;
+		}
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$restore_error = isset( $_GET['cartbay_restore_error'] ) ? sanitize_text_field( wp_unslash( $_GET['cartbay_restore_error'] ) ) : '';
@@ -1043,19 +1127,15 @@ class Plugin {
 	 * @return void
 	 */
 	private function cancel_pending_email_jobs( int $session_id ): void {
-		global $wpdb;
+		if ( ! function_exists( 'as_unschedule_all_actions' ) ) {
+			return;
+		}
 
-		$pattern = '%' . $wpdb->esc_like( '[' . $session_id . ',' ) . '%';
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		$wpdb->query(
-			$wpdb->prepare(
-				"UPDATE {$wpdb->prefix}actionscheduler_actions SET status = %s WHERE hook = %s AND status = %s AND args LIKE %s",
-				'canceled',
-				'cartbay_send_recovery_email',
-				'pending',
-				$pattern
-			)
-		);
+		// Recovery emails are scheduled per step with args [session_id, step_index]
+		// for the three recovery emails; cancel each pending step via the API.
+		for ( $step = 0; $step < 3; $step++ ) {
+			as_unschedule_all_actions( 'cartbay_send_recovery_email', array( $session_id, $step ), 'cartbay' );
+		}
 	}
 
 	/**

@@ -50,7 +50,9 @@ class CaptureService {
 	 * @since 1.0.0
 	 *
 	 * @param string $email      Sanitized, validated email.
-	 * @param array  $cart_data  Cart snapshot: hash, total, currency.
+	 * @param array  $cart_data  Client cart metadata (hash/total/currency) used
+	 *                           only as display fallbacks; the cart items always
+	 *                           come from the server-side WooCommerce cart.
 	 * @param string $source     'classic' or 'block'.
 	 * @param int    $session_id Optional existing session ID for update.
 	 *
@@ -75,11 +77,15 @@ class CaptureService {
 		$retention_days = absint( $settings['data_retention_days'] ?? 30 );
 		$consent_text   = isset( $settings['consent_text'] ) ? sanitize_textarea_field( $settings['consent_text'] ) : '';
 
-		$snapshot = $this->build_server_cart_snapshot();
-		if ( ! $this->snapshot_has_items( $snapshot ) ) {
-			$snapshot = $this->build_client_cart_snapshot( $cart_data );
-		}
+		// Load the shopper's own server-side WooCommerce cart. REST requests do
+		// not boot the cart automatically, so this endpoint must load it
+		// explicitly (mirroring the restore flow) and read the real server cart
+		// rather than trusting a client-supplied payload. Binding capture to the
+		// server cart is what stops a scripted request with no shopping session
+		// from enrolling an arbitrary email into recovery messaging.
+		$this->maybe_load_wc_cart();
 
+		$snapshot         = $this->build_server_cart_snapshot();
 		$cart_fingerprint = $this->build_cart_fingerprint( $snapshot );
 
 		// 3. Find existing session by cart identity, not shopper identity alone.
@@ -100,6 +106,19 @@ class CaptureService {
 				$snapshot         = $existing_snapshot;
 				$cart_fingerprint = $this->build_cart_fingerprint( $snapshot );
 			}
+		}
+
+		// Creating a brand-new session requires a genuine server-side cart. A
+		// request that carries no active WooCommerce cart (e.g. a scripted call
+		// with no shopping session) must not be able to enroll an email address
+		// into recovery messaging. Updates to an already-owned session are
+		// exempt: ownership was proven above and the stored snapshot is reused.
+		if ( ! $existing && ! $this->snapshot_has_items( $snapshot ) ) {
+			return new WP_Error(
+				'no_active_cart',
+				__( 'No active cart to capture.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+				array( 'status' => 400 )
+			);
 		}
 
 		$meta = array(
@@ -232,6 +251,33 @@ class CaptureService {
 	}
 
 	/**
+	 * Ensure the shopper's WooCommerce cart is loaded for the current request.
+	 *
+	 * REST requests do not boot the WooCommerce cart/session automatically, so
+	 * the capture endpoint loads it explicitly (mirroring the restore flow) to
+	 * read the shopper's real server-side cart instead of trusting a client
+	 * payload. A request that carries no shopping session simply yields an empty
+	 * cart, which the caller treats as "nothing to capture".
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return void
+	 */
+	private function maybe_load_wc_cart(): void {
+		if ( ! function_exists( 'WC' ) ) {
+			return;
+		}
+
+		if ( null === WC()->session && function_exists( 'wc_load_cart' ) ) {
+			wc_load_cart();
+		}
+
+		if ( null === WC()->cart && function_exists( 'wc_load_cart' ) ) {
+			wc_load_cart();
+		}
+	}
+
+	/**
 	 * Build a restore-ready cart snapshot from the server-side WooCommerce cart.
 	 *
 	 * @since 1.0.0
@@ -287,60 +333,6 @@ class CaptureService {
 			'grand_total'     => (float) WC()->cart->get_total( 'edit' ),
 			'cart_hash'       => sanitize_text_field( WC()->cart->get_cart_hash() ),
 			'cart_item_count' => absint( WC()->cart->get_cart_contents_count() ),
-			'captured_at'     => time(),
-		);
-	}
-
-	/**
-	 * Build a restore-ready snapshot from sanitized client cart data.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param array<string, mixed> $cart_data Client cart data.
-	 *
-	 * @return array<string, mixed> Sanitized cart snapshot.
-	 */
-	private function build_client_cart_snapshot( array $cart_data ): array {
-		$raw_items = isset( $cart_data['items'] ) && is_array( $cart_data['items'] ) ? $cart_data['items'] : array();
-		$items     = array();
-
-		foreach ( $raw_items as $raw_item ) {
-			if ( ! is_array( $raw_item ) ) {
-				continue;
-			}
-
-			$product_id   = absint( $raw_item['product_id'] ?? $raw_item['id'] ?? 0 );
-			$variation_id = absint( $raw_item['variation_id'] ?? 0 );
-			if ( $product_id <= 0 ) {
-				continue;
-			}
-
-			$product   = wc_get_product( $variation_id > 0 ? $variation_id : $product_id );
-			$parent_id = $product && is_callable( array( $product, 'get_parent_id' ) ) ? absint( call_user_func( array( $product, 'get_parent_id' ) ) ) : 0;
-			if ( $parent_id > 0 && 0 === $variation_id ) {
-				$variation_id = $product->get_id();
-				$product_id   = $parent_id;
-			}
-			$items[] = array(
-				'product_id'     => $product_id,
-				'variation_id'   => $variation_id,
-				'quantity'       => max( 1, absint( $raw_item['quantity'] ?? 1 ) ),
-				'variation'      => isset( $raw_item['variation'] ) && is_array( $raw_item['variation'] ) ? $this->sanitize_snapshot_array( $raw_item['variation'] ) : array(),
-				'cart_item_data' => isset( $raw_item['cart_item_data'] ) && is_array( $raw_item['cart_item_data'] ) ? $this->sanitize_snapshot_array( $raw_item['cart_item_data'] ) : array(),
-				'product_name'   => $product ? sanitize_text_field( $product->get_name() ) : sanitize_text_field( (string) ( $raw_item['product_name'] ?? $raw_item['name'] ?? '' ) ),
-				'permalink'      => $product ? esc_url_raw( $product->get_permalink() ) : '',
-				'image_id'       => $product ? absint( $product->get_image_id() ) : 0,
-				'currency'       => sanitize_text_field( $cart_data['currency'] ?? get_woocommerce_currency() ),
-			);
-		}
-
-		return array(
-			'items'           => $items,
-			'currency'        => sanitize_text_field( $cart_data['currency'] ?? get_woocommerce_currency() ),
-			'applied_coupons' => isset( $cart_data['applied_coupons'] ) && is_array( $cart_data['applied_coupons'] ) ? array_values( array_map( 'sanitize_text_field', $cart_data['applied_coupons'] ) ) : array(),
-			'grand_total'     => floatval( $cart_data['total'] ?? $cart_data['grand_total'] ?? 0 ),
-			'cart_hash'       => sanitize_text_field( $cart_data['hash'] ?? $cart_data['cart_hash'] ?? '' ),
-			'cart_item_count' => absint( $cart_data['cart_item_count'] ?? count( $items ) ),
 			'captured_at'     => time(),
 		);
 	}
@@ -572,21 +564,14 @@ class CaptureService {
 			as_unschedule_all_actions( 'cartbay_detect_session_abandonment', array( $deleted_session_id ), 'cartbay' );
 		}
 
-		// Cancel pending recovery email jobs. Action Scheduler stores
-		// args as [session_id, step_index], so we use a direct DB query
-		// to match all steps for this session (same approach as RecoveryMatcher).
-		global $wpdb;
-		$pattern = '%' . $wpdb->esc_like( '[' . $deleted_session_id . ',' ) . '%';
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		$wpdb->query(
-			$wpdb->prepare(
-				"UPDATE {$wpdb->prefix}actionscheduler_actions SET status = %s WHERE hook = %s AND status = %s AND args LIKE %s",
-				'canceled',
-				'cartbay_send_recovery_email',
-				'pending',
-				$pattern
-			)
-		);
+		// Cancel every pending recovery-email step scheduled for this session
+		// through the Action Scheduler API. Steps are scheduled with args
+		// [session_id, step_index] for the three recovery emails.
+		if ( function_exists( 'as_unschedule_all_actions' ) ) {
+			for ( $step = 0; $step < 3; $step++ ) {
+				as_unschedule_all_actions( 'cartbay_send_recovery_email', array( $deleted_session_id, $step ), 'cartbay' );
+			}
+		}
 
 		$existing->delete( true );
 		AnalyticsService::invalidate_cache();

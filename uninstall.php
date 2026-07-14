@@ -239,6 +239,8 @@ $cartbay_options = array(
 	'cartbay_settings',
 	'cartbay_wizard_complete',
 	'cartbay_sequence_defaults_version',
+	'cartbay_db_version',
+	'cartbay_log_entries',
 	'woocommerce_cartbay_recovery_1_settings',
 	'woocommerce_cartbay_recovery_2_settings',
 	'woocommerce_cartbay_recovery_3_settings',
@@ -249,3 +251,17 @@ foreach ( $cartbay_options as $cartbay_option ) {
 }
 
 delete_transient( 'cartbay_analytics_cache' );
+delete_transient( 'cartbay_wizard_redirect' );
+
+// Sweep the per-notification context transients (cartbay_notification_ctx_*),
+// which are created dynamically with a TTL. They self-expire, but on an
+// opt-in full removal we clear any that remain.
+global $wpdb;
+// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+$wpdb->query(
+	$wpdb->prepare(
+		"DELETE FROM {$wpdb->options} WHERE option_name LIKE %s OR option_name LIKE %s",
+		$wpdb->esc_like( '_transient_cartbay_notification_ctx_' ) . '%',
+		$wpdb->esc_like( '_transient_timeout_cartbay_notification_ctx_' ) . '%'
+	)
+);

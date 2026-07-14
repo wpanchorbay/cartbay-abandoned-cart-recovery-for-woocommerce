@@ -168,7 +168,7 @@ import apiFetch from '@wordpress/api-fetch';
 		) {
 			return cartbayCapture.settings.consent_default_state;
 		}
-		return 'checked';
+		return 'unchecked';
 	}
 
 	/**
