@@ -54,11 +54,15 @@ class CaptureService {
 	 *                           only as display fallbacks; the cart items always
 	 *                           come from the server-side WooCommerce cart.
 	 * @param string $source     'classic' or 'block'.
-	 * @param int    $session_id Optional existing session ID for update.
+	 * @param int    $session_id    Optional existing session ID for update.
+	 * @param string $capture_token Per-session ownership token proving the caller
+	 *                              may update the given $session_id.
 	 *
-	 * @return int|WP_Error Session ID on success.
+	 * @return array{session_id:int, capture_token:string}|WP_Error Session ID and,
+	 *         on create, the plain capture token to hand back to the client
+	 *         (empty on update). WP_Error on failure.
 	 */
-	public function capture( string $email, array $cart_data, string $source, int $session_id = 0 ): int|WP_Error {
+	public function capture( string $email, array $cart_data, string $source, int $session_id = 0, string $capture_token = '' ): array|WP_Error {
 		if ( ! Settings::is_capture_enabled() ) {
 			return new WP_Error(
 				'capture_disabled',
@@ -73,9 +77,8 @@ class CaptureService {
 		}
 
 		// 2. Get settings.
-		$settings       = get_option( 'cartbay_settings', array() );
-		$retention_days = absint( $settings['data_retention_days'] ?? 30 );
-		$consent_text   = isset( $settings['consent_text'] ) ? sanitize_textarea_field( $settings['consent_text'] ) : '';
+		$settings     = get_option( 'cartbay_settings', array() );
+		$consent_text = isset( $settings['consent_text'] ) ? sanitize_textarea_field( $settings['consent_text'] ) : '';
 
 		// Load the shopper's own server-side WooCommerce cart. REST requests do
 		// not boot the cart automatically, so this endpoint must load it
@@ -88,16 +91,16 @@ class CaptureService {
 		$snapshot         = $this->build_server_cart_snapshot();
 		$cart_fingerprint = $this->build_cart_fingerprint( $snapshot );
 
-		// 3. Find existing session by cart identity, not shopper identity alone.
+		// 3. Resolve an existing session ONLY by session_id + a valid ownership
+		// token. A guessable order ID or a matching (non-secret) email is not
+		// proof of ownership, so without a valid token we never mutate an
+		// existing record — a fresh session is created below instead.
 		$existing = null;
 		if ( $session_id > 0 ) {
 			$order = $this->sessions->get( $session_id );
-			if ( $order && $this->can_update_session( $order, $cart_fingerprint, $email ) ) {
+			if ( $order instanceof WC_Order && $this->can_update_session( $order, $capture_token ) ) {
 				$existing = $order;
 			}
-		}
-		if ( ! $existing ) {
-			$existing = $this->sessions->find_active_by_email_and_cart_fingerprint( $email, $cart_fingerprint, $retention_days );
 		}
 
 		if ( ! $this->snapshot_has_items( $snapshot ) && $existing instanceof WC_Order ) {
@@ -159,7 +162,12 @@ class CaptureService {
 				'capture'
 			);
 
-			return $existing->get_id();
+			// No new token on update: the client already holds the one issued at
+			// create, and the plain token is never recoverable server-side.
+			return array(
+				'session_id'    => $existing->get_id(),
+				'capture_token' => '',
+			);
 		}
 
 		$session_id = $this->sessions->create( $email, $meta );
@@ -181,73 +189,45 @@ class CaptureService {
 		AnalyticsService::invalidate_cache();
 		$this->schedule_abandonment_check( $session_id );
 
-		$session = $this->sessions->get( $session_id );
-		if ( $session instanceof WC_Order && $this->snapshot_has_items( $snapshot ) ) {
-			$this->persist_session_items( $session, $snapshot );
+		$session       = $this->sessions->get( $session_id );
+		$capture_token = '';
+		if ( $session instanceof WC_Order ) {
+			if ( $this->snapshot_has_items( $snapshot ) ) {
+				$this->persist_session_items( $session, $snapshot );
+			}
+			// Issue the ownership token the client must present to later update
+			// or delete this session through the public capture endpoint.
+			$capture_token = TokenHelper::create_capture_token( $session );
 		}
 
-		return $session_id;
+		return array(
+			'session_id'    => $session_id,
+			'capture_token' => $capture_token,
+		);
 	}
 
 	/**
-	 * Determine whether a session can be updated by the incoming cart capture.
+	 * Determine whether an existing session may be updated by this capture.
 	 *
-	 * A client-supplied session_id is a guessable WooCommerce order ID and must
-	 * never authorize a cross-shopper update on its own. The incoming email is
-	 * required to match the session's stored email as proof of ownership.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param WC_Order $session          CartBay session order.
-	 * @param string   $cart_fingerprint Incoming cart fingerprint.
-	 * @param string   $email            Incoming validated shopper email.
-	 *
-	 * @return bool True when the capture belongs to the same cart session.
-	 */
-	private function can_update_session( WC_Order $session, string $cart_fingerprint, string $email ): bool {
-		// Ownership proof first: reject any session_id whose stored email does
-		// not match the request email, defeating order-ID enumeration attacks.
-		if ( ! $this->session_email_matches( $session, $email ) ) {
-			return false;
-		}
-
-		$status = $session->get_status();
-		if ( 'cartbay-captured' === $status ) {
-			return true;
-		}
-
-		if ( 'cartbay-abandoned' !== $status ) {
-			return false;
-		}
-
-		$stored_fingerprint = sanitize_text_field( (string) $session->get_meta( '_cartbay_cart_fingerprint', true ) );
-
-		return '' !== $cart_fingerprint && hash_equals( $stored_fingerprint, $cart_fingerprint );
-	}
-
-	/**
-	 * Verify the request email matches the session's stored billing email.
-	 *
-	 * Used as the ownership proof for unauthenticated capture-time updates and
-	 * consent-withdrawal deletes, where a bare session_id (a guessable order ID)
-	 * cannot be trusted.
+	 * Ownership is proven by a per-session capture token (issued to the client at
+	 * create time), not by a guessable order ID or a non-secret email. The status
+	 * allowlist must stay: SessionRepository::update() also writes to
+	 * recovered/expired/suppressed, and a valid owner token must not resurrect a
+	 * recovered or unsubscribed (suppressed) session.
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param WC_Order $session CartBay session order.
-	 * @param string   $email   Incoming validated shopper email.
+	 * @param WC_Order $session       CartBay session order.
+	 * @param string   $capture_token Incoming per-session ownership token.
 	 *
-	 * @return bool True when both emails are present and equal (case-insensitive).
+	 * @return bool True when the token proves ownership and the session is in-flight.
 	 */
-	private function session_email_matches( WC_Order $session, string $email ): bool {
-		$request_email = strtolower( sanitize_email( $email ) );
-		$stored_email  = strtolower( sanitize_email( (string) $session->get_billing_email() ) );
-
-		if ( '' === $request_email || '' === $stored_email ) {
+	private function can_update_session( WC_Order $session, string $capture_token ): bool {
+		if ( ! TokenHelper::validate_capture_token( $session, $capture_token ) ) {
 			return false;
 		}
 
-		return hash_equals( $stored_email, $request_email );
+		return in_array( $session->get_status(), array( 'cartbay-captured', 'cartbay-abandoned' ), true );
 	}
 
 	/**
@@ -523,42 +503,39 @@ class CaptureService {
 	}
 
 	/**
-	 * Delete a captured cart session after consent is withdrawn.
+	 * Delete a captured cart session after consent is withdrawn at checkout.
+	 *
+	 * Deletion mutates an existing session, so it requires proof of ownership: a
+	 * valid per-session capture token. A bare session_id (a guessable order ID)
+	 * or a supplied email is not sufficient and is not accepted here. Shoppers who
+	 * have left checkout withdraw consent instead through the tokenised unsubscribe
+	 * link carried by every recovery email.
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param string $email      Sanitized email address, when available.
-	 * @param int    $session_id Optional existing session ID.
+	 * @param int    $session_id    Session ID to delete.
+	 * @param string $capture_token Per-session ownership token proving the caller
+	 *                              may delete this session.
 	 *
 	 * @return bool Whether a session was deleted.
 	 */
-	public function delete_after_consent_withdrawal( string $email = '', int $session_id = 0 ): bool {
-		$settings       = get_option( 'cartbay_settings', array() );
-		$retention_days = absint( $settings['data_retention_days'] ?? 30 );
-		$existing       = null;
-
-		// Resolve by session_id only when the request proves ownership of it.
-		// session_id is a guessable order ID, so the email must match the
-		// stored session; otherwise fall through to the email lookup below.
-		if ( $session_id > 0 && '' !== $email ) {
-			$order = $this->sessions->get( $session_id );
-			if ( $order
-				&& in_array( $order->get_status(), array( 'cartbay-captured', 'cartbay-abandoned' ), true )
-				&& $this->session_email_matches( $order, $email )
-			) {
-				$existing = $order;
-			}
-		}
-
-		if ( ! $existing && '' !== $email ) {
-			$existing = $this->sessions->find_active_by_email( $email, $retention_days );
-		}
-
-		if ( ! $existing ) {
+	public function delete_after_consent_withdrawal( int $session_id, string $capture_token ): bool {
+		if ( $session_id <= 0 || '' === $capture_token ) {
 			return false;
 		}
 
-		$deleted_session_id = $existing->get_id();
+		$order = $this->sessions->get( $session_id );
+		if ( ! $order instanceof WC_Order ) {
+			return false;
+		}
+
+		if ( ! in_array( $order->get_status(), array( 'cartbay-captured', 'cartbay-abandoned' ), true )
+			|| ! TokenHelper::validate_capture_token( $order, $capture_token )
+		) {
+			return false;
+		}
+
+		$deleted_session_id = $order->get_id();
 
 		if ( function_exists( 'as_unschedule_all_actions' ) ) {
 			as_unschedule_all_actions( 'cartbay_detect_session_abandonment', array( $deleted_session_id ), 'cartbay' );
@@ -573,7 +550,7 @@ class CaptureService {
 			}
 		}
 
-		$existing->delete( true );
+		$order->delete( true );
 		AnalyticsService::invalidate_cache();
 
 		Logger::info(

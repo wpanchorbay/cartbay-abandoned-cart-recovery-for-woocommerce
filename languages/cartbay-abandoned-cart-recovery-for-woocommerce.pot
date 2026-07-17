@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-07-07T11:41:00+00:00\n"
+"POT-Creation-Date: 2026-07-17T19:44:42+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: cartbay-abandoned-cart-recovery-for-woocommerce\n"
@@ -89,15 +89,15 @@ msgid "Choose whether the checkout consent checkbox starts checked or unchecked.
 msgstr ""
 
 #: app/Admin/Settings/CaptureSection.php:76
-msgid "Shoppers can still change the checkbox at checkout. CartBay only captures while it is checked."
+msgid "Defaults to unchecked so consent is an explicit opt-in (recommended for GDPR and similar laws). Shoppers can change it at checkout; CartBay only captures while it is checked."
 msgstr ""
 
 #: app/Admin/Settings/CaptureSection.php:81
-msgid "Checked"
+msgid "Unchecked (recommended)"
 msgstr ""
 
 #: app/Admin/Settings/CaptureSection.php:82
-msgid "Unchecked"
+msgid "Checked"
 msgstr ""
 
 #: app/Admin/Settings/CaptureSection.php:86
@@ -126,7 +126,7 @@ msgid "Control CartBay-owned troubleshooting logs. WooCommerce native logs remai
 msgstr ""
 
 #: app/Admin/Settings/LogsSection.php:78
-msgid "CartBay File Logging"
+msgid "CartBay Logging"
 msgstr ""
 
 #: app/Admin/Settings/LogsSection.php:79
@@ -134,7 +134,7 @@ msgid "Enable CartBay-owned troubleshooting log"
 msgstr ""
 
 #: app/Admin/Settings/LogsSection.php:80
-msgid "Keeps a separate CartBay log in addition to WooCommerce native logs. Sensitive values such as emails, license keys, and tokens are redacted."
+msgid "Keeps a bounded CartBay log in the database (in addition to WooCommerce native logs). Sensitive values such as emails, license keys, and tokens are redacted."
 msgstr ""
 
 #: app/Admin/Settings/LogsSection.php:86
@@ -142,109 +142,101 @@ msgid "CartBay Log Retention (days)"
 msgstr ""
 
 #: app/Admin/Settings/LogsSection.php:87
-msgid "CartBay file log entries older than this are removed automatically."
+msgid "CartBay log entries older than this are removed automatically. The log also keeps at most the most recent few hundred entries."
 msgstr ""
 
-#: app/Admin/Settings/LogsSection.php:98
-msgid "CartBay Log Size Limit (MB)"
-msgstr ""
-
-#: app/Admin/Settings/LogsSection.php:99
-msgid "When the log file exceeds this size, older entries are removed first."
-msgstr ""
-
-#: app/Admin/Settings/LogsSection.php:124
+#: app/Admin/Settings/LogsSection.php:112
 msgid "Back to Settings"
 msgstr ""
 
-#: app/Admin/Settings/LogsSection.php:198
+#: app/Admin/Settings/LogsSection.php:182
 msgid "CartBay Log Entries"
 msgstr ""
 
-#: app/Admin/Settings/LogsSection.php:199
-msgid "These entries are sanitized for support. Context values for emails, tokens, and licenses are redacted."
+#: app/Admin/Settings/LogsSection.php:183
+msgid "These entries are stored in the WordPress database and sanitized for support. Context values for emails, tokens, and licenses are redacted."
 msgstr ""
 
-#: app/Admin/Settings/LogsSection.php:204
+#: app/Admin/Settings/LogsSection.php:187
 msgid "Filter by level"
 msgstr ""
 
-#: app/Admin/Settings/LogsSection.php:206
+#: app/Admin/Settings/LogsSection.php:189
 msgid "All levels"
 msgstr ""
 
-#: app/Admin/Settings/LogsSection.php:211
+#: app/Admin/Settings/LogsSection.php:194
 #: app/Admin/Settings/OverviewSection.php:363
 msgid "Filter"
 msgstr ""
 
 #. translators: %s: number of items
-#: app/Admin/Settings/LogsSection.php:216
-#: app/Admin/Settings/LogsSection.php:299
+#: app/Admin/Settings/LogsSection.php:199
+#: app/Admin/Settings/LogsSection.php:282
 #, php-format
 msgid "%s entries"
 msgstr ""
 
-#: app/Admin/Settings/LogsSection.php:224
-#: app/Admin/Settings/LogsSection.php:266
+#: app/Admin/Settings/LogsSection.php:207
+#: app/Admin/Settings/LogsSection.php:249
 msgid "Time"
 msgstr ""
 
-#: app/Admin/Settings/LogsSection.php:227
-#: app/Admin/Settings/LogsSection.php:267
+#: app/Admin/Settings/LogsSection.php:210
+#: app/Admin/Settings/LogsSection.php:250
 msgid "Level"
 msgstr ""
 
-#: app/Admin/Settings/LogsSection.php:228
-#: app/Admin/Settings/LogsSection.php:268
+#: app/Admin/Settings/LogsSection.php:211
+#: app/Admin/Settings/LogsSection.php:251
 msgid "System"
 msgstr ""
 
-#: app/Admin/Settings/LogsSection.php:229
-#: app/Admin/Settings/LogsSection.php:269
+#: app/Admin/Settings/LogsSection.php:212
+#: app/Admin/Settings/LogsSection.php:252
 msgid "Message"
 msgstr ""
 
 #. translators: %s: number of context fields recorded for the log entry.
-#: app/Admin/Settings/LogsSection.php:230
-#: app/Admin/Settings/LogsSection.php:271
+#: app/Admin/Settings/LogsSection.php:213
+#: app/Admin/Settings/LogsSection.php:254
 msgid "Context"
 msgstr ""
 
-#: app/Admin/Settings/LogsSection.php:231
-#: app/Admin/Settings/LogsSection.php:272
+#: app/Admin/Settings/LogsSection.php:214
+#: app/Admin/Settings/LogsSection.php:255
 #: app/Admin/Settings/TemplatesSection.php:136
 msgid "Actions"
 msgstr ""
 
-#: app/Admin/Settings/LogsSection.php:235
+#: app/Admin/Settings/LogsSection.php:218
 msgid "No log entries found for the selected filter."
 msgstr ""
 
 #. translators: %s: number of context fields recorded for the log entry.
-#: app/Admin/Settings/LogsSection.php:271
+#: app/Admin/Settings/LogsSection.php:254
 #, php-format
 msgid "%s item"
 msgid_plural "%s items"
 msgstr[0] ""
 msgstr[1] ""
 
-#: app/Admin/Settings/LogsSection.php:274
+#: app/Admin/Settings/LogsSection.php:257
 msgid "CartBay Log Entry"
 msgstr ""
 
-#: app/Admin/Settings/LogsSection.php:274
+#: app/Admin/Settings/LogsSection.php:257
 msgid "Details"
 msgstr ""
 
-#: app/Admin/Settings/LogsSection.php:275
+#: app/Admin/Settings/LogsSection.php:258
 #: app/Admin/Settings/SettingsPage.php:462
 #: app/Admin/Settings/SettingsPage.php:511
 msgid "Copy Entry"
 msgstr ""
 
 #. translators: 1: current page, 2: total pages
-#: app/Admin/Settings/LogsSection.php:311
+#: app/Admin/Settings/LogsSection.php:294
 #: app/Admin/Settings/OverviewSection.php:557
 #, php-format
 msgid "%1$d of %2$d"
@@ -404,7 +396,7 @@ msgid "CartBay Pro generates a unique, single-use coupon per shopper, sets an ex
 msgstr ""
 
 #: app/Admin/Settings/OverviewSection.php:82
-#: app/Core/Plugin.php:424
+#: app/Core/Plugin.php:430
 msgid "Overview"
 msgstr ""
 
@@ -510,6 +502,7 @@ msgstr ""
 #: app/Admin/Settings/OverviewSection.php:399
 #: app/Admin/Settings/OverviewSection.php:407
 #: app/Admin/Settings/OverviewSection.php:427
+#: app/Core/Privacy.php:225
 msgid "Email"
 msgstr ""
 
@@ -517,6 +510,7 @@ msgstr ""
 #: app/Admin/Settings/OverviewSection.php:408
 #: app/Admin/Settings/OverviewSection.php:428
 #: app/Admin/Settings/OverviewSection.php:586
+#: app/Core/Privacy.php:229
 msgid "Status"
 msgstr ""
 
@@ -547,6 +541,7 @@ msgid "Show more details"
 msgstr ""
 
 #: app/Admin/Settings/OverviewSection.php:474
+#: app/Core/Privacy.php:233
 msgid "Captured"
 msgstr ""
 
@@ -781,7 +776,7 @@ msgid "CartBay does not send email itself — this depends on your site's mail s
 msgstr ""
 
 #: app/Admin/Settings/SettingsSection.php:37
-#: app/Core/Plugin.php:429
+#: app/Core/Plugin.php:435
 msgid "Settings"
 msgstr ""
 
@@ -1006,7 +1001,7 @@ msgid "You do not have permission to access CartBay."
 msgstr ""
 
 #: app/Admin/Wizard/WizardController.php:105
-#: app/Core/Plugin.php:403
+#: app/Core/Plugin.php:409
 msgid "CartBay Setup Wizard"
 msgstr ""
 
@@ -1150,23 +1145,20 @@ msgstr ""
 msgid "You do not have permission to view analytics."
 msgstr ""
 
-#: app/Api/Routes/CaptureRoute.php:121
+#: app/Api/Routes/CaptureRoute.php:155
+#: app/Api/Routes/CaptureRoute.php:195
 msgid "Invalid or expired request. Please reload the checkout page and try again."
 msgstr ""
 
-#: app/Api/Routes/CaptureRoute.php:145
+#: app/Api/Routes/CaptureRoute.php:166
 msgid "Too many requests. Please try again later."
 msgstr ""
 
-#: app/Api/Routes/CaptureRoute.php:171
-msgid "A valid email address is required to withdraw consent."
-msgstr ""
-
-#: app/Api/Routes/CaptureRoute.php:191
+#: app/Api/Routes/CaptureRoute.php:215
 msgid "Invalid email address."
 msgstr ""
 
-#: app/Api/Routes/CaptureRoute.php:201
+#: app/Api/Routes/CaptureRoute.php:225
 msgid "Capture disabled."
 msgstr ""
 
@@ -1223,7 +1215,7 @@ msgid "Test flow triggered. Email will arrive in ~30 seconds."
 msgstr ""
 
 #: app/Core/CheckoutFields.php:61
-#: app/Core/Installer.php:89
+#: app/Core/Installer.php:116
 msgid "Save my email to recover my cart if I leave."
 msgstr ""
 
@@ -1237,49 +1229,49 @@ msgstr ""
 msgid "CartBay could not resolve the service \"%s\"."
 msgstr ""
 
-#: app/Core/Plugin.php:356
+#: app/Core/Plugin.php:362
 msgid "CartBay Templates"
 msgstr ""
 
-#: app/Core/Plugin.php:369
+#: app/Core/Plugin.php:375
 msgid "CartBay Suppressions"
 msgstr ""
 
-#: app/Core/Plugin.php:393
-#: app/Core/Plugin.php:394
+#: app/Core/Plugin.php:399
+#: app/Core/Plugin.php:400
 msgid "CartBay"
 msgstr ""
 
-#: app/Core/Plugin.php:404
+#: app/Core/Plugin.php:410
 msgid "Setup Wizard"
 msgstr ""
 
-#: app/Core/Plugin.php:434
+#: app/Core/Plugin.php:440
 msgid "Docs"
 msgstr ""
 
-#: app/Core/Plugin.php:451
+#: app/Core/Plugin.php:524
 msgid "CartBay: Captured"
 msgstr ""
 
-#: app/Core/Plugin.php:452
+#: app/Core/Plugin.php:525
 msgid "CartBay: Abandoned"
 msgstr ""
 
-#: app/Core/Plugin.php:453
+#: app/Core/Plugin.php:526
 msgid "CartBay: Recovered"
 msgstr ""
 
-#: app/Core/Plugin.php:454
+#: app/Core/Plugin.php:527
 msgid "CartBay: Expired"
 msgstr ""
 
-#: app/Core/Plugin.php:455
+#: app/Core/Plugin.php:528
 msgid "CartBay: Suppressed"
 msgstr ""
 
 #. translators: %s: number of orders currently in the captured CartBay status.
-#: app/Core/Plugin.php:469
+#: app/Core/Plugin.php:542
 #, php-format
 msgid "CartBay: Captured <span class=\"count\">(%s)</span>"
 msgid_plural "CartBay: Captured <span class=\"count\">(%s)</span>"
@@ -1287,7 +1279,7 @@ msgstr[0] ""
 msgstr[1] ""
 
 #. translators: %s: number of orders currently in the abandoned CartBay status.
-#: app/Core/Plugin.php:471
+#: app/Core/Plugin.php:544
 #, php-format
 msgid "CartBay: Abandoned <span class=\"count\">(%s)</span>"
 msgid_plural "CartBay: Abandoned <span class=\"count\">(%s)</span>"
@@ -1295,7 +1287,7 @@ msgstr[0] ""
 msgstr[1] ""
 
 #. translators: %s: number of orders currently in the recovered CartBay status.
-#: app/Core/Plugin.php:473
+#: app/Core/Plugin.php:546
 #, php-format
 msgid "CartBay: Recovered <span class=\"count\">(%s)</span>"
 msgid_plural "CartBay: Recovered <span class=\"count\">(%s)</span>"
@@ -1303,7 +1295,7 @@ msgstr[0] ""
 msgstr[1] ""
 
 #. translators: %s: number of orders currently in the expired CartBay status.
-#: app/Core/Plugin.php:475
+#: app/Core/Plugin.php:548
 #, php-format
 msgid "CartBay: Expired <span class=\"count\">(%s)</span>"
 msgid_plural "CartBay: Expired <span class=\"count\">(%s)</span>"
@@ -1311,42 +1303,68 @@ msgstr[0] ""
 msgstr[1] ""
 
 #. translators: %s: number of orders currently in the suppressed CartBay status.
-#: app/Core/Plugin.php:477
+#: app/Core/Plugin.php:550
 #, php-format
 msgid "CartBay: Suppressed <span class=\"count\">(%s)</span>"
 msgid_plural "CartBay: Suppressed <span class=\"count\">(%s)</span>"
 msgstr[0] ""
 msgstr[1] ""
 
-#: app/Core/Plugin.php:844
+#: app/Core/Plugin.php:917
 #: app/Email/AbstractCartBayRecoveryEmail.php:469
 #: app/Email/AbstractCartBayRecoveryEmail.php:541
 msgid "SAVE10"
 msgstr ""
 
-#: app/Core/Plugin.php:985
+#: app/Core/Plugin.php:1065
 msgid "You have been unsubscribed from cart recovery emails."
 msgstr ""
 
-#: app/Core/Plugin.php:989
+#: app/Core/Plugin.php:1069
 msgid "Invalid unsubscribe link."
 msgstr ""
 
-#: app/Core/Plugin.php:996
+#: app/Core/Plugin.php:1073
+msgid "Too many unsubscribe attempts. Please wait a moment and try again."
+msgstr ""
+
+#: app/Core/Plugin.php:1080
 msgid "This cart recovery link has expired. Please add items to your cart again."
 msgstr ""
 
-#: app/Core/Plugin.php:1000
+#: app/Core/Plugin.php:1084
 msgid "Invalid cart recovery link."
 msgstr ""
 
-#: app/Core/Plugin.php:1004
+#: app/Core/Plugin.php:1088
 msgid "Too many cart recovery attempts. Please wait a moment and try again."
 msgstr ""
 
-#: app/Core/Plugin.php:1008
+#: app/Core/Plugin.php:1092
 #: app/Recovery/RestoreService.php:373
 msgid "We could not restore the items from this recovery link. Please add them to your cart again."
+msgstr ""
+
+#: app/Core/Privacy.php:70
+#: app/Core/Privacy.php:88
+#: app/Core/Privacy.php:112
+msgid "CartBay Abandoned Cart Sessions"
+msgstr ""
+
+#: app/Core/Privacy.php:168
+msgid "When a shopper checks the CartBay consent box at checkout, this site stores their email address, a snapshot of their cart, the checkout source, and timestamps so it can send recovery reminders if the cart is left behind. This data is stored on this site using WooCommerce-native records and is used only to send those recovery emails. Shoppers can withdraw consent by unchecking the box, and every recovery email includes an unsubscribe link. Stored data is removed automatically after the configured retention period."
+msgstr ""
+
+#: app/Core/Privacy.php:237
+msgid "Checkout source"
+msgstr ""
+
+#: app/Core/Privacy.php:241
+msgid "Cart items stored"
+msgstr ""
+
+#: app/Core/Privacy.php:245
+msgid "Cart total"
 msgstr ""
 
 #: app/Data/SessionRepository.php:35
@@ -1488,12 +1506,16 @@ msgstr ""
 msgid "Claim My Cart"
 msgstr ""
 
-#: app/Recovery/CaptureService.php:63
+#: app/Recovery/CaptureService.php:69
 msgid "Capture is disabled."
 msgstr ""
 
-#: app/Recovery/CaptureService.php:70
+#: app/Recovery/CaptureService.php:76
 msgid "Email is suppressed."
+msgstr ""
+
+#: app/Recovery/CaptureService.php:122
+msgid "No active cart to capture."
 msgstr ""
 
 #: app/Recovery/EmailSequenceService.php:201

@@ -158,6 +158,40 @@ import apiFetch from '@wordpress/api-fetch';
 	}
 
 	/**
+	 * Get the per-session ownership token from sessionStorage.
+	 */
+	function getStoredToken() {
+		try {
+			return sessionStorage.getItem('cartbay_capture_token') || '';
+		} catch (e) {
+			return '';
+		}
+	}
+
+	/**
+	 * Store the per-session ownership token in sessionStorage.
+	 */
+	function storeToken(token) {
+		try {
+			sessionStorage.setItem('cartbay_capture_token', token);
+		} catch (e) {
+			// Ignore storage errors.
+		}
+	}
+
+	/**
+	 * Clear the stored session ID and its ownership token together.
+	 */
+	function clearStoredSession() {
+		clearStoredSessionId();
+		try {
+			sessionStorage.removeItem('cartbay_capture_token');
+		} catch (e) {
+			// Ignore storage errors.
+		}
+	}
+
+	/**
 	 * Get configured consent checkbox default state.
 	 */
 	function getConsentDefaultState() {
@@ -203,11 +237,15 @@ import apiFetch from '@wordpress/api-fetch';
 					source: 'block',
 					cart: cartData,
 					session_id: getStoredSessionId(),
+					capture_token: getStoredToken(),
 				},
 			});
 		}).then(function (json) {
 			if (json && json.success && json.session_id) {
 				storeSessionId(json.session_id);
+				if (json.capture_token) {
+					storeToken(json.capture_token);
+				}
 				lastCapturedEmail = email;
 			}
 		}).catch(function () {
@@ -222,17 +260,16 @@ import apiFetch from '@wordpress/api-fetch';
 	 *
 	 * @param {string} email Customer email.
 	 */
-	function deleteCapture(email) {
+	function deleteCapture() {
 		var sessionId = getStoredSessionId();
-		// Prefer the email the session was captured with so consent withdrawal
-		// still proves ownership even if the email field was cleared first.
-		var captureEmail = email || lastCapturedEmail;
+		var token = getStoredToken();
 
-		clearStoredSessionId();
+		clearStoredSession();
 		lastCapturedEmail = '';
 
-		// Deletion requires the captured email as proof of ownership.
-		if (!captureEmail) {
+		// Deletion requires the per-session ownership token issued at capture
+		// time. Without it there is nothing this browser can prove it owns.
+		if (!sessionId || !token) {
 			return;
 		}
 
@@ -241,11 +278,11 @@ import apiFetch from '@wordpress/api-fetch';
 			method: 'POST',
 			headers: { 'X-WP-Nonce': getNonce() },
 			data: {
-				email: captureEmail,
 				consent: false,
 				source: 'block',
 				cart: getCartData(),
 				session_id: sessionId,
+				capture_token: token,
 			},
 		}).catch(function () {
 			// Silent fail — don't block checkout.
@@ -312,7 +349,7 @@ import apiFetch from '@wordpress/api-fetch';
 			return;
 		}
 
-		deleteCapture(email);
+		deleteCapture();
 	}
 
 	/**
