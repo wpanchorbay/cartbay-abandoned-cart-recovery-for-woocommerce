@@ -97,7 +97,7 @@ class CheckoutFields {
 
 		$settings = get_option( 'cartbay_settings', array() );
 
-		return 'unchecked' !== ( $settings['consent_default_state'] ?? 'checked' );
+		return 'unchecked' !== ( $settings['consent_default_state'] ?? 'unchecked' );
 	}
 
 	/**

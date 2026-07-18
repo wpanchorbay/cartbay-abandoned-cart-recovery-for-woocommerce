@@ -7,6 +7,7 @@
 
 namespace WPAnchorBay\CartBay\Admin\Settings;
 
+use WPAnchorBay\CartBay\Core\Settings;
 use WPAnchorBay\CartBay\Recovery\SequenceSettings;
 
 defined( 'ABSPATH' ) || exit;
@@ -168,8 +169,7 @@ class TemplatesSection extends AbstractSettingsSection {
 
 		<h3><?php esc_html_e( 'Trigger Test Flow', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></h3>
 		<?php
-		$settings  = get_option( 'cartbay_settings', array() );
-		$test_mode = ! empty( $settings['test_mode'] );
+		$test_mode = Settings::is_test_mode_enabled();
 		if ( ! $test_mode ) :
 			$enable_url = wp_nonce_url( admin_url( 'admin-post.php?action=cartbay_enable_test_mode' ), 'cartbay_enable_test_mode', 'cartbay_nonce' );
 			?>

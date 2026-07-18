@@ -171,8 +171,8 @@ class SettingsSection extends AbstractSettingsSection {
 		$settings        = get_option( 'cartbay_settings', array() );
 		$settings        = is_array( $settings ) ? $settings : array();
 
-		$settings['test_mode']                = isset( $posted_settings['test_mode'] );
-		$settings['remove_data_on_uninstall'] = isset( $posted_settings['remove_data_on_uninstall'] );
+		$settings['test_mode']                = isset( $posted_settings['test_mode'] ) ? 'yes' : 'no';
+		$settings['remove_data_on_uninstall'] = isset( $posted_settings['remove_data_on_uninstall'] ) ? 'yes' : 'no';
 		$settings['wc_menu_enabled']          = isset( $posted_settings['wc_menu_enabled'] ) ? 'yes' : 'no';
 		update_option( 'cartbay_settings', $settings );
 

@@ -228,7 +228,10 @@ class WizardControllerTest extends TestCase {
 
 		self::assertStringContainsString( 'id="cartbay-test-email-address"', $html );
 		self::assertStringContainsString( 'value="owner@example.test"', $html );
-		self::assertStringContainsString( 'email: email', $html );
+		// The send button is rendered here; its click handler is enqueued via
+		// wp_add_inline_script rather than printed inline in the page markup.
+		self::assertStringContainsString( 'id="cartbay-test-email"', $html );
+		self::assertStringNotContainsString( '<script>', $html );
 	}
 
 	/**
@@ -286,6 +289,22 @@ class WizardControllerTest extends TestCase {
 		self::assertStringContainsString( 'The first recovery email should arrive while the shopper still remembers the cart.', $html );
 		self::assertStringContainsString( 'The second email gives shoppers time to compare options before following up.', $html );
 		self::assertStringContainsString( 'The final email is the later reminder and usually carries the strongest recovery message.', $html );
+	}
+
+	/**
+	 * get_steps() must stay public and static: SettingsPage::is_wizard_email_step()
+	 * calls it directly to resolve the current step key without depending on a
+	 * hardcoded step number, since Pro shifts the order by injecting its own step.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return void
+	 */
+	public function test_get_steps_is_public_static_and_ordered(): void {
+		self::assertSame(
+			array( 'welcome', 'consent', 'email', 'launch' ),
+			array_keys( WizardController::get_steps() )
+		);
 	}
 
 	/**

@@ -7,10 +7,10 @@
 
 namespace WPAnchorBay\CartBay\Admin\Settings;
 
+use WPAnchorBay\CartBay\Admin\Wizard\WizardController;
 use WPAnchorBay\CartBay\Analytics\AnalyticsService;
 use WPAnchorBay\CartBay\Core\Container;
 use WPAnchorBay\CartBay\Core\Settings;
-use WPAnchorBay\CartBay\Data\SessionRepository;
 use WPAnchorBay\CartBay\Recovery\NotificationService;
 
 defined( 'ABSPATH' ) || exit;
@@ -227,6 +227,30 @@ class SettingsPage {
 
 		$script = <<<'JS'
 jQuery( function( $ ) {
+	// Test-email button — present on both the wizard Email step and the
+	// Notifications section, so bind it before the wc-settings-only handlers.
+	$( document.body ).on( 'click', '#cartbay-test-email, #cartbay-test-email-notifications', function( event ) {
+		event.preventDefault();
+
+		var btn     = $( this );
+		var email   = $( '#cartbay-test-email-address' ).val();
+		var $result = $( '#cartbay-test-email-result' );
+
+		btn.prop( 'disabled', true ).text( 'TEST_EMAIL_SENDING_TEXT' );
+		$.post( 'TEST_EMAIL_URL', {
+			_wpnonce: 'REST_NONCE',
+			email: email
+		} ).done( function( resp ) {
+			$result.text( resp.message || 'TEST_EMAIL_SUCCESS_TEXT' );
+		} ).fail( function( jqXHR ) {
+			var base = 'TEST_EMAIL_FAILURE_TEXT';
+			var reason = jqXHR.responseJSON && jqXHR.responseJSON.data && jqXHR.responseJSON.data.reason;
+			$result.text( reason ? base + ' ' + reason : base );
+		} ).always( function() {
+			btn.prop( 'disabled', false ).text( 'TEST_EMAIL_BUTTON_TEXT' );
+		} );
+	} );
+
 	if ( ! $( 'body' ).hasClass( 'woocommerce_page_wc-settings' ) ) {
 		window.setTimeout( function() {
 			$( '.cartbay-notice-auto-dismiss.is-dismissible:visible' ).each( function() {
@@ -266,40 +290,6 @@ jQuery( function( $ ) {
 	}
 
 	$( document.body ).on( 'click', '#cartbay-session-query-submit, #cartbay-session-search-submit', handleSessionQuery );
-
-	function handleNotificationQuery( event ) {
-		event.preventDefault();
-		window.onbeforeunload = null;
-
-		var $button = $( event.currentTarget );
-		var url = $button.data( 'baseUrl' ) || $( '#cartbay-notification-search-submit' ).data( 'baseUrl' );
-		var status = $( '#cartbay_notification_status' ).val();
-		var search = $( '#cartbay_notification_search' ).val();
-
-		if ( ! url ) {
-			return;
-		}
-
-		if ( status ) {
-			url += '&notification_status=' + encodeURIComponent( status );
-		}
-
-		if ( search ) {
-			url += '&notification_search=' + encodeURIComponent( search );
-		}
-
-		window.location = url;
-	}
-
-	$( document.body ).on( 'click', '#cartbay-notification-query-submit, #cartbay-notification-search-submit', handleNotificationQuery );
-
-	$( document.body ).on( 'keydown', '#cartbay_notification_search', function( event ) {
-		if ( 13 === event.which ) { // Enter key
-			event.preventDefault();
-			window.onbeforeunload = null;
-			handleNotificationQuery( event );
-		}
-	} );
 
 	$( document.body ).on( 'keydown', '#cartbay-session-search-input', function( event ) {
 		if ( 13 === event.which ) { // Enter key
@@ -349,50 +339,6 @@ jQuery( function( $ ) {
 		}
 
 		window.alert( modalData.entry );
-	} );
-
-	$( document.body ).on( 'click', '.cartbay-notification-more-trigger', function( event ) {
-		event.preventDefault();
-
-		var $trigger = $( this );
-		var contentSelector = $trigger.data( 'content' );
-		var content = contentSelector ? $( contentSelector ).html() : '';
-		var modalData = {
-			title: $trigger.data( 'modalTitle' ),
-			content: content || ''
-		};
-
-		if ( $.fn.WCBackboneModal ) {
-			$trigger.WCBackboneModal( {
-				template: 'cartbay-notification-stats-modal',
-				variable: modalData
-			} );
-			return;
-		}
-
-		window.alert( $( '<div>' + modalData.content + '</div>' ).text() );
-	} );
-
-	$( document.body ).on( 'click', '.cartbay-notification-details-trigger', function( event ) {
-		event.preventDefault();
-
-		var $trigger = $( this );
-		var contentSelector = $trigger.data( 'content' );
-		var content = contentSelector ? $( contentSelector ).html() : '';
-		var modalData = {
-			title: $trigger.data( 'modalTitle' ),
-			content: content || ''
-		};
-
-		if ( $.fn.WCBackboneModal ) {
-			$trigger.WCBackboneModal( {
-				template: 'cartbay-notification-details-modal',
-				variable: modalData
-			} );
-			return;
-		}
-
-		window.alert( $( '<div>' + modalData.content + '</div>' ).text() );
 	} );
 
 	$( document.body ).on( 'click', '#cartbay-log-query-submit', function( event ) {
@@ -499,6 +445,11 @@ JS;
 				'TRIGGER_BUTTON_TEXT',
 				'COPIED_TEXT',
 				'COPY_ENTRY_TEXT',
+				'TEST_EMAIL_URL',
+				'TEST_EMAIL_SENDING_TEXT',
+				'TEST_EMAIL_SUCCESS_TEXT',
+				'TEST_EMAIL_FAILURE_TEXT',
+				'TEST_EMAIL_BUTTON_TEXT',
 			),
 			array(
 				esc_js( __( 'Triggering...', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) ),
@@ -509,6 +460,11 @@ JS;
 				esc_js( __( 'Trigger Test Flow', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) ),
 				esc_js( __( 'Copied', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) ),
 				esc_js( __( 'Copy Entry', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) ),
+				esc_url( rest_url( 'cartbay/v1/test/email' ) ),
+				esc_js( __( 'Sending...', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) ),
+				esc_js( __( 'Test email sent!', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) ),
+				esc_js( __( 'Failed to send test email.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) ),
+				esc_js( __( 'Send Test Email', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) ),
 			),
 			$script
 		);
@@ -561,52 +517,6 @@ JS;
 			</div>
 			<div class="wc-backbone-modal-backdrop modal-close"></div>
 		</script>
-		<script type="text/template" id="tmpl-cartbay-notification-stats-modal">
-			<div class="wc-backbone-modal cartbay-notification-stats-modal">
-				<div class="wc-backbone-modal-content">
-					<section class="wc-backbone-modal-main" role="main">
-						<header class="wc-backbone-modal-header">
-							<h1>{{ data.title }}</h1>
-							<button class="modal-close modal-close-link dashicons dashicons-no-alt">
-								<span class="screen-reader-text"><?php esc_html_e( 'Close modal panel', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></span>
-							</button>
-						</header>
-						<article>
-							{{{ data.content }}}
-						</article>
-						<footer>
-							<div class="inner">
-								<button type="button" class="button button-primary button-large modal-close"><?php esc_html_e( 'Close', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></button>
-							</div>
-						</footer>
-					</section>
-				</div>
-			</div>
-			<div class="wc-backbone-modal-backdrop modal-close"></div>
-		</script>
-		<script type="text/template" id="tmpl-cartbay-notification-details-modal">
-			<div class="wc-backbone-modal cartbay-notification-details-modal">
-				<div class="wc-backbone-modal-content">
-					<section class="wc-backbone-modal-main" role="main">
-						<header class="wc-backbone-modal-header">
-							<h1>{{ data.title }}</h1>
-							<button class="modal-close modal-close-link dashicons dashicons-no-alt">
-								<span class="screen-reader-text"><?php esc_html_e( 'Close modal panel', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></span>
-							</button>
-						</header>
-						<article>
-							{{{ data.content }}}
-						</article>
-						<footer>
-							<div class="inner">
-								<button type="button" class="button button-primary button-large modal-close"><?php esc_html_e( 'Close', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></button>
-							</div>
-						</footer>
-					</section>
-				</div>
-			</div>
-			<div class="wc-backbone-modal-backdrop modal-close"></div>
-		</script>
 		<?php
 	}
 
@@ -626,7 +536,7 @@ JS;
 
 		$settings              = get_option( 'cartbay_settings', array() );
 		$settings              = is_array( $settings ) ? $settings : array();
-		$settings['test_mode'] = false;
+		$settings['test_mode'] = 'no';
 		update_option( 'cartbay_settings', $settings );
 
 		$this->url->redirect_with_notice( 'success', __( 'Test mode disabled.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) );
@@ -648,7 +558,7 @@ JS;
 
 		$settings              = get_option( 'cartbay_settings', array() );
 		$settings              = is_array( $settings ) ? $settings : array();
-		$settings['test_mode'] = true;
+		$settings['test_mode'] = 'yes';
 		update_option( 'cartbay_settings', $settings );
 
 		$redirect_url = add_query_arg(
@@ -672,8 +582,6 @@ JS;
 	 * @return void
 	 */
 	public function render_wc_settings_context_notices(): void {
-		$settings = get_option( 'cartbay_settings', array() );
-
 		if ( ! Settings::is_capture_enabled() ) {
 			$capture_url = $this->url->section( 'capture' );
 			$this->render_wc_settings_inline_notice(
@@ -686,7 +594,7 @@ JS;
 			);
 		}
 
-		if ( ! empty( $settings['test_mode'] ) ) {
+		if ( Settings::is_test_mode_enabled() ) {
 			$disable_url = wp_nonce_url( admin_url( 'admin-post.php?action=cartbay_disable_test_mode' ), 'cartbay_disable_test_mode', 'cartbay_nonce' );
 			$this->render_wc_settings_inline_notice(
 				'warning',
@@ -763,8 +671,7 @@ JS;
 			return;
 		}
 
-		$settings = get_option( 'cartbay_settings', array() );
-		if ( empty( $settings['test_mode'] ) ) {
+		if ( ! Settings::is_test_mode_enabled() ) {
 			return;
 		}
 
@@ -789,6 +696,10 @@ JS;
 			return;
 		}
 
+		if ( ! $this->is_wizard_email_step() ) {
+			return;
+		}
+
 		$mail_warning = $this->get_mail_warning_message();
 
 		if ( '' === $mail_warning ) {
@@ -797,6 +708,34 @@ JS;
 
 		echo '<div class="notice notice-warning is-dismissible">';
 		echo '<p>' . wp_kses_post( $mail_warning ) . '</p></div>';
+	}
+
+	/**
+	 * Determine whether the current request is the wizard's Email Delivery step.
+	 *
+	 * `is_cartbay_admin_page()` only checks `page=cartbay-wizard`, not the current
+	 * step, so without this the global SMTP notice would duplicate on every wizard
+	 * step instead of just the one that already shows it inline. Resolves the step
+	 * key the same way WizardController::render() does, rather than a hardcoded
+	 * step number, since Pro injects its own step via `cartbay_wizard_steps`.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return bool Whether the current wizard step is the Email Delivery step.
+	 */
+	private function is_wizard_email_step(): bool {
+		$page = isset( $_GET['page'] ) ? sanitize_key( wp_unslash( $_GET['page'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+
+		if ( 'cartbay-wizard' !== $page ) {
+			return false;
+		}
+
+		$step_keys  = array_keys( WizardController::get_steps() );
+		$step_count = count( $step_keys );
+		$step       = isset( $_GET['step'] ) ? absint( $_GET['step'] ) : 1; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$step       = max( 1, min( $step, $step_count ) );
+
+		return 'email' === ( $step_keys[ $step - 1 ] ?? '' );
 	}
 
 	/**
@@ -814,10 +753,19 @@ JS;
 		}
 
 		if ( ! empty( $status['has_logger'] ) ) {
-			return __( '<strong>An email logging plugin is active, but no SMTP delivery service was detected.</strong> Emails to buyers may not be delivered reliably.', 'cartbay-abandoned-cart-recovery-for-woocommerce' );
+			$message = __( '<strong>An email logging plugin is active, but no SMTP delivery service was detected.</strong> Emails to buyers may not be delivered reliably.', 'cartbay-abandoned-cart-recovery-for-woocommerce' );
+		} else {
+			$message = __( '<strong>No SMTP plugin detected.</strong> Without an SMTP service, recovery emails may land in spam. Consider installing an SMTP plugin.', 'cartbay-abandoned-cart-recovery-for-woocommerce' );
 		}
 
-		return __( '<strong>No SMTP plugin detected.</strong> Without an SMTP service, recovery emails may land in spam. Consider installing an SMTP plugin.', 'cartbay-abandoned-cart-recovery-for-woocommerce' );
+		$message .= ' ' . __( 'CartBay does not send email itself — this depends on your site\'s mail setup.', 'cartbay-abandoned-cart-recovery-for-woocommerce' );
+		$message .= sprintf(
+			' <a href="%1$s" target="_blank" rel="noopener noreferrer">%2$s</a>',
+			esc_url( CARTBAY_DOCS_EMAIL_SETUP_URL ),
+			esc_html__( 'Learn how to set up reliable email delivery', 'cartbay-abandoned-cart-recovery-for-woocommerce' )
+		);
+
+		return $message;
 	}
 
 	/**

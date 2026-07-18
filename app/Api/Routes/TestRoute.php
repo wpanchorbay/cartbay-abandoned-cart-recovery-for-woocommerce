@@ -7,6 +7,7 @@
 
 namespace WPAnchorBay\CartBay\Api\Routes;
 
+use WPAnchorBay\CartBay\Core\Settings;
 use WPAnchorBay\CartBay\Recovery\NotificationService;
 use WPAnchorBay\CartBay\Utils\Logger;
 use WP_Error;
@@ -80,8 +81,7 @@ class TestRoute {
 			);
 		}
 
-		$settings = get_option( 'cartbay_settings', array() );
-		if ( empty( $settings['test_mode'] ) ) {
+		if ( ! Settings::is_test_mode_enabled() ) {
 			return new WP_Error(
 				'test_mode_disabled',
 				__( 'Test mode is not enabled. Enable it in CartBay Settings → Debug.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),

@@ -73,13 +73,13 @@ class CaptureSection extends AbstractSettingsSection {
 			array(
 				'title'    => __( 'Consent Checkbox Default State', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 				'desc'     => __( 'Choose whether the checkout consent checkbox starts checked or unchecked.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
-				'desc_tip' => __( 'Shoppers can still change the checkbox at checkout. CartBay only captures while it is checked.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+				'desc_tip' => __( 'Defaults to unchecked so consent is an explicit opt-in (recommended for GDPR and similar laws). Shoppers can change it at checkout; CartBay only captures while it is checked.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 				'id'       => 'cartbay_settings[consent_default_state]',
-				'default'  => 'checked',
+				'default'  => 'unchecked',
 				'type'     => 'select',
 				'options'  => array(
+					'unchecked' => __( 'Unchecked (recommended)', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 					'checked'   => __( 'Checked', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
-					'unchecked' => __( 'Unchecked', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 				),
 			),
 			array(

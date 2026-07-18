@@ -10,7 +10,14 @@ namespace WPAnchorBay\CartBay\Utils;
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Write CartBay messages to the WooCommerce logger.
+ * Write CartBay messages to the WooCommerce logger and a bounded database log.
+ *
+ * Messages are always sent to the WooCommerce logger (wc_get_logger), which is
+ * the WordPress.org-sanctioned logging surface. In addition, a bounded,
+ * non-autoloaded option keeps the most recent sanitized entries so the admin
+ * Logs screen can display them without reading any files. No data is written to
+ * the filesystem — plugin data lives in the database, per WordPress.org
+ * guidelines.
  *
  * @since 1.0.0
  */
@@ -23,6 +30,13 @@ class Logger {
 	private const SOURCE = 'cartbay';
 
 	/**
+	 * Option that stores the bounded CartBay log ring buffer (non-autoloaded).
+	 *
+	 * @since 1.0.0
+	 */
+	private const OPTION_KEY = 'cartbay_log_entries';
+
+	/**
 	 * Default CartBay log retention in days.
 	 *
 	 * @since 1.0.0
@@ -30,18 +44,15 @@ class Logger {
 	private const DEFAULT_RETENTION_DAYS = 7;
 
 	/**
-	 * Default CartBay log file size cap in MB.
+	 * Maximum number of entries kept in the database log.
+	 *
+	 * The log is a bounded ring buffer stored in a single non-autoloaded option,
+	 * so the entry count is capped to keep the option small regardless of how
+	 * much the plugin logs.
 	 *
 	 * @since 1.0.0
 	 */
-	private const DEFAULT_MAX_SIZE_MB = 5;
-
-	/**
-	 * Transient key that throttles retention-based log pruning.
-	 *
-	 * @since 1.0.0
-	 */
-	private const PRUNE_THROTTLE_KEY = 'cartbay_log_prune_throttle';
+	private const MAX_ENTRIES = 500;
 
 	/**
 	 * Log an informational message.
@@ -89,7 +100,7 @@ class Logger {
 	}
 
 	/**
-	 * Return recent CartBay file log entries for admin display.
+	 * Return recent CartBay log entries for admin display.
 	 *
 	 * @since 1.0.0
 	 *
@@ -98,19 +109,19 @@ class Logger {
 	 * @return array<int, array<string, mixed>> Log entries.
 	 */
 	public static function get_recent_entries( int $limit = 20 ): array {
-		return self::get_entries( 0, 'DESC', $limit, 0, '' );
+		return self::get_entries( $limit, 'DESC', 0, 0, '' );
 	}
 
 	/**
-	 * Return CartBay file log entries for admin display.
+	 * Return CartBay log entries for admin display.
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param int    $limit   Maximum entries. Use 0 for all entries.
-	 * @param string $order   Sort order: 'ASC' or 'DESC'.
-	 * @param int    $offset  Number of entries to skip.
+	 * @param int    $limit    Maximum entries. Use 0 for all entries.
+	 * @param string $order    Sort order: 'ASC' or 'DESC'.
+	 * @param int    $offset   Number of entries to skip.
 	 * @param int    $per_page Entries per page. Use 0 for unlimited.
-	 * @param string $level   Filter by level. Use '' for all levels.
+	 * @param string $level    Filter by level. Use '' for all levels.
 	 *
 	 * @return array<int, array<string, mixed>> Log entries.
 	 */
@@ -121,33 +132,22 @@ class Logger {
 		int $per_page = 0,
 		string $level = ''
 	): array {
-		$path = self::get_log_file_path();
+		$entries = self::read_entries();
 
-		if ( '' === $path || ! file_exists( $path ) || ! is_readable( $path ) ) {
-			return array();
-		}
-
-		$lines = file( $path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES );
-		if ( ! is_array( $lines ) ) {
-			return array();
-		}
-
-		$entries = array();
-		foreach ( $lines as $line ) {
-			$data = json_decode( $line, true );
-			if ( is_array( $data ) ) {
-				if ( '' !== $level && isset( $data['level'] ) && $data['level'] !== $level ) {
-					continue;
-				}
-				$entries[] = $data;
-			}
+		if ( '' !== $level ) {
+			$entries = array_values(
+				array_filter(
+					$entries,
+					static fn ( array $entry ): bool => ( $entry['level'] ?? '' ) === $level
+				)
+			);
 		}
 
 		usort(
 			$entries,
-			static function ( $a, $b ) use ( $order ): int {
-				$a_ts   = isset( $a['timestamp'] ) ? strtotime( (string) $a['timestamp'] ) : 0;
-				$b_ts   = isset( $b['timestamp'] ) ? strtotime( (string) $b['timestamp'] ) : 0;
+			static function ( array $a, array $b ) use ( $order ): int {
+				$a_ts   = absint( $a['time'] ?? 0 );
+				$b_ts   = absint( $b['time'] ?? 0 );
 				$result = $a_ts <=> $b_ts;
 				return 'ASC' === $order ? $result : -$result;
 			}
@@ -160,7 +160,7 @@ class Logger {
 		if ( $per_page > 0 ) {
 			$entries = array_slice( $entries, 0, $per_page );
 		} elseif ( $limit > 0 ) {
-			$entries = array_slice( $entries, -absint( $limit ) );
+			$entries = array_slice( $entries, 0, $limit );
 		}
 
 		return $entries;
@@ -176,48 +176,29 @@ class Logger {
 	 * @return int Total count.
 	 */
 	public static function count_entries( string $level = '' ): int {
-		$path = self::get_log_file_path();
+		$entries = self::read_entries();
 
-		if ( '' === $path || ! file_exists( $path ) || ! is_readable( $path ) ) {
-			return 0;
+		if ( '' === $level ) {
+			return count( $entries );
 		}
 
-		$lines = file( $path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES );
-		if ( ! is_array( $lines ) ) {
-			return 0;
-		}
-
-		$count = 0;
-		foreach ( $lines as $line ) {
-			$data = json_decode( $line, true );
-			if ( ! is_array( $data ) ) {
-				continue;
-			}
-			if ( '' !== $level && isset( $data['level'] ) && $data['level'] !== $level ) {
-				continue;
-			}
-			++$count;
-		}
-
-		return $count;
+		return count(
+			array_filter(
+				$entries,
+				static fn ( array $entry ): bool => ( $entry['level'] ?? '' ) === $level
+			)
+		);
 	}
 
 	/**
-	 * Get the CartBay log file path.
+	 * Clear the stored CartBay log entries.
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return string Log file path.
+	 * @return void
 	 */
-	public static function get_log_file_path(): string {
-		$upload_dir = wp_upload_dir();
-		$base_dir   = (string) $upload_dir['basedir'];
-
-		if ( '' === $base_dir ) {
-			return '';
-		}
-
-		return trailingslashit( $base_dir ) . 'cartbay/cartbay.log';
+	public static function clear(): void {
+		delete_option( self::OPTION_KEY );
 	}
 
 	/**
@@ -249,11 +230,11 @@ class Logger {
 			);
 		}
 
-		self::write_file_log( $level, $message, $safe_context, $subsystem );
+		self::store_entry( $level, $message, $safe_context, $subsystem );
 	}
 
 	/**
-	 * Write a sanitized CartBay-owned JSON-line log entry.
+	 * Append a sanitized entry to the bounded database log.
 	 *
 	 * @since 1.0.0
 	 *
@@ -264,141 +245,98 @@ class Logger {
 	 *
 	 * @return void
 	 */
-	private static function write_file_log( string $level, string $message, array $context, ?string $subsystem = null ): void {
-		if ( ! self::is_file_logging_enabled() ) {
+	private static function store_entry( string $level, string $message, array $context, ?string $subsystem = null ): void {
+		if ( ! self::is_logging_enabled() ) {
 			return;
 		}
 
-		$path = self::get_log_file_path();
-		if ( '' === $path ) {
-			return;
-		}
-
-		$directory = dirname( $path );
-		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_is_writable
-		if ( ! wp_mkdir_p( $directory ) || ! is_writable( $directory ) ) {
-			return;
-		}
-
-		// Protect directory from browsing.
-		$index = trailingslashit( $directory ) . 'index.php';
-		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_is_readable
-		if ( ! file_exists( $index ) ) {
-			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
-			file_put_contents( $index, "<?php\n// Silence is golden." . PHP_EOL );
-		}
-
-		self::maybe_prune_file_log( $path );
+		$now = time();
 
 		$entry = array(
-			'timestamp' => gmdate( 'c' ),
+			'time'      => $now,
+			'timestamp' => gmdate( 'c', $now ),
 			'level'     => sanitize_key( $level ),
 			'message'   => sanitize_text_field( $message ),
 			'context'   => $context,
 			'system'    => null !== $subsystem ? sanitize_key( $subsystem ) : 'core',
 		);
 
-		$encoded = wp_json_encode( $entry );
-		if ( ! is_string( $encoded ) ) {
-			return;
-		}
+		$entries   = self::read_entries();
+		$entries[] = $entry;
+		$entries   = self::prune( $entries );
 
-		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
-		file_put_contents( $path, $encoded . PHP_EOL, FILE_APPEND | LOCK_EX );
+		update_option( self::OPTION_KEY, $entries, false );
 	}
 
 	/**
-	 * Prune the log only when the full-file rewrite is warranted.
-	 *
-	 * {@see prune_file_log()} reads, JSON-decodes, and rewrites the entire log
-	 * file. Running that on every write makes each log entry an O(n) operation,
-	 * so it is gated here: the size cap is enforced immediately whenever the file
-	 * grows past it, while the retention sweep runs at most once per hour. Routine
-	 * event logging then just appends instead of rewriting the whole file.
+	 * Read the stored log entries.
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param string $path Log file path.
-	 *
-	 * @return void
+	 * @return array<int, array<string, mixed>> Stored entries.
 	 */
-	private static function maybe_prune_file_log( string $path ): void {
-		if ( ! file_exists( $path ) ) {
-			return;
-		}
+	private static function read_entries(): array {
+		$entries = get_option( self::OPTION_KEY, array() );
 
-		$size      = filesize( $path );
-		$max_bytes = self::get_max_size_mb() * MB_IN_BYTES;
-
-		// Always trim when the file has grown past the size cap.
-		if ( false !== $size && $size > $max_bytes ) {
-			self::prune_file_log( $path );
-			return;
-		}
-
-		// Otherwise run the retention sweep at most once per hour.
-		if ( false === get_transient( self::PRUNE_THROTTLE_KEY ) ) {
-			set_transient( self::PRUNE_THROTTLE_KEY, 1, HOUR_IN_SECONDS );
-			self::prune_file_log( $path );
-		}
+		return is_array( $entries ) ? array_values( array_filter( $entries, 'is_array' ) ) : array();
 	}
 
 	/**
-	 * Prune the file log by retention and size limits.
+	 * Prune entries beyond the retention window and the entry cap.
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param string $path Log file path.
+	 * @param array<int, array<string, mixed>> $entries Entries to prune.
 	 *
-	 * @return void
+	 * @return array<int, array<string, mixed>> Pruned entries.
 	 */
-	private static function prune_file_log( string $path ): void {
-		if ( ! file_exists( $path ) || ! is_readable( $path ) ) {
-			return;
-		}
-
-		$lines = file( $path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES );
-		if ( ! is_array( $lines ) ) {
-			return;
-		}
-
+	private static function prune( array $entries ): array {
 		$cutoff = time() - ( self::get_retention_days() * DAY_IN_SECONDS );
-		$kept   = array();
 
-		foreach ( $lines as $line ) {
-			$data      = json_decode( $line, true );
-			$timestamp = is_array( $data ) && isset( $data['timestamp'] ) ? strtotime( (string) $data['timestamp'] ) : false;
-			if ( false === $timestamp || $timestamp >= $cutoff ) {
-				$kept[] = $line;
-			}
+		$entries = array_values(
+			array_filter(
+				$entries,
+				static fn ( array $entry ): bool => absint( $entry['time'] ?? 0 ) >= $cutoff
+			)
+		);
+
+		if ( count( $entries ) > self::MAX_ENTRIES ) {
+			$entries = array_slice( $entries, -self::MAX_ENTRIES );
 		}
 
-		$max_bytes  = self::get_max_size_mb() * MB_IN_BYTES;
-		$log_size   = strlen( implode( PHP_EOL, $kept ) );
-		$line_count = count( $kept );
-
-		while ( $log_size > $max_bytes && $line_count > 1 ) {
-			array_shift( $kept );
-			$log_size   = strlen( implode( PHP_EOL, $kept ) );
-			$line_count = count( $kept );
-		}
-
-		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
-		file_put_contents( $path, empty( $kept ) ? '' : implode( PHP_EOL, $kept ) . PHP_EOL, LOCK_EX );
+		return $entries;
 	}
 
 	/**
-	 * Whether CartBay-owned file logging is enabled.
+	 * Whether CartBay-owned database logging is enabled.
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return bool Whether file logging is enabled.
+	 * @return bool Whether logging is enabled.
 	 */
-	private static function is_file_logging_enabled(): bool {
+	private static function is_logging_enabled(): bool {
 		$settings = get_option( 'cartbay_settings', array() );
 		$settings = is_array( $settings ) ? $settings : array();
 
-		return ! array_key_exists( 'log_enabled', $settings ) || ! empty( $settings['log_enabled'] );
+		if ( ! array_key_exists( 'log_enabled', $settings ) ) {
+			return true;
+		}
+
+		$value = $settings['log_enabled'];
+
+		if ( is_bool( $value ) ) {
+			return $value;
+		}
+
+		if ( is_numeric( $value ) ) {
+			return 1 === absint( $value );
+		}
+
+		if ( is_string( $value ) ) {
+			return in_array( strtolower( trim( $value ) ), array( '1', 'true', 'yes', 'on' ), true );
+		}
+
+		return false;
 	}
 
 	/**
@@ -413,20 +351,6 @@ class Logger {
 		$settings = is_array( $settings ) ? $settings : array();
 
 		return max( 1, min( 30, absint( $settings['log_retention_days'] ?? self::DEFAULT_RETENTION_DAYS ) ) );
-	}
-
-	/**
-	 * Get configured log max size in MB.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return int Max size in MB.
-	 */
-	private static function get_max_size_mb(): int {
-		$settings = get_option( 'cartbay_settings', array() );
-		$settings = is_array( $settings ) ? $settings : array();
-
-		return max( 1, min( 20, absint( $settings['log_max_size_mb'] ?? self::DEFAULT_MAX_SIZE_MB ) ) );
 	}
 
 	/**

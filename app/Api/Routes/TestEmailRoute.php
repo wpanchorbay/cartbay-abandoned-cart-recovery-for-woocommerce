@@ -63,6 +63,37 @@ class TestEmailRoute {
 	}
 
 	/**
+	 * Send email through a callable, capturing the real wp_mail_failed reason.
+	 *
+	 * WordPress fires `wp_mail_failed` synchronously, with the underlying
+	 * PHPMailer/SMTP error message, before `wp_mail()` returns false. Capturing
+	 * it here lets the caller surface a specific reason instead of a generic
+	 * failure message.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param callable $sender Callable that triggers a `wp_mail()`-backed send and returns bool.
+	 *
+	 * @return array{0: bool, 1: string} Whether the send succeeded, and the captured failure reason.
+	 */
+	private function attempt_send( callable $sender ): array {
+		$reason  = '';
+		$capture = function ( WP_Error $error ) use ( &$reason ) {
+			$reason = $error->get_error_message();
+		};
+
+		add_action( 'wp_mail_failed', $capture );
+
+		try {
+			$sent = (bool) $sender();
+		} finally {
+			remove_action( 'wp_mail_failed', $capture );
+		}
+
+		return array( $sent, $reason );
+	}
+
+	/**
 	 * Handle the test email request.
 	 *
 	 * @since 1.0.0
@@ -106,14 +137,26 @@ class TestEmailRoute {
 			$emails          = WC()->mailer()->get_emails();
 
 			if ( '' !== $email_class && isset( $emails[ $email_class ] ) && method_exists( $emails[ $email_class ], 'send_preview' ) ) {
-				$sent = (bool) $emails[ $email_class ]->send_preview( $target_email );
+				list( $sent, $reason ) = $this->attempt_send(
+					static fn (): bool => (bool) $emails[ $email_class ]->send_preview( $target_email )
+				);
 
 				if ( ! $sent ) {
-					Logger::error( 'Test email API failed to send preview email.', array( 'step' => $step_index ), 'test' );
+					Logger::error(
+						'Test email API failed to send preview email.',
+						array(
+							'step'   => $step_index,
+							'reason' => $reason,
+						),
+						'test'
+					);
 					return new WP_Error(
 						'email_failed',
 						__( 'Failed to send the preview email. Check your WordPress email configuration.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
-						array( 'status' => 500 )
+						array(
+							'status' => 500,
+							'reason' => $reason,
+						)
 					);
 				}
 
@@ -137,14 +180,19 @@ class TestEmailRoute {
 		$subject = __( 'CartBay Test Email', 'cartbay-abandoned-cart-recovery-for-woocommerce' );
 		$message = __( 'This is a test email from CartBay. If you received this, your email delivery is working correctly.', 'cartbay-abandoned-cart-recovery-for-woocommerce' );
 
-		$sent = wp_mail( $target_email, $subject, $message );
+		list( $sent, $reason ) = $this->attempt_send(
+			static fn (): bool => wp_mail( $target_email, $subject, $message )
+		);
 
 		if ( ! $sent ) {
-			Logger::error( 'Test email API failed to send basic test email.', array(), 'test' );
+			Logger::error( 'Test email API failed to send basic test email.', array( 'reason' => $reason ), 'test' );
 			return new WP_Error(
 				'email_failed',
 				__( 'Failed to send test email. Check your WordPress email configuration.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
-				array( 'status' => 500 )
+				array(
+					'status' => 500,
+					'reason' => $reason,
+				)
 			);
 		}
 

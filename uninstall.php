@@ -47,7 +47,12 @@ cartbay_uninstall_remove_capabilities();
 $cartbay_settings = get_option( 'cartbay_settings', array() );
 $cartbay_settings = is_array( $cartbay_settings ) ? $cartbay_settings : array();
 
-if ( empty( $cartbay_settings['remove_data_on_uninstall'] ) ) {
+$cartbay_remove_data_on_uninstall = $cartbay_settings['remove_data_on_uninstall'] ?? false;
+if ( is_string( $cartbay_remove_data_on_uninstall ) ) {
+	$cartbay_remove_data_on_uninstall = in_array( strtolower( trim( $cartbay_remove_data_on_uninstall ) ), array( '1', 'true', 'yes', 'on' ), true );
+}
+
+if ( ! $cartbay_remove_data_on_uninstall ) {
 	return;
 }
 
@@ -204,8 +209,10 @@ function cartbay_uninstall_delete_file_logs(): void {
 	}
 
 	$files = array(
+		trailingslashit( $base_dir ) . 'cartbay/cartbay.log.php',
 		trailingslashit( $base_dir ) . 'cartbay/cartbay.log',
 		trailingslashit( $base_dir ) . 'cartbay/index.php',
+		trailingslashit( $base_dir ) . 'cartbay/.htaccess',
 	);
 
 	foreach ( $files as $file ) {
@@ -232,6 +239,8 @@ $cartbay_options = array(
 	'cartbay_settings',
 	'cartbay_wizard_complete',
 	'cartbay_sequence_defaults_version',
+	'cartbay_db_version',
+	'cartbay_log_entries',
 	'woocommerce_cartbay_recovery_1_settings',
 	'woocommerce_cartbay_recovery_2_settings',
 	'woocommerce_cartbay_recovery_3_settings',
@@ -242,3 +251,17 @@ foreach ( $cartbay_options as $cartbay_option ) {
 }
 
 delete_transient( 'cartbay_analytics_cache' );
+delete_transient( 'cartbay_wizard_redirect' );
+
+// Sweep the per-notification context transients (cartbay_notification_ctx_*),
+// which are created dynamically with a TTL. They self-expire, but on an
+// opt-in full removal we clear any that remain.
+global $wpdb;
+// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+$wpdb->query(
+	$wpdb->prepare(
+		"DELETE FROM {$wpdb->options} WHERE option_name LIKE %s OR option_name LIKE %s",
+		$wpdb->esc_like( '_transient_cartbay_notification_ctx_' ) . '%',
+		$wpdb->esc_like( '_transient_timeout_cartbay_notification_ctx_' ) . '%'
+	)
+);

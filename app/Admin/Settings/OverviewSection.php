@@ -128,13 +128,13 @@ class OverviewSection extends AbstractSettingsSection {
 			),
 			array(
 				'label'      => __( 'Abandoned Cart Value', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
-				'value'      => wp_kses_post( $abandoned_value ),
+				'value'      => $abandoned_value,
 				'tooltip'    => __( 'Total cart value for sessions that became abandoned during the selected period.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 				'allow_html' => true,
 			),
 			array(
 				'label'      => __( 'Recovered Revenue', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
-				'value'      => wp_kses_post( $revenue ),
+				'value'      => $revenue,
 				'tooltip'    => __( 'Revenue from WooCommerce orders matched to recovered CartBay sessions in the selected period.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 				'allow_html' => true,
 			),
@@ -148,17 +148,18 @@ class OverviewSection extends AbstractSettingsSection {
 		/**
 		 * Filter the Overview metric cards.
 		 *
-		 * Free ships the basic recovery metrics only. Advanced analytics cards
-		 * (restore-link clicks, click-to-recovery rate, link-restored purchases,
-		 * failed restores) are a CartBay Pro feature appended via this filter.
-		 * The full analytics payload is passed so Pro can build cards without
-		 * re-querying.
+		 * Extensions can append their own metric cards here (for example deeper
+		 * reporting such as restore-link clicks, click-to-recovery rate, or
+		 * shopper behaviour). The current period and the core analytics payload
+		 * are passed so extensions can compute additional figures without
+		 * re-querying. Each card is an array with `label`, `value`, optional
+		 * `tooltip`, and optional `allow_html` keys.
 		 *
 		 * @since 1.0.0
 		 *
 		 * @param array<int, array<string, mixed>> $cards  Metric cards to render.
 		 * @param int                              $period Selected reporting period in days.
-		 * @param array<string, mixed>             $data   Analytics payload for the period.
+		 * @param array<string, mixed>             $data   Core analytics payload for the period.
 		 */
 		$cards    = apply_filters( 'cartbay_overview_metric_cards', $cards, $period, $data );
 		$periods  = array(
@@ -363,10 +364,12 @@ class OverviewSection extends AbstractSettingsSection {
 		echo '</div>';
 		echo '<div class="alignleft actions">';
 		/**
-		 * Fires in the sessions table toolbar, where the CSV export buttons render.
+		 * Fires in the sessions table toolbar, alongside the filter controls.
 		 *
-		 * CSV export (sessions + emails) is a CartBay Pro feature. Pro hooks here
-		 * to add its export buttons without modifying the free plugin.
+		 * Extensions can add their own toolbar controls here (for example CSV
+		 * export buttons) without modifying the free plugin. The current
+		 * session-list view context is passed so extensions can honour the
+		 * active filters.
 		 *
 		 * @since 1.0.0
 		 *

@@ -119,11 +119,12 @@ class NotificationsSection extends AbstractSettingsSection {
 		echo '</div>';
 
 		/**
-		 * Fires after the basic notification summary, before the delivery test.
+		 * Fires after the notification health summary, before the delivery test.
 		 *
-		 * The detailed per-notification lifecycle log (filterable table, retry and
-		 * restore-click tracking, queue inspector, manual resend) is a CartBay Pro
-		 * feature injected here. Free ships the summary and delivery test only.
+		 * Extensions can render additional notification reporting here (for
+		 * example a filterable per-notification lifecycle table, queue inspector,
+		 * or manual resend controls). The current view context is passed so
+		 * extensions can honour the selected period.
 		 *
 		 * @since 1.0.0
 		 *
@@ -149,8 +150,6 @@ class NotificationsSection extends AbstractSettingsSection {
 	 */
 	private function render_test_email_delivery(): void {
 		$mail_status    = $this->mail_detector->detect();
-		$rest_url       = rest_url( 'cartbay/v1/test/email' );
-		$nonce          = wp_create_nonce( 'wp_rest' );
 		$admin_email    = sanitize_email( (string) wp_get_current_user()->user_email );
 		$from_email     = sanitize_email( apply_filters( 'wp_mail_from', 'wordpress@' . wp_parse_url( home_url(), PHP_URL_HOST ) ) ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 		$from_name      = apply_filters( 'wp_mail_from_name', 'WordPress' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
@@ -161,6 +160,12 @@ class NotificationsSection extends AbstractSettingsSection {
 			$admin_email = sanitize_email( (string) get_option( 'admin_email' ) );
 		}
 
+		$learn_more_link = sprintf(
+			' <a href="%1$s" target="_blank" rel="noopener noreferrer">%2$s</a>',
+			esc_url( CARTBAY_DOCS_EMAIL_SETUP_URL ),
+			esc_html__( 'Learn how to set up reliable email delivery', 'cartbay-abandoned-cart-recovery-for-woocommerce' )
+		);
+
 		if ( ! empty( $mail_status['has_delivery'] ) ) {
 			$delivery_class = 'notice-success';
 			$delivery_label = __( 'SMTP delivery detected.', 'cartbay-abandoned-cart-recovery-for-woocommerce' );
@@ -168,16 +173,18 @@ class NotificationsSection extends AbstractSettingsSection {
 				$delivery_label .= ' ' . $mail_status['delivery']['detail'];
 			}
 		} elseif ( ! empty( $mail_status['has_logger'] ) ) {
-			$delivery_label = __( 'Email logging detected, but no SMTP delivery service. Emails to buyers may not be delivered reliably.', 'cartbay-abandoned-cart-recovery-for-woocommerce' );
+			$delivery_label = __( 'Email logging detected, but no SMTP delivery service. Emails to buyers may not be delivered reliably.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . $learn_more_link;
 		} else {
-			$delivery_label = __( 'No SMTP plugin detected. Without an SMTP service, recovery emails may land in spam.', 'cartbay-abandoned-cart-recovery-for-woocommerce' );
+			$delivery_label = __( 'No SMTP plugin detected. Without an SMTP service, recovery emails may land in spam.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . $learn_more_link;
 		}
 		?>
 		<div class="cartbay-test-delivery-section">
 			<h3><?php esc_html_e( 'Email Delivery Test', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></h3>
 
+			<p class="description"><?php esc_html_e( 'CartBay hands recovery emails to WordPress and WooCommerce for delivery — it does not send email itself. If sending is unreliable, the fix is your site\'s mail setup, not CartBay.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></p>
+
 			<div class="notice inline <?php echo esc_attr( $delivery_class ); ?>">
-				<p><?php echo esc_html( $delivery_label ); ?></p>
+				<p><?php echo wp_kses_post( $delivery_label ); ?></p>
 			</div>
 
 			<table class="widefat striped" style="margin: 12px 0; max-width: 480px;">
@@ -209,26 +216,6 @@ class NotificationsSection extends AbstractSettingsSection {
 			</p>
 			<p class="description"><?php esc_html_e( 'Enter an email address and click to send a test email and verify delivery.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></p>
 		</div>
-
-		<script>
-		jQuery( function( $ ) {
-			$( '#cartbay-test-email-notifications' ).on( 'click', function() {
-				var btn  = $( this );
-				var email = $( '#cartbay-test-email-address' ).val();
-				btn.prop( 'disabled', true ).text( '<?php echo esc_js( __( 'Sending...', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) ); ?>' );
-				$.post( '<?php echo esc_url( $rest_url ); ?>', {
-					_wpnonce: '<?php echo esc_js( $nonce ); ?>',
-					email: email
-				} ).done( function( resp ) {
-					$( '#cartbay-test-email-result' ).text( resp.message || '<?php echo esc_js( __( 'Test email sent!', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) ); ?>' );
-				} ).fail( function() {
-					$( '#cartbay-test-email-result' ).text( '<?php echo esc_js( __( 'Failed to send test email.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) ); ?>' );
-				} ).always( function() {
-					btn.prop( 'disabled', false ).text( '<?php echo esc_js( __( 'Send Test Email', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) ); ?>' );
-				} );
-			} );
-		} );
-		</script>
 		<?php
 	}
 
@@ -259,10 +246,10 @@ class NotificationsSection extends AbstractSettingsSection {
 	}
 
 	/**
-	 * Render the basic notification health summary cards.
+	 * Render the notification health summary cards.
 	 *
-	 * Advanced step-level performance and status-level breakdowns are a CartBay
-	 * Pro feature added via the `cartbay_notifications_after_summary` hook.
+	 * Extensions can add deeper reporting (step-level performance, status-level
+	 * breakdowns, etc.) via the `cartbay_notifications_after_summary` hook.
 	 *
 	 * @since 1.0.0
 	 *

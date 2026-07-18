@@ -41,6 +41,10 @@ if ( ! defined( 'CARTBAY_DOCS_URL' ) ) {
 	define( 'CARTBAY_DOCS_URL', 'https://docs.wpanchorbay.com/cartbay' );
 }
 
+if ( ! defined( 'CARTBAY_DOCS_EMAIL_SETUP_URL' ) ) {
+	define( 'CARTBAY_DOCS_EMAIL_SETUP_URL', 'https://docs.wpanchorbay.com/cartbay/getting-started/email-delivery-setup/' );
+}
+
 if ( ! defined( 'CARTBAY_SETTINGS_URL' ) ) {
 	define( 'CARTBAY_SETTINGS_URL', 'admin.php?page=wc-settings&tab=cartbay&section=settings' );
 }

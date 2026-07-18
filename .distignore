@@ -1,0 +1,41 @@
+# Files and directories that must never ship in the WordPress.org package.
+# The release script (scripts/release.js) already builds from an allowlist;
+# this is belt-and-suspenders for any other packaging path (e.g. wp dist-archive).
+#
+# NOTE: src/, package.json, and webpack.config.js are intentionally NOT listed —
+# they ship in the package to keep the compiled JS sources available/reproducible
+# (WordPress.org guideline 4).
+
+/.git
+/.github
+/.history
+/.claude
+/.agents
+/.codex
+/.gemini
+/.antigravitycli
+/.commandcode
+/.generic-ui
+/.meta
+/.phpunit.cache
+/.playwright
+/graphify-out
+/node_modules
+/tests
+/scripts
+/dist
+/.distignore
+/.gitignore
+/.graphifyignore
+/bun.lock
+/composer.lock
+/phpcs.xml
+/phpstan.neon
+/phpstan-bootstrap.php
+/phpstan-woocommerce-stubs.php
+/phpunit.xml
+/AGENTS.md
+/GEMINI.md
+/README.md
+/CHANGELOG.md
+/*.zip

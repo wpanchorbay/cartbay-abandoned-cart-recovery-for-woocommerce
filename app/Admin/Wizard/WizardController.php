@@ -70,7 +70,7 @@ class WizardController {
 			wp_die( esc_html__( 'You do not have permission to access CartBay.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) );
 		}
 
-		$steps      = $this->get_steps();
+		$steps      = self::get_steps();
 		$step_count = count( $steps );
 		$step       = isset( $_GET['step'] ) ? absint( $_GET['step'] ) : 1;
 		$step       = max( 1, min( $step, $step_count ) );
@@ -301,6 +301,8 @@ class WizardController {
 		?>
 		<h2><?php esc_html_e( 'Email Delivery', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></h2>
 
+		<p class="description"><?php esc_html_e( 'CartBay hands recovery emails to WordPress and WooCommerce for delivery — it does not send email itself. If sending is unreliable, the fix is your site\'s mail setup, not CartBay.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></p>
+
 		<?php if ( ! empty( $status['has_delivery'] ) ) : ?>
 			<div class="notice notice-success inline is-dismissible cartbay-notice-auto-dismiss">
 				<p><?php esc_html_e( 'SMTP delivery detected. Your emails should deliver reliably.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></p>
@@ -310,6 +312,7 @@ class WizardController {
 				<p>
 					<strong><?php esc_html_e( 'An email logging plugin is active, but no SMTP delivery service was detected.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></strong>
 					<?php esc_html_e( 'Emails to buyers may not be delivered reliably.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?>
+					<a href="<?php echo esc_url( CARTBAY_DOCS_EMAIL_SETUP_URL ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Learn how to set up reliable email delivery', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></a>
 				</p>
 			</div>
 		<?php else : ?>
@@ -317,6 +320,7 @@ class WizardController {
 				<p>
 					<strong><?php esc_html_e( 'No SMTP plugin detected.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></strong>
 					<?php esc_html_e( 'Without an SMTP service, recovery emails may land in spam. Consider installing an SMTP plugin.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?>
+					<a href="<?php echo esc_url( CARTBAY_DOCS_EMAIL_SETUP_URL ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Learn how to set up reliable email delivery', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></a>
 				</p>
 			</div>
 		<?php endif; ?>
@@ -330,26 +334,6 @@ class WizardController {
 			<span id="cartbay-test-email-result"></span>
 		</p>
 		<p class="description"><?php esc_html_e( 'Enter an email address and click to send a test email and verify delivery.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></p>
-
-		<script>
-		jQuery(function($) {
-			$('#cartbay-test-email').on('click', function() {
-				var btn = $(this);
-				var email = $('#cartbay-test-email-address').val();
-				btn.prop('disabled', true).text('<?php echo esc_js( __( 'Sending...', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) ); ?>');
-				$.post('<?php echo esc_url( rest_url( 'cartbay/v1/test/email' ) ); ?>', {
-					_wpnonce: '<?php echo esc_js( wp_create_nonce( 'wp_rest' ) ); ?>',
-					email: email
-				}).done(function(resp) {
-					$('#cartbay-test-email-result').text(resp.message || '<?php echo esc_js( __( 'Test email sent!', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) ); ?>');
-				}).fail(function() {
-					$('#cartbay-test-email-result').text('<?php echo esc_js( __( 'Failed to send test email.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) ); ?>');
-				}).always(function() {
-					btn.prop('disabled', false).text('<?php echo esc_js( __( 'Send Test Email', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) ); ?>');
-				});
-			});
-		});
-		</script>
 		<?php
 	}
 
@@ -469,6 +453,10 @@ class WizardController {
 	/**
 	 * Queue a wizard action notice for the next redirect.
 	 *
+	 * Part of the wizard's public extension API: the controller instance is
+	 * passed to the `cartbay_wizard_process_step` filter so extensions that add
+	 * their own wizard steps can surface a success or error notice on redirect.
+	 *
 	 * @since 1.0.0
 	 *
 	 * @param string $type    Notice type.
@@ -556,11 +544,15 @@ class WizardController {
 	/**
 	 * Get the ordered wizard steps.
 	 *
+	 * Public and static so other admin surfaces (e.g. the global SMTP notice in
+	 * SettingsPage) can resolve the current step key without depending on step
+	 * numbers, which shift when Pro injects its own step via `cartbay_wizard_steps`.
+	 *
 	 * @since 1.0.0
 	 *
 	 * @return array<string, string> Wizard labels keyed by step ID.
 	 */
-	private function get_steps(): array {
+	public static function get_steps(): array {
 		$steps = array(
 			'welcome' => __( 'Welcome', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 			'consent' => __( 'Consent & Timing', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),

@@ -25,7 +25,7 @@
 		cartbayCapture.settings &&
 		cartbayCapture.settings.consent_default_state
 			? cartbayCapture.settings.consent_default_state
-			: 'checked';
+			: 'unchecked';
 
 	var lastCapturedEmail = '';
 	var captureInFlight = false;
@@ -82,6 +82,47 @@
 		} catch (e) {
 			// Ignore storage errors.
 		}
+	}
+
+	/**
+	 * Get the per-session ownership token from sessionStorage.
+	 */
+	function getStoredToken() {
+		try {
+			return sessionStorage.getItem('cartbay_capture_token') || '';
+		} catch (e) {
+			return '';
+		}
+	}
+
+	/**
+	 * Store the per-session ownership token in sessionStorage.
+	 */
+	function storeToken(token) {
+		try {
+			sessionStorage.setItem('cartbay_capture_token', token);
+		} catch (e) {
+			// Ignore storage errors.
+		}
+	}
+
+	/**
+	 * Clear the stored session ID and its ownership token together.
+	 */
+	function clearStoredSession() {
+		clearStoredSessionId();
+		try {
+			sessionStorage.removeItem('cartbay_capture_token');
+		} catch (e) {
+			// Ignore storage errors.
+		}
+	}
+
+	/**
+	 * Get the REST nonce localized alongside the capture endpoint.
+	 */
+	function getNonce() {
+		return cartbayCapture.nonce ? cartbayCapture.nonce : '';
 	}
 
 	/**
@@ -159,11 +200,15 @@
 			source: 'classic',
 			cart: cartbayCapture.cart || {},
 			session_id: getStoredSessionId(),
+			capture_token: getStoredToken(),
 		};
 
 		fetch(cartbayCapture.endpoint, {
 			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
+			headers: {
+				'Content-Type': 'application/json',
+				'X-WP-Nonce': getNonce(),
+			},
 			credentials: 'same-origin',
 			body: JSON.stringify(data),
 		}).then(function (response) {
@@ -171,6 +216,9 @@
 		}).then(function (json) {
 			if (json && json.success && json.session_id) {
 				storeSessionId(json.session_id);
+				if (json.capture_token) {
+					storeToken(json.capture_token);
+				}
 				lastCapturedEmail = email;
 			}
 		}).catch(function () {
@@ -185,29 +233,31 @@
 	 */
 	function deleteCapture() {
 		var sessionId = getStoredSessionId();
-		// Prefer the email the session was captured with so consent withdrawal
-		// still proves ownership even if the email field was cleared first.
-		var email = lastCapturedEmail || getEmail();
+		var token = getStoredToken();
 
-		clearStoredSessionId();
+		clearStoredSession();
 		lastCapturedEmail = '';
 
-		// Deletion requires the captured email as proof of ownership.
-		if (!email) {
+		// Deletion requires the per-session ownership token issued at capture
+		// time. Without it there is nothing this browser can prove it owns.
+		if (!sessionId || !token) {
 			return;
 		}
 
 		var data = {
-			email: email,
 			consent: false,
 			source: 'classic',
 			cart: cartbayCapture.cart || {},
 			session_id: sessionId,
+			capture_token: token,
 		};
 
 		fetch(cartbayCapture.endpoint, {
 			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
+			headers: {
+				'Content-Type': 'application/json',
+				'X-WP-Nonce': getNonce(),
+			},
 			credentials: 'same-origin',
 			body: JSON.stringify(data),
 		}).catch(function () {

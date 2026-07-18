@@ -386,6 +386,17 @@ if ( ! function_exists( 'wc_get_orders' ) ) {
 	}
 }
 
+if ( ! function_exists( 'wc_get_order_statuses' ) ) {
+	/**
+	 * Get registered WooCommerce order statuses.
+	 *
+	 * @return array<string, string>
+	 */
+	function wc_get_order_statuses(): array {
+		return array();
+	}
+}
+
 if ( ! function_exists( 'wc_get_logger' ) ) {
 	/**
 	 * Fetch the WooCommerce logger.

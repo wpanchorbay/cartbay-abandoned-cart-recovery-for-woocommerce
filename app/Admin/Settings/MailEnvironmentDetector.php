@@ -64,32 +64,6 @@ class MailEnvironmentDetector {
 	}
 
 	/**
-	 * Determine whether mail delivery is detected.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return bool Whether a delivery system is detected.
-	 */
-	public function has_delivery(): bool {
-		$status = $this->detect();
-
-		return ! empty( $status['has_delivery'] );
-	}
-
-	/**
-	 * Determine whether an email logger exists without a delivery system.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return bool Whether only email logging is detected.
-	 */
-	public function has_logger_only(): bool {
-		$status = $this->detect();
-
-		return empty( $status['has_delivery'] ) && ! empty( $status['has_logger'] );
-	}
-
-	/**
 	 * Detect mail delivery signals.
 	 *
 	 * @since 1.0.0
@@ -195,7 +169,7 @@ class MailEnvironmentDetector {
 	private function get_delivery_plugins(): array {
 		$plugins = array(
 			'wp-mail-smtp/wp_mail_smtp.php'     => 'WP Mail SMTP',
-			'postman-smtp/postman-smtp.php'     => 'Post SMTP',
+			'postman-smtp/postman-smtp.php'     => 'Postman SMTP',
 			'post-smtp/postman-smtp.php'        => 'Post SMTP',
 			'easy-wp-smtp/easy-wp-smtp.php'     => 'Easy WP SMTP',
 			'fluent-smtp/fluent-smtp.php'       => 'FluentSMTP',

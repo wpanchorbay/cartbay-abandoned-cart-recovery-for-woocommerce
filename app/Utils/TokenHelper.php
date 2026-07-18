@@ -87,6 +87,58 @@ class TokenHelper {
 	}
 
 	/**
+	 * Create a capture-ownership token for a session, store its hash, return the plain token.
+	 *
+	 * Issued to the shopper's browser when a session is first captured. It is the
+	 * proof of ownership required to later update or delete that specific session
+	 * through the public capture endpoint — the same bearer-token model as the
+	 * WooCommerce Store API cart token. Only the hash is persisted; the plain
+	 * token is never recoverable server-side.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param \WC_Order $session WC order representing the cart session.
+	 *
+	 * @return string Plain token to hand back to the client.
+	 */
+	public static function create_capture_token( \WC_Order $session ): string {
+		$token = self::generate();
+
+		$session->update_meta_data( '_cartbay_capture_token_hash', self::hash( $token ) );
+		$session->save();
+
+		return $token;
+	}
+
+	/**
+	 * Validate a capture-ownership token against a session.
+	 *
+	 * Authorizes update/delete of an existing session on the public capture
+	 * endpoint. An empty supplied token or an empty stored hash must fail closed:
+	 * `hash_equals( '', '' )` is true, so without this guard any request carrying
+	 * no token would authorize against a legacy session that predates the token.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param \WC_Order $session WC order representing the cart session.
+	 * @param string    $token   Plain token supplied by the client.
+	 *
+	 * @return bool True when the token matches the stored hash.
+	 */
+	public static function validate_capture_token( \WC_Order $session, string $token ): bool {
+		if ( '' === $token ) {
+			return false;
+		}
+
+		$stored_hash = (string) $session->get_meta( '_cartbay_capture_token_hash', true );
+		if ( '' === $stored_hash ) {
+			return false;
+		}
+
+		return hash_equals( $stored_hash, self::hash( $token ) );
+	}
+
+	/**
 	 * Validate a restore token against a session.
 	 *
 	 * @since 1.0.0

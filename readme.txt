@@ -1,11 +1,11 @@
 === CartBay — Abandoned Cart Recovery for WooCommerce ===
 Contributors: wpanchorbay, forhadkhan
-Tags: abandoned cart, cart recovery, woocommerce, boost sales, cart abandonment
+Tags: abandoned cart, cart recovery, cart abandonment, boost sales, email reminder
 Requires at least: 6.9
 Tested up to: 7.0
 Requires PHP: 8.2
 WC requires at least: 10.7
-WC tested up to: 10.7
+WC tested up to: 10.8
 Stable tag: 1.0.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -72,9 +72,27 @@ Enable Test Mode in **WooCommerce > CartBay > Settings**. You can then trigger a
 
 The free plugin does not contact WPAnchorBay licensing services. CartBay sends recovery emails through your WordPress/WooCommerce mail setup and sends capture requests only to your own site's local REST API endpoint at `/wp-json/cartbay/v1/capture`.
 
+= Why didn't my recovery email send? =
+
+CartBay hands recovery emails to WordPress and WooCommerce for delivery — it does not send email itself. If a send fails, the cause is almost always your site's mail configuration (no SMTP plugin, misconfigured SMTP credentials, or your host blocking PHP mail()), not CartBay. Use the built-in "Send Test Email" tool in the setup wizard or under WooCommerce > CartBay > Notifications to check your configuration, and see https://docs.wpanchorbay.com/cartbay/getting-started/email-delivery-setup/ for help setting up reliable email delivery.
+
 = What personal data does CartBay store? =
 
 When a shopper gives consent at checkout, CartBay stores the email address, cart snapshot, checkout source, timestamps, notification history, and recovery metadata in WooCommerce-native order records. This data stays on your WordPress site unless your mail provider processes outgoing recovery emails.
+
+== Source Code ==
+
+CartBay is fully open source under GPL-2.0-or-later and contains no obfuscated code. The plugin's JavaScript is written in an un-minified, human-readable form and is **included in this package** under the `src/` directory:
+
+* `src/capture/index.js` — classic checkout capture (compiled to `assets/js/cartbay-capture.js`).
+* `src/block/index.js` — block checkout capture (compiled to `assets/js/cartbay-block.js`).
+
+The compiled files in `assets/js/` are generated from these sources with the official WordPress build tooling (@wordpress/scripts, which uses webpack). The build tooling and configuration are also included in this package as `package.json` and `webpack.config.js`.
+
+To regenerate the compiled assets from source, run these commands in the plugin directory:
+
+`npm install`
+`npm run build`
 
 == Changelog ==
 

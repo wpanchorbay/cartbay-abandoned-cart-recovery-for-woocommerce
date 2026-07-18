@@ -182,18 +182,16 @@ class RecoveryMatcher {
 
 		$notification_id = sanitize_key( (string) $order->get_meta( '_cartbay_notification_id', true ) );
 		if ( '' === $notification_id ) {
-			$notification_id = $this->notifications->mark_recovered( $session->get_id(), $order->get_id() );
+			$notification_id = $this->notifications->latest_sent_notification_id( $session->get_id() );
 		}
 
-		// Mark as recovered.
+		// Mark as recovered. Attribution details (source, matched notification)
+		// are passed to the `cartbay_session_event` hook below so extensions can
+		// record them; the free plugin persists only what its own reporting uses.
 		$session->set_status( 'wc-cartbay-recovered' );
 		$session->update_meta_data( '_cartbay_recovered_at', time() );
 		$session->update_meta_data( '_cartbay_recovered_order_id', $order->get_id() );
 		$session->update_meta_data( '_cartbay_recovered_revenue', floatval( $order->get_total() ) );
-		$session->update_meta_data( '_cartbay_attribution_source', $attribution_source );
-		$session->update_meta_data( '_cartbay_matched_email_hash', hash( 'sha256', strtolower( trim( sanitize_email( $email ) ) ) ) );
-		$session->update_meta_data( '_cartbay_recovered_notification_id', $notification_id );
-		$session->update_meta_data( '_cartbay_restored', (bool) $session->get_meta( '_cartbay_restore_clicked_at', true ) );
 		$session->save();
 
 		// Cancel pending email jobs for this session.
@@ -281,18 +279,14 @@ class RecoveryMatcher {
 	 * @return void
 	 */
 	private function cancel_pending_email_jobs( int $session_id ): void {
-		global $wpdb;
+		if ( ! function_exists( 'as_unschedule_all_actions' ) ) {
+			return;
+		}
 
-		$pattern = '%' . $wpdb->esc_like( '[' . $session_id . ',' ) . '%';
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		$wpdb->query(
-			$wpdb->prepare(
-				"UPDATE {$wpdb->prefix}actionscheduler_actions SET status = %s WHERE hook = %s AND status = %s AND args LIKE %s",
-				'canceled',
-				'cartbay_send_recovery_email',
-				'pending',
-				$pattern
-			)
-		);
+		// Recovery emails are scheduled per step with args [session_id, step_index]
+		// for the three recovery emails; cancel each pending step via the API.
+		for ( $step = 0; $step < 3; $step++ ) {
+			as_unschedule_all_actions( 'cartbay_send_recovery_email', array( $session_id, $step ), 'cartbay' );
+		}
 	}
 }

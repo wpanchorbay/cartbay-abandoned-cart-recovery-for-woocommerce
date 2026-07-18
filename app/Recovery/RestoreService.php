@@ -102,7 +102,7 @@ class RestoreService {
 		$session->update_meta_data( '_cartbay_restore_clicked_at', time() );
 		$session->save();
 
-		$notification_id = $this->notifications->mark_restore_clicked( $session->get_id() );
+		$notification_id = $this->notifications->latest_sent_notification_id( $session->get_id() );
 		$this->sessions->add_event(
 			$session->get_id(),
 			'restore_clicked',

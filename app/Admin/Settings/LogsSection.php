@@ -75,16 +75,16 @@ class LogsSection extends AbstractSettingsSection {
 				'id'    => 'cartbay_log_settings',
 			),
 			array(
-				'title'    => __( 'CartBay File Logging', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+				'title'    => __( 'CartBay Logging', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 				'desc'     => __( 'Enable CartBay-owned troubleshooting log', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
-				'desc_tip' => __( 'Keeps a separate CartBay log in addition to WooCommerce native logs. Sensitive values such as emails, license keys, and tokens are redacted.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+				'desc_tip' => __( 'Keeps a bounded CartBay log in the database (in addition to WooCommerce native logs). Sensitive values such as emails, license keys, and tokens are redacted.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 				'id'       => 'cartbay_settings[log_enabled]',
 				'default'  => 'yes',
 				'type'     => 'checkbox',
 			),
 			array(
 				'title'             => __( 'CartBay Log Retention (days)', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
-				'desc'              => __( 'CartBay file log entries older than this are removed automatically.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+				'desc'              => __( 'CartBay log entries older than this are removed automatically. The log also keeps at most the most recent few hundred entries.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 				'id'                => 'cartbay_settings[log_retention_days]',
 				'default'           => 7,
 				'type'              => 'number',
@@ -92,18 +92,6 @@ class LogsSection extends AbstractSettingsSection {
 				'custom_attributes' => array(
 					'min' => 1,
 					'max' => 30,
-				),
-			),
-			array(
-				'title'             => __( 'CartBay Log Size Limit (MB)', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
-				'desc'              => __( 'When the log file exceeds this size, older entries are removed first.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
-				'id'                => 'cartbay_settings[log_max_size_mb]',
-				'default'           => 5,
-				'type'              => 'number',
-				'css'               => 'width:80px;',
-				'custom_attributes' => array(
-					'min' => 1,
-					'max' => 20,
 				),
 			),
 			array(
@@ -139,11 +127,9 @@ class LogsSection extends AbstractSettingsSection {
 		$settings           = get_option( 'cartbay_settings', array() );
 		$settings           = is_array( $settings ) ? $settings : array();
 
-		$settings['log_enabled'] = ( 'yes' === $posted_log_enabled );
+		$settings['log_enabled'] = $posted_log_enabled;
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce handled by Woo settings save.
 		$settings['log_retention_days'] = isset( $_POST['cartbay_settings']['log_retention_days'] ) ? max( 1, min( 30, absint( wp_unslash( $_POST['cartbay_settings']['log_retention_days'] ) ) ) ) : 7;
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce handled by Woo settings save.
-		$settings['log_max_size_mb'] = isset( $_POST['cartbay_settings']['log_max_size_mb'] ) ? max( 1, min( 20, absint( wp_unslash( $_POST['cartbay_settings']['log_max_size_mb'] ) ) ) ) : 5;
 
 		update_option( 'cartbay_settings', $settings );
 
@@ -152,7 +138,6 @@ class LogsSection extends AbstractSettingsSection {
 			array(
 				'log_enabled'        => $settings['log_enabled'],
 				'log_retention_days' => $settings['log_retention_days'],
-				'log_max_size_mb'    => $settings['log_max_size_mb'],
 			),
 			'logs'
 		);
@@ -181,7 +166,6 @@ class LogsSection extends AbstractSettingsSection {
 		$paged        = max( 1, min( $paged, max( 1, $total_pages ) ) );
 		$offset       = ( $paged - 1 ) * $per_page;
 		$entries      = Logger::get_entries( 0, $order, $offset, $per_page, $level );
-		$path         = Logger::get_log_file_path();
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended
 		$filter_base = add_query_arg(
 			array_filter(
@@ -196,8 +180,7 @@ class LogsSection extends AbstractSettingsSection {
 		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 
 		echo '<h2>' . esc_html__( 'CartBay Log Entries', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '</h2>';
-		echo '<p class="description cartbay-section-description">' . esc_html__( 'These entries are sanitized for support. Context values for emails, tokens, and licenses are redacted.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '</p>';
-		echo '<p><code>' . esc_html( $path ) . '</code></p>';
+		echo '<p class="description cartbay-section-description">' . esc_html__( 'These entries are stored in the WordPress database and sanitized for support. Context values for emails, tokens, and licenses are redacted.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '</p>';
 
 		echo '<div class="cartbay-log-filters">';
 		echo '<div class="tablenav top"><div class="alignleft actions">';

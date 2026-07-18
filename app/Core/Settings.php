@@ -52,6 +52,24 @@ class Settings {
 	}
 
 	/**
+	 * Determine whether test mode is enabled.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return bool Whether test mode should run.
+	 */
+	public static function is_test_mode_enabled(): bool {
+		$settings = get_option( 'cartbay_settings', array() );
+		$settings = is_array( $settings ) ? $settings : array();
+
+		if ( ! array_key_exists( 'test_mode', $settings ) ) {
+			return false;
+		}
+
+		return self::normalize_boolean( $settings['test_mode'] );
+	}
+
+	/**
 	 * Normalize stored checkbox-like values to a boolean.
 	 *
 	 * @since 1.0.0
