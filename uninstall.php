@@ -127,44 +127,6 @@ function cartbay_uninstall_delete_sessions(): void {
 }
 
 /**
- * Delete CartBay-generated recovery coupons.
- *
- * @since 1.0.0
- *
- * @return void
- */
-function cartbay_uninstall_delete_coupons(): void {
-	if ( ! function_exists( 'wc_get_coupons' ) ) {
-		return;
-	}
-
-	do {
-		// phpcs:disable WordPress.DB.SlowDBQuery.slow_db_query_meta_key, WordPress.DB.SlowDBQuery.slow_db_query_meta_value -- WC CRUD lookup for CartBay-generated coupons during uninstall cleanup.
-		$coupons = wc_get_coupons(
-			array(
-				'limit'      => 100,
-				'orderby'    => 'ID',
-				'order'      => 'ASC',
-				'meta_key'   => '_cartbay_generated',
-				'meta_value' => 'yes',
-			)
-		);
-		// phpcs:enable WordPress.DB.SlowDBQuery.slow_db_query_meta_key, WordPress.DB.SlowDBQuery.slow_db_query_meta_value
-		$count = count( $coupons );
-
-		$deleted = 0;
-		foreach ( $coupons as $coupon ) {
-			if ( ! is_object( $coupon ) || ! method_exists( $coupon, 'delete' ) ) {
-				continue;
-			}
-
-			$coupon->delete( true );
-			++$deleted;
-		}
-	} while ( 100 === $count && $deleted > 0 );
-}
-
-/**
  * Delete CartBay private content records.
  *
  * @since 1.0.0
@@ -230,7 +192,6 @@ function cartbay_uninstall_delete_file_logs(): void {
 
 cartbay_uninstall_unschedule_actions();
 cartbay_uninstall_delete_sessions();
-cartbay_uninstall_delete_coupons();
 cartbay_uninstall_delete_private_content();
 cartbay_uninstall_delete_file_logs();
 
