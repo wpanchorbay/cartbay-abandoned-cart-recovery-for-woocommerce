@@ -258,7 +258,6 @@ class Plugin {
 	 */
 	private function register_hooks(): void {
 		add_action( 'init', array( $this, 'register_order_statuses' ) );
-		add_filter( 'woocommerce_register_shop_order_statuses', array( $this, 'add_wc_order_statuses' ) );
 		add_filter( 'wc_order_statuses', array( $this, 'add_wc_order_statuses' ) );
 		// Keep CartBay session records out of the merchant's real order reporting
 		// surfaces: they are recovery-tracking rows, not purchases.
