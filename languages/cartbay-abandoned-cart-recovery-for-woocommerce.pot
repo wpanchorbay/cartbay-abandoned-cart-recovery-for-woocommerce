@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-07-19T15:15:43+00:00\n"
+"POT-Creation-Date: 2026-07-19T15:43:20+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: cartbay-abandoned-cart-recovery-for-woocommerce\n"
@@ -415,7 +415,6 @@ msgid "CartBay Pro generates a unique, single-use coupon per shopper, sets an ex
 msgstr ""
 
 #: app/Admin/Settings/OverviewSection.php:82
-#: app/Core/Plugin.php:430
 msgid "Overview"
 msgstr ""
 
@@ -1368,6 +1367,10 @@ msgstr ""
 
 #: app/Core/Plugin.php:410
 msgid "Setup Wizard"
+msgstr ""
+
+#: app/Core/Plugin.php:430
+msgid "Manage"
 msgstr ""
 
 #: app/Core/Plugin.php:440

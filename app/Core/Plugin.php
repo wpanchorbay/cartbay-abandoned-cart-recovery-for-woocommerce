@@ -424,10 +424,10 @@ class Plugin {
 	 * @return array<int, string>
 	 */
 	public function add_plugin_action_links( array $links ): array {
-		$overview_link = sprintf(
+		$manage_link   = sprintf(
 			'<a href="%s">%s</a>',
 			esc_url( admin_url( 'admin.php?page=wc-settings&tab=cartbay' ) ),
-			esc_html__( 'Overview', 'cartbay-abandoned-cart-recovery-for-woocommerce' )
+			esc_html__( 'Manage', 'cartbay-abandoned-cart-recovery-for-woocommerce' )
 		);
 		$settings_link = sprintf(
 			'<a href="%s">%s</a>',
@@ -440,7 +440,7 @@ class Plugin {
 			esc_html__( 'Docs', 'cartbay-abandoned-cart-recovery-for-woocommerce' )
 		);
 
-		array_unshift( $links, $overview_link, $settings_link, $docs_link );
+		array_unshift( $links, $manage_link, $settings_link, $docs_link );
 
 		return $links;
 	}
