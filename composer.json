@@ -1,6 +1,6 @@
 {
     "name": "wpanchorbay/cartbay-abandoned-cart-recovery-for-woocommerce",
-    "description": "Abandoned Cart Recovery for WooCommerce",
+    "description": "CartBay — Abandoned Cart Recovery for WooCommerce",
     "type": "wordpress-plugin",
     "license": "GPL-2.0-or-later",
     "require": {
