@@ -1,10 +1,10 @@
 === CartBay - Abandoned Cart Recovery for WooCommerce ===
 Contributors: wpanchorbay, forhadkhan, sankarsan, arifac, shuvendushekhar
 Tags: abandoned cart, cart recovery, cart abandonment, boost sales, email reminder
-Requires at least: 6.9
+Requires at least: 6.6
 Tested up to: 7.0
-Requires PHP: 8.2
-WC requires at least: 10.7
+Requires PHP: 8.0
+WC requires at least: 9.8
 WC tested up to: 10.9
 Stable tag: 1.0.0
 License: GPL-2.0-or-later
@@ -74,9 +74,9 @@ CartBay is fully GPL, contains no obfuscated code, and ships its JavaScript sour
 
 **Prerequisites:**
 
-* [WordPress](https://wordpress.org/) 6.9 or higher
-* [WooCommerce](https://wordpress.org/plugins/woocommerce/) 10.7 or higher, installed and active
-* PHP 8.2 or higher
+* [WordPress](https://wordpress.org/) 6.6 or higher
+* [WooCommerce](https://wordpress.org/plugins/woocommerce/) 9.8 or higher, installed and active
+* PHP 8.0 or higher
 
 1. Install CartBay from **Plugins > Add New**, or upload the plugin ZIP under **Plugins > Add New > Upload Plugin**.
 2. Activate the plugin.
@@ -88,7 +88,7 @@ CartBay is fully GPL, contains no obfuscated code, and ships its JavaScript sour
 
 = Do I need WooCommerce? =
 
-Yes. CartBay requires WooCommerce 10.7 or higher and WordPress 6.9 or higher.
+Yes. CartBay requires WooCommerce 9.8 or higher and WordPress 6.6 or higher.
 
 = Does CartBay work with the Block Checkout? =
 
