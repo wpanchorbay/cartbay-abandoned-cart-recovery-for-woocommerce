@@ -1,6 +1,6 @@
 <div align="center">
 
-# CartBay — Abandoned Cart Recovery for WooCommerce
+# CartBay - Abandoned Cart Recovery for WooCommerce
 
 **Recover lost WooCommerce checkout revenue with a focused 3-email recovery sequence. Sets up in under 5 minutes.**
 

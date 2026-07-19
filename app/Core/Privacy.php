@@ -169,7 +169,7 @@ class Privacy {
 		);
 
 		wp_add_privacy_policy_content(
-			'CartBay — Abandoned Cart Recovery for WooCommerce',
+			'CartBay - Abandoned Cart Recovery for WooCommerce',
 			'<p>' . $content . '</p>'
 		);
 	}

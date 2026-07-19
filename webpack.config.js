@@ -29,7 +29,7 @@ if ( packageJson.repository ) {
 const version = packageJson.version || '1.0.0';
 
 const bannerText = `/*!
- * CartBay — Abandoned Cart Recovery for WooCommerce
+ * CartBay - Abandoned Cart Recovery for WooCommerce
  * Copyright (c) ${ new Date().getFullYear() } WP Anchor Bay - https://wpanchorbay.com
  *
  * This software is licensed under the GPLv2 or later.

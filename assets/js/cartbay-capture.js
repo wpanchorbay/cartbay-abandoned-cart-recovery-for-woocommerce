@@ -1,5 +1,5 @@
 /*!
- * CartBay — Abandoned Cart Recovery for WooCommerce
+ * CartBay - Abandoned Cart Recovery for WooCommerce
  * Copyright (c) 2026 WP Anchor Bay - https://wpanchorbay.com
  *
  * This software is licensed under the GPLv2 or later.
