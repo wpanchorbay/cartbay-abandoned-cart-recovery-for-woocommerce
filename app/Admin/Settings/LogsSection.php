@@ -188,7 +188,7 @@ class LogsSection extends AbstractSettingsSection {
 		echo '<select name="level" id="cartbay-log-level-filter">';
 		echo '<option value=""' . selected( '', $level, false ) . '>' . esc_html__( 'All levels', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '</option>';
 		foreach ( $valid_levels as $l ) {
-			echo '<option value="' . esc_attr( $l ) . '"' . selected( $l, $level, false ) . '>' . esc_html( ucfirst( $l ) ) . '</option>';
+			echo '<option value="' . esc_attr( $l ) . '"' . selected( $l, $level, false ) . '>' . esc_html( $this->level_label( $l ) ) . '</option>';
 		}
 		echo '</select> ';
 		echo '<button type="button" id="cartbay-log-query-submit" class="button" data-base-url="' . esc_url( $filter_base ) . '">' . esc_html__( 'Filter', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '</button>';
@@ -247,7 +247,7 @@ class LogsSection extends AbstractSettingsSection {
 
 		echo '<tr class="cartbay-log-entry">';
 		echo '<td class="column-primary column-timestamp" data-colname="' . esc_attr__( 'Time', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '"><code>' . esc_html( $timestamp ) . '</code></td>';
-		echo '<td class="column-level" data-colname="' . esc_attr__( 'Level', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '"><span class="cartbay-badge cartbay-badge--' . esc_attr( $level ) . '">' . esc_html( ucfirst( $level ) ) . '</span></td>';
+		echo '<td class="column-level" data-colname="' . esc_attr__( 'Level', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '"><span class="cartbay-badge cartbay-badge--' . esc_attr( $level ) . '">' . esc_html( $this->level_label( $level ) ) . '</span></td>';
 		echo '<td class="column-system" data-colname="' . esc_attr__( 'System', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '">' . esc_html( $system ) . '</td>';
 		echo '<td class="column-message" data-colname="' . esc_attr__( 'Message', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '">' . esc_html( $message ) . '</td>';
 		/* translators: %s: number of context fields recorded for the log entry. */
@@ -302,5 +302,24 @@ class LogsSection extends AbstractSettingsSection {
 		}
 
 		echo '</span></div></div>';
+	}
+
+	/**
+	 * Translated display label for a log level slug.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $slug Log level slug.
+	 *
+	 * @return string Translated label, or the capitalized slug for unknown levels.
+	 */
+	private function level_label( string $slug ): string {
+		$labels = array(
+			'info'    => __( 'Info', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+			'warning' => __( 'Warning', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+			'error'   => __( 'Error', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+		);
+
+		return $labels[ $slug ] ?? ucfirst( $slug );
 	}
 }

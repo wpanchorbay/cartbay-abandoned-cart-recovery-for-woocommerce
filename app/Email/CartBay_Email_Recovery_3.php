@@ -33,7 +33,7 @@ class CartBay_Email_Recovery_3 extends AbstractCartBayRecoveryEmail {
 		$this->default_heading      = __( 'Your cart is still here', 'cartbay-abandoned-cart-recovery-for-woocommerce' );
 		$this->default_preheader    = __( 'A final reminder to finish checking out before your cart expires.', 'cartbay-abandoned-cart-recovery-for-woocommerce' );
 		$this->default_cta_label    = __( 'Claim My Cart', 'cartbay-abandoned-cart-recovery-for-woocommerce' );
-		$this->default_body_content = '<p>This is your last chance to complete your order.</p><p>Your cart is still saved and ready for you. If you still want these items, now is the best time to come back.</p>';
+		$this->default_body_content = __( '<p>This is your last chance to complete your order.</p><p>Your cart is still saved and ready for you. If you still want these items, now is the best time to come back.</p>', 'cartbay-abandoned-cart-recovery-for-woocommerce' );
 		$this->placeholders         = $this->get_default_placeholders();
 
 		parent::__construct();

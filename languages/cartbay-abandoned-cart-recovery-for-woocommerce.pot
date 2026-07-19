@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-07-17T19:44:42+00:00\n"
+"POT-Creation-Date: 2026-07-19T15:15:43+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: cartbay-abandoned-cart-recovery-for-woocommerce\n"
@@ -230,8 +230,8 @@ msgid "Details"
 msgstr ""
 
 #: app/Admin/Settings/LogsSection.php:258
-#: app/Admin/Settings/SettingsPage.php:462
-#: app/Admin/Settings/SettingsPage.php:511
+#: app/Admin/Settings/SettingsPage.php:468
+#: app/Admin/Settings/SettingsPage.php:523
 msgid "Copy Entry"
 msgstr ""
 
@@ -240,6 +240,22 @@ msgstr ""
 #: app/Admin/Settings/OverviewSection.php:557
 #, php-format
 msgid "%1$d of %2$d"
+msgstr ""
+
+#: app/Admin/Settings/LogsSection.php:318
+msgid "Info"
+msgstr ""
+
+#: app/Admin/Settings/LogsSection.php:319
+msgid "Warning"
+msgstr ""
+
+#: app/Admin/Settings/LogsSection.php:320
+msgid "Error"
+msgstr ""
+
+#: app/Admin/Settings/MailEnvironmentDetector.php:467
+msgid "unknown callback"
 msgstr ""
 
 #: app/Admin/Settings/NotificationsSection.php:82
@@ -256,7 +272,7 @@ msgid "Notification activity summary"
 msgstr ""
 
 #: app/Admin/Settings/NotificationsSection.php:166
-#: app/Admin/Settings/SettingsPage.php:765
+#: app/Admin/Settings/SettingsPage.php:777
 #: app/Admin/Wizard/WizardController.php:315
 #: app/Admin/Wizard/WizardController.php:323
 msgid "Learn how to set up reliable email delivery"
@@ -306,7 +322,7 @@ msgid "email@example.com"
 msgstr ""
 
 #: app/Admin/Settings/NotificationsSection.php:213
-#: app/Admin/Settings/SettingsPage.php:467
+#: app/Admin/Settings/SettingsPage.php:473
 #: app/Admin/Wizard/WizardController.php:332
 msgid "Send Test Email"
 msgstr ""
@@ -317,14 +333,17 @@ msgid "Enter an email address and click to send a test email and verify delivery
 msgstr ""
 
 #: app/Admin/Settings/NotificationsSection.php:234
+#: app/Admin/Settings/OverviewSection.php:166
 msgid "7 Days"
 msgstr ""
 
 #: app/Admin/Settings/NotificationsSection.php:235
+#: app/Admin/Settings/OverviewSection.php:167
 msgid "30 Days"
 msgstr ""
 
 #: app/Admin/Settings/NotificationsSection.php:236
+#: app/Admin/Settings/OverviewSection.php:168
 msgid "90 Days"
 msgstr ""
 
@@ -644,16 +663,19 @@ msgid "Send after"
 msgstr ""
 
 #: app/Admin/Settings/RecoverySequenceSection.php:145
+#: app/Admin/Settings/SettingsPage.php:479
 #: app/Admin/Wizard/WizardController.php:268
 msgid "minutes"
 msgstr ""
 
 #: app/Admin/Settings/RecoverySequenceSection.php:146
+#: app/Admin/Settings/SettingsPage.php:477
 #: app/Admin/Wizard/WizardController.php:269
 msgid "hours"
 msgstr ""
 
 #: app/Admin/Settings/RecoverySequenceSection.php:147
+#: app/Admin/Settings/SettingsPage.php:475
 #: app/Admin/Wizard/WizardController.php:270
 msgid "days"
 msgstr ""
@@ -684,94 +706,106 @@ msgstr ""
 msgid "Cart"
 msgstr ""
 
-#: app/Admin/Settings/SettingsPage.php:455
+#: app/Admin/Settings/SettingsPage.php:461
 msgid "Triggering..."
 msgstr ""
 
-#: app/Admin/Settings/SettingsPage.php:458
+#: app/Admin/Settings/SettingsPage.php:464
 msgid "Test flow triggered."
 msgstr ""
 
-#: app/Admin/Settings/SettingsPage.php:459
+#: app/Admin/Settings/SettingsPage.php:465
 msgid "Failed to trigger the test flow."
 msgstr ""
 
-#: app/Admin/Settings/SettingsPage.php:460
+#: app/Admin/Settings/SettingsPage.php:466
 #: app/Admin/Settings/TemplatesSection.php:170
 #: app/Admin/Settings/TemplatesSection.php:195
 msgid "Trigger Test Flow"
 msgstr ""
 
-#: app/Admin/Settings/SettingsPage.php:461
+#: app/Admin/Settings/SettingsPage.php:467
 msgid "Copied"
 msgstr ""
 
-#: app/Admin/Settings/SettingsPage.php:464
+#: app/Admin/Settings/SettingsPage.php:470
 msgid "Sending..."
 msgstr ""
 
-#: app/Admin/Settings/SettingsPage.php:465
+#: app/Admin/Settings/SettingsPage.php:471
 msgid "Test email sent!"
 msgstr ""
 
-#: app/Admin/Settings/SettingsPage.php:466
+#: app/Admin/Settings/SettingsPage.php:472
 msgid "Failed to send test email."
 msgstr ""
 
-#: app/Admin/Settings/SettingsPage.php:503
+#: app/Admin/Settings/SettingsPage.php:474
+msgid "day"
+msgstr ""
+
+#: app/Admin/Settings/SettingsPage.php:476
+msgid "hour"
+msgstr ""
+
+#: app/Admin/Settings/SettingsPage.php:478
+msgid "minute"
+msgstr ""
+
+#: app/Admin/Settings/SettingsPage.php:515
 msgid "Close modal panel"
 msgstr ""
 
-#: app/Admin/Settings/SettingsPage.php:512
+#: app/Admin/Settings/SettingsPage.php:524
 msgid "Close"
 msgstr ""
 
-#: app/Admin/Settings/SettingsPage.php:532
-#: app/Admin/Settings/SettingsPage.php:554
+#: app/Admin/Settings/SettingsPage.php:544
+#: app/Admin/Settings/SettingsPage.php:566
 msgid "You do not have permission to update CartBay settings."
 msgstr ""
 
-#: app/Admin/Settings/SettingsPage.php:542
+#: app/Admin/Settings/SettingsPage.php:554
 msgid "Test mode disabled."
 msgstr ""
 
-#: app/Admin/Settings/SettingsPage.php:569
+#: app/Admin/Settings/SettingsPage.php:581
 msgid "Test mode enabled."
 msgstr ""
 
 #. translators: %s: URL to the Capture settings section.
-#: app/Admin/Settings/SettingsPage.php:591
+#: app/Admin/Settings/SettingsPage.php:603
 #, php-format
 msgid "<strong>CartBay capture is disabled.</strong> CartBay will not capture new abandoned carts until capture is enabled. <a href=\"%s\">Enable Capture</a>."
 msgstr ""
 
 #. translators: %s: URL to disable test mode.
-#: app/Admin/Settings/SettingsPage.php:603
+#: app/Admin/Settings/SettingsPage.php:615
 #, php-format
-msgid "<strong>CartBay Test Mode is active.</strong> Recovery emails use shortened delays. <a href=\"%s\">Disable Test Mode</a> before going live."
+msgid "<strong>CartBay Test Mode is active.</strong> Use Trigger Test Flow in Templates to preview recovery emails. <a href=\"%s\">Disable Test Mode</a> before going live."
 msgstr ""
 
-#: app/Admin/Settings/SettingsPage.php:681
+#: app/Admin/Settings/SettingsPage.php:693
 msgid "CartBay Test Mode is active."
 msgstr ""
 
-#: app/Admin/Settings/SettingsPage.php:682
-msgid "Recovery emails use shortened delays. Disable before going live."
+#: app/Admin/Settings/SettingsPage.php:694
+msgid "Use Trigger Test Flow in Templates to preview recovery emails. Disable before going live."
 msgstr ""
 
-#: app/Admin/Settings/SettingsPage.php:683
+#: app/Admin/Settings/SettingsPage.php:695
 msgid "Disable Test Mode"
 msgstr ""
 
-#: app/Admin/Settings/SettingsPage.php:756
+#: app/Admin/Settings/SettingsPage.php:768
 msgid "<strong>An email logging plugin is active, but no SMTP delivery service was detected.</strong> Emails to buyers may not be delivered reliably."
 msgstr ""
 
-#: app/Admin/Settings/SettingsPage.php:758
+#: app/Admin/Settings/SettingsPage.php:770
 msgid "<strong>No SMTP plugin detected.</strong> Without an SMTP service, recovery emails may land in spam. Consider installing an SMTP plugin."
 msgstr ""
 
-#: app/Admin/Settings/SettingsPage.php:761
+#: app/Admin/Settings/SettingsPage.php:773
 msgid "CartBay does not send email itself — this depends on your site's mail setup."
 msgstr ""
 
@@ -845,7 +879,7 @@ msgid "Test Mode"
 msgstr ""
 
 #: app/Admin/Settings/SettingsSection.php:127
-msgid "Enable test mode (shortened email delays, dummy sessions)"
+msgid "Enable test mode (unlocks Trigger Test Flow to preview recovery emails using dummy sessions)"
 msgstr ""
 
 #: app/Admin/Settings/SettingsSection.php:128
@@ -1229,6 +1263,96 @@ msgstr ""
 msgid "CartBay could not resolve the service \"%s\"."
 msgstr ""
 
+#: app/Core/Installer.php:161
+#: app/Email/CartBay_Email_Recovery_1.php:36
+msgid "<p>Hi there,</p><p>You were close to checking out, so we saved your cart for you.</p><p>Come back while everything is still fresh and finish your order in just a few clicks.</p>"
+msgstr ""
+
+#: app/Core/Installer.php:162
+#: app/Core/Installer.php:276
+#: app/Email/CartBay_Email_Recovery_1.php:32
+msgid "[{site_title}] You left something in your cart"
+msgstr ""
+
+#: app/Core/Installer.php:163
+#: app/Core/Installer.php:277
+#: app/Email/CartBay_Email_Recovery_1.php:33
+msgid "You left something behind"
+msgstr ""
+
+#: app/Core/Installer.php:164
+#: app/Core/Installer.php:278
+#: app/Email/CartBay_Email_Recovery_1.php:34
+msgid "Pick up where you left off before your cart goes cold."
+msgstr ""
+
+#: app/Core/Installer.php:165
+#: app/Core/Installer.php:279
+#: app/Email/CartBay_Email_Recovery_1.php:35
+#: templates/emails/recovery-email-1.php:31
+#: templates/emails/recovery-email-2.php:31
+#: templates/emails/recovery-email-3.php:31
+msgid "Return to My Cart"
+msgstr ""
+
+#: app/Core/Installer.php:170
+#: app/Email/CartBay_Email_Recovery_2.php:36
+msgid "<p>Still thinking it over?</p><p>Your cart is still waiting for you, and checkout only takes a moment.</p><p>If anything was getting in the way, this is a great time to jump back in and complete your order.</p>"
+msgstr ""
+
+#: app/Core/Installer.php:171
+#: app/Core/Installer.php:283
+#: app/Email/CartBay_Email_Recovery_2.php:32
+msgid "[{site_title}] Your cart is waiting for you"
+msgstr ""
+
+#: app/Core/Installer.php:172
+#: app/Core/Installer.php:284
+#: app/Email/CartBay_Email_Recovery_2.php:33
+msgid "Still thinking about it?"
+msgstr ""
+
+#: app/Core/Installer.php:173
+#: app/Core/Installer.php:285
+#: app/Email/CartBay_Email_Recovery_2.php:34
+msgid "Your saved cart is ready whenever you are."
+msgstr ""
+
+#: app/Core/Installer.php:174
+#: app/Core/Installer.php:286
+#: app/Email/CartBay_Email_Recovery_2.php:35
+msgid "Complete My Order"
+msgstr ""
+
+#: app/Core/Installer.php:179
+#: app/Email/CartBay_Email_Recovery_3.php:36
+msgid "<p>This is your last chance to complete your order.</p><p>Your cart is still saved and ready for you. If you still want these items, now is the best time to come back.</p>"
+msgstr ""
+
+#: app/Core/Installer.php:180
+#: app/Core/Installer.php:290
+#: app/Email/CartBay_Email_Recovery_3.php:32
+msgid "[{site_title}] Last chance to complete your order"
+msgstr ""
+
+#: app/Core/Installer.php:181
+#: app/Core/Installer.php:291
+#: app/Email/CartBay_Email_Recovery_3.php:33
+msgid "Your cart is still here"
+msgstr ""
+
+#: app/Core/Installer.php:182
+#: app/Core/Installer.php:292
+#: app/Email/CartBay_Email_Recovery_3.php:34
+msgid "A final reminder to finish checking out before your cart expires."
+msgstr ""
+
+#: app/Core/Installer.php:183
+#: app/Core/Installer.php:293
+#: app/Email/CartBay_Email_Recovery_3.php:35
+msgid "Claim My Cart"
+msgstr ""
+
 #: app/Core/Plugin.php:362
 msgid "CartBay Templates"
 msgstr ""
@@ -1439,25 +1563,6 @@ msgstr ""
 msgid "First abandoned cart recovery email."
 msgstr ""
 
-#: app/Email/CartBay_Email_Recovery_1.php:32
-msgid "[{site_title}] You left something in your cart"
-msgstr ""
-
-#: app/Email/CartBay_Email_Recovery_1.php:33
-msgid "You left something behind"
-msgstr ""
-
-#: app/Email/CartBay_Email_Recovery_1.php:34
-msgid "Pick up where you left off before your cart goes cold."
-msgstr ""
-
-#: app/Email/CartBay_Email_Recovery_1.php:35
-#: templates/emails/recovery-email-1.php:31
-#: templates/emails/recovery-email-2.php:31
-#: templates/emails/recovery-email-3.php:31
-msgid "Return to My Cart"
-msgstr ""
-
 #: app/Email/CartBay_Email_Recovery_2.php:26
 msgid "CartBay: Recovery Email 2"
 msgstr ""
@@ -1466,44 +1571,12 @@ msgstr ""
 msgid "Second abandoned cart recovery email."
 msgstr ""
 
-#: app/Email/CartBay_Email_Recovery_2.php:32
-msgid "[{site_title}] Your cart is waiting for you"
-msgstr ""
-
-#: app/Email/CartBay_Email_Recovery_2.php:33
-msgid "Still thinking about it?"
-msgstr ""
-
-#: app/Email/CartBay_Email_Recovery_2.php:34
-msgid "Your saved cart is ready whenever you are."
-msgstr ""
-
-#: app/Email/CartBay_Email_Recovery_2.php:35
-msgid "Complete My Order"
-msgstr ""
-
 #: app/Email/CartBay_Email_Recovery_3.php:26
 msgid "CartBay: Recovery Email 3"
 msgstr ""
 
 #: app/Email/CartBay_Email_Recovery_3.php:27
 msgid "Third abandoned cart recovery email."
-msgstr ""
-
-#: app/Email/CartBay_Email_Recovery_3.php:32
-msgid "[{site_title}] Last chance to complete your order"
-msgstr ""
-
-#: app/Email/CartBay_Email_Recovery_3.php:33
-msgid "Your cart is still here"
-msgstr ""
-
-#: app/Email/CartBay_Email_Recovery_3.php:34
-msgid "A final reminder to finish checking out before your cart expires."
-msgstr ""
-
-#: app/Email/CartBay_Email_Recovery_3.php:35
-msgid "Claim My Cart"
 msgstr ""
 
 #: app/Recovery/CaptureService.php:69

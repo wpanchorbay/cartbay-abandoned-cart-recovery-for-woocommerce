@@ -464,6 +464,6 @@ class MailEnvironmentDetector {
 			return get_class( $callback );
 		}
 
-		return 'unknown callback';
+		return __( 'unknown callback', 'cartbay-abandoned-cart-recovery-for-woocommerce' );
 	}
 }
