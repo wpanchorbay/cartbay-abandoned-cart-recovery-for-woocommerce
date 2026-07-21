@@ -107,7 +107,7 @@ class SettingsSection extends AbstractSettingsSection {
 				array(
 					'title'    => __( 'WooCommerce Menu Shortcut', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 					'desc'     => __( 'Show CartBay under the WooCommerce admin menu.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
-					'desc_tip' => __( 'When enabled, WooCommerce > CartBay opens this CartBay settings area directly.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+					'desc_tip' => __( 'When enabled, WooCommerce → CartBay opens this CartBay settings area directly.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 					'id'       => 'cartbay_settings[wc_menu_enabled]',
 					'default'  => 'yes',
 					'type'     => 'checkbox',

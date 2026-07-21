@@ -209,11 +209,13 @@ class NotificationsSection extends AbstractSettingsSection {
 			</table>
 
 			<p class="description">
+				<?php esc_html_e( 'Recovery emails are sent with your WooCommerce store sender details.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?>
+				<br />
 				<?php
 				echo wp_kses_post(
 					sprintf(
 						/* translators: %s: link to the WooCommerce email settings screen. */
-						__( 'Recovery emails are sent with your WooCommerce store sender details. Change the From name and address in %s.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+						__( 'Change the From name and address in %s.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 						sprintf(
 							'<a href="%1$s">%2$s</a>',
 							esc_url( admin_url( 'admin.php?page=wc-settings&tab=email' ) ),
