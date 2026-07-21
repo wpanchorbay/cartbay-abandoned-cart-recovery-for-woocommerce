@@ -125,6 +125,22 @@ class TestRoute {
 		$session->update_meta_data( '_cartbay_consent', 1 );
 		$session->update_meta_data( '_cartbay_source', 'test' );
 		$session->update_meta_data( '_cartbay_last_activity_at', time() );
+
+		// Add a real product so the recovery email's restore link rebuilds a
+		// genuine cart. Without a restorable line item the restore link resolves
+		// to an empty-cart error instead of a working checkout.
+		$sample_product = $this->get_sample_product();
+		if ( $sample_product instanceof \WC_Product ) {
+			$session->add_product( $sample_product, 1 );
+			$session->calculate_totals( false );
+		} else {
+			Logger::warning(
+				'Test flow: no purchasable product found; the restore link will be empty.',
+				array(),
+				'test'
+			);
+		}
+
 		$session->save();
 
 		// Schedule first email step in 30 seconds.
@@ -148,5 +164,42 @@ class TestRoute {
 			),
 			200
 		);
+	}
+
+	/**
+	 * Find a purchasable, in-stock product to seed the test cart.
+	 *
+	 * The recovery email's restore link only rebuilds a cart when the session
+	 * has a restorable line item, so the test flow needs a real product. Only
+	 * directly purchasable products qualify, which skips variable parents (a
+	 * variation, not its parent, is what a shopper buys) and returns the first
+	 * simple purchasable, in-stock product instead.
+	 *
+	 * @since 1.0.1
+	 *
+	 * @return \WC_Product|null A restorable product, or null when the store has none.
+	 */
+	private function get_sample_product(): ?\WC_Product {
+		if ( ! function_exists( 'wc_get_products' ) ) {
+			return null;
+		}
+
+		$products = wc_get_products(
+			array(
+				'status'       => 'publish',
+				'stock_status' => 'instock',
+				'limit'        => 20,
+				'orderby'      => 'date',
+				'order'        => 'DESC',
+			)
+		);
+
+		foreach ( $products as $product ) {
+			if ( $product instanceof \WC_Product && $product->is_purchasable() && $product->is_in_stock() ) {
+				return $product;
+			}
+		}
+
+		return null;
 	}
 }
