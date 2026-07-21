@@ -95,6 +95,16 @@ class RestoreService {
 			return;
 		}
 
+		// Idempotency: if this exact recovery link already rebuilt the cart in
+		// this browser session, don't record another click or re-add items —
+		// just return the shopper to checkout. Prevents a double-click (or an
+		// impatient reload) from doubling quantities now that restore merges.
+		if ( function_exists( 'WC' ) && WC()->session
+			&& hash_equals( (string) WC()->session->get( 'cartbay_restore_token_hash' ), $token_hash ) ) {
+			wp_safe_redirect( wc_get_checkout_url() );
+			exit;
+		}
+
 		$items = $this->get_restore_items( $session );
 
 		// Update last activity timestamp.
@@ -114,31 +124,23 @@ class RestoreService {
 		AnalyticsService::invalidate_cache();
 
 		if ( empty( $items ) ) {
-			$this->record_restore_result( $session->get_id(), 0, 0, 0, array() );
+			$this->sessions->add_event( $session->get_id(), 'cart_restore_failed', array( 'reason' => 'empty' ) );
 			$this->redirect_with_error( 'empty' );
 			return;
 		}
 
-		// Rebuild cart.
-		WC()->cart->empty_cart();
+		// Rebuild the cart by merging saved items into the live cart rather than
+		// emptying it, so a shopper who is mid-purchase keeps what they already
+		// added. add_to_cart() merges quantities for identical items.
+		$cart_was_empty = WC()->cart->is_empty();
 		$this->sessions->add_event( $session->get_id(), 'cart_restore_started' );
-		$added       = 0;
-		$failed      = 0;
-		$failures    = array();
-		$total_items = count( $items );
 
+		$results = array();
 		foreach ( $items as $item ) {
-			$result = $this->restore_item( $item );
-			if ( true === $result ) {
-				++$added;
-				continue;
-			}
-
-			++$failed;
-			$failures[] = $result;
+			$results[] = $this->restore_item( $item );
 		}
 
-		$this->record_restore_result( $session->get_id(), $total_items, $added, $failed, $failures );
+		$this->record_restore_result( $session->get_id(), $results, $cart_was_empty );
 
 		// Pre-fill the checkout billing email from the restored session.
 		$session_email = $session->get_billing_email();
@@ -158,10 +160,6 @@ class RestoreService {
 		 * @param \WC_Order $session The restored CartBay session order.
 		 */
 		do_action( 'cartbay_restore_apply_discounts', $session );
-
-		if ( $added > 0 ) {
-			wc_add_notice( __( 'Your saved cart has been restored.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ), 'success' );
-		}
 
 		Logger::info(
 			'Restore link clicked and cart rebuilt.',
@@ -277,111 +275,245 @@ class RestoreService {
 	}
 
 	/**
-	 * Restore a single cart item.
+	 * Restore a single cart item, clamping quantity to available stock.
 	 *
 	 * @since 1.0.0
 	 *
 	 * @param array<string, mixed> $item Restore item.
 	 *
-	 * @return true|array<string, mixed> True on success or safe failure details.
+	 * @return array<string, mixed> Structured restore outcome (see item_result()).
 	 */
-	private function restore_item( array $item ): bool|array {
+	private function restore_item( array $item ): array {
 		$product_id   = absint( $item['product_id'] ?? 0 );
 		$variation_id = absint( $item['variation_id'] ?? 0 );
+		$requested    = max( 1, absint( $item['quantity'] ?? 1 ) );
 		$restore_id   = $variation_id > 0 ? $variation_id : $product_id;
 		$product      = wc_get_product( $restore_id );
 
 		if ( ! $product ) {
-			return $this->item_failure( $product_id, $variation_id, 'missing_product' );
+			return $this->item_result( 'failed', $product_id, $variation_id, '', $requested, 0, 'missing_product', false );
 		}
 
+		$name = $product->get_name();
+
 		if ( ! $product->is_purchasable() ) {
-			return $this->item_failure( $product_id, $variation_id, 'not_purchasable' );
+			return $this->item_result( 'failed', $product_id, $variation_id, $name, $requested, 0, 'not_purchasable', false );
 		}
 
 		if ( ! $product->is_in_stock() ) {
-			return $this->item_failure( $product_id, $variation_id, 'out_of_stock' );
+			return $this->item_result( 'failed', $product_id, $variation_id, $name, $requested, 0, 'out_of_stock', false );
 		}
 
-		$quantity       = max( 1, absint( $item['quantity'] ?? 1 ) );
+		// Clamp to available stock so a shopper who saved 5 (of which only 2
+		// remain) still gets the 2, instead of add_to_cart() rejecting the line.
+		$quantity = $requested;
+		if ( $product->managing_stock() && ! $product->backorders_allowed() ) {
+			$available = $product->get_stock_quantity();
+			if ( null !== $available && $available < $quantity ) {
+				$quantity = max( 0, (int) $available );
+			}
+		}
+
+		if ( $quantity < 1 ) {
+			return $this->item_result( 'failed', $product_id, $variation_id, $name, $requested, 0, 'out_of_stock', false );
+		}
+
 		$variation      = isset( $item['variation'] ) && is_array( $item['variation'] ) ? $this->sanitize_restore_array( $item['variation'] ) : array();
 		$cart_item_data = isset( $item['cart_item_data'] ) && is_array( $item['cart_item_data'] ) ? $this->sanitize_restore_array( $item['cart_item_data'] ) : array();
 
 		$cart_item_key = WC()->cart->add_to_cart( $product_id, $quantity, $variation_id, $variation, $cart_item_data );
 
-		return $cart_item_key ? true : $this->item_failure( $product_id, $variation_id, 'add_to_cart_failed' );
-	}
+		if ( ! $cart_item_key ) {
+			return $this->item_result( 'failed', $product_id, $variation_id, $name, $requested, 0, 'add_to_cart_failed', false );
+		}
 
-	/**
-	 * Build safe restore failure details.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param int    $product_id   Product ID.
-	 * @param int    $variation_id Variation ID.
-	 * @param string $reason       Safe reason code.
-	 *
-	 * @return array<string, mixed> Failure details.
-	 */
-	private function item_failure( int $product_id, int $variation_id, string $reason ): array {
-		return array(
-			'product_id'   => absint( $product_id ),
-			'variation_id' => absint( $variation_id ),
-			'reason'       => sanitize_key( $reason ),
+		$is_partial = $quantity < $requested;
+
+		return $this->item_result(
+			$is_partial ? 'partial' : 'added',
+			$product_id,
+			$variation_id,
+			$name,
+			$requested,
+			$quantity,
+			$is_partial ? 'limited_stock' : '',
+			$this->item_price_changed( $item, $product, $requested )
 		);
 	}
 
 	/**
-	 * Record restore outcome and shopper notices.
+	 * Build a structured restore outcome for one item.
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param int               $session_id  Session order ID.
-	 * @param int               $total_items Total restore item count.
-	 * @param int               $added       Added item count.
-	 * @param int               $failed      Failed item count.
-	 * @param array<int, mixed> $failures    Safe failure details.
+	 * @param string $status        'added', 'partial', or 'failed'.
+	 * @param int    $product_id    Product ID.
+	 * @param int    $variation_id  Variation ID.
+	 * @param string $name          Product name (may be empty when unresolved).
+	 * @param int    $requested     Quantity the shopper had saved.
+	 * @param int    $restored      Quantity actually added to the cart.
+	 * @param string $reason        Safe reason code for a partial/failed item.
+	 * @param bool   $price_changed Whether the unit price changed since capture.
+	 *
+	 * @return array<string, mixed> Outcome details.
+	 */
+	private function item_result( string $status, int $product_id, int $variation_id, string $name, int $requested, int $restored, string $reason, bool $price_changed ): array {
+		return array(
+			'status'        => sanitize_key( $status ),
+			'product_id'    => absint( $product_id ),
+			'variation_id'  => absint( $variation_id ),
+			'name'          => sanitize_text_field( $name ),
+			'requested'     => absint( $requested ),
+			'restored'      => absint( $restored ),
+			'reason'        => sanitize_key( $reason ),
+			'price_changed' => (bool) $price_changed,
+		);
+	}
+
+	/**
+	 * Detect whether an item's unit price changed since it was captured.
+	 *
+	 * Only snapshot items carry a captured price; order-item fallback restores
+	 * (which lack line totals) are treated as unchanged.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array<string, mixed> $item      Restore item.
+	 * @param \WC_Product          $product   Current product.
+	 * @param int                  $requested Captured quantity.
+	 *
+	 * @return bool True when the current unit price differs from the captured one.
+	 */
+	private function item_price_changed( array $item, \WC_Product $product, int $requested ): bool {
+		if ( ! isset( $item['line_subtotal'] ) || $requested < 1 ) {
+			return false;
+		}
+
+		$captured_unit = (float) $item['line_subtotal'] / $requested;
+		$current_unit  = (float) $product->get_price();
+
+		return abs( $captured_unit - $current_unit ) > 0.01;
+	}
+
+	/**
+	 * Record restore outcome and surface shopper notices.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param int                              $session_id     Session order ID.
+	 * @param array<int, array<string, mixed>> $results        Per-item restore outcomes.
+	 * @param bool                             $cart_was_empty Whether the live cart was empty before restore.
 	 *
 	 * @return void
 	 */
-	private function record_restore_result( int $session_id, int $total_items, int $added, int $failed, array $failures ): void {
+	private function record_restore_result( int $session_id, array $results, bool $cart_was_empty ): void {
+		$added_count   = 0;
+		$partial_items = array();
+		$failed_items  = array();
+		$price_changed = false;
+
+		foreach ( $results as $result ) {
+			if ( ! empty( $result['price_changed'] ) ) {
+				$price_changed = true;
+			}
+
+			$status = isset( $result['status'] ) ? (string) $result['status'] : 'failed';
+			if ( 'added' === $status ) {
+				++$added_count;
+			} elseif ( 'partial' === $status ) {
+				$partial_items[] = $result;
+			} else {
+				$failed_items[] = $result;
+			}
+		}
+
+		$total   = count( $results );
+		$added   = $added_count + count( $partial_items );
+		$failed  = count( $failed_items );
 		$session = $this->sessions->get( $session_id );
+
 		if ( $session ) {
 			$session->update_meta_data(
 				'_cartbay_restore_result',
 				array(
-					'total_items' => absint( $total_items ),
+					'total_items' => absint( $total ),
 					'added'       => absint( $added ),
+					'partial'     => absint( count( $partial_items ) ),
 					'failed'      => absint( $failed ),
-					'failures'    => $failures,
+					'results'     => $results,
 					'recorded_at' => time(),
 				)
 			);
 			$session->save();
 		}
 
-		if ( 0 === $total_items || 0 === $added ) {
-			$this->sessions->add_event( $session_id, 'cart_restore_failed', array( 'failures' => $failures ) );
+		if ( 0 === $added ) {
+			$this->sessions->add_event( $session_id, 'cart_restore_failed', array( 'results' => $results ) );
 			Logger::error(
 				'Cart restore failed.',
 				array(
 					'session_id' => $session_id,
-					'failures'   => $failures,
+					'results'    => $results,
 				),
 				'restore'
 			);
-			wc_add_notice( __( 'We could not restore the items from this recovery link. Please add them to your cart again.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ), 'error' );
+
+			$names = $this->format_item_names( $failed_items );
+			wc_add_notice(
+				'' !== $names
+					? sprintf(
+						/* translators: %s: comma-separated product names. */
+						__( 'We could not restore these items from your recovery link: %s. Please add them to your cart again.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+						$names
+					)
+					: __( 'We could not restore the items from this recovery link. Please add them to your cart again.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+				'error'
+			);
 			return;
 		}
 
-		if ( $failed > 0 ) {
+		wc_add_notice(
+			$cart_was_empty
+				? __( 'Your saved cart has been restored.', 'cartbay-abandoned-cart-recovery-for-woocommerce' )
+				: __( 'We added your saved items to your cart.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+			'success'
+		);
+
+		if ( ! empty( $partial_items ) ) {
+			wc_add_notice(
+				sprintf(
+					/* translators: %s: comma-separated product names. */
+					__( 'We could only restore part of your saved quantity for: %s (limited stock).', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+					$this->format_item_names( $partial_items )
+				),
+				'notice'
+			);
+		}
+
+		if ( ! empty( $failed_items ) ) {
+			wc_add_notice(
+				sprintf(
+					/* translators: %s: comma-separated product names. */
+					__( 'Some saved items are no longer available and could not be restored: %s.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+					$this->format_item_names( $failed_items )
+				),
+				'notice'
+			);
+		}
+
+		if ( $price_changed ) {
+			wc_add_notice( __( 'Some prices have changed since you saved your cart.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ), 'notice' );
+		}
+
+		if ( ! empty( $partial_items ) || ! empty( $failed_items ) ) {
 			$this->sessions->add_event(
 				$session_id,
 				'cart_restore_partial',
 				array(
-					'added'    => $added,
-					'failed'   => $failed,
-					'failures' => $failures,
+					'added'   => $added,
+					'partial' => count( $partial_items ),
+					'failed'  => $failed,
+					'results' => $results,
 				)
 			);
 			Logger::warning(
@@ -390,15 +522,58 @@ class RestoreService {
 					'session_id' => $session_id,
 					'added'      => $added,
 					'failed'     => $failed,
-					'failures'   => $failures,
+					'results'    => $results,
 				),
 				'restore'
 			);
-			wc_add_notice( __( 'Some items from your saved cart are no longer available and could not be restored.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ), 'notice' );
 			return;
 		}
 
-		$this->sessions->add_event( $session_id, 'cart_restored', array( 'added' => $added ) );
+		$this->sessions->add_event(
+			$session_id,
+			'cart_restored',
+			array(
+				'added'         => $added,
+				'price_changed' => $price_changed,
+			)
+		);
+	}
+
+	/**
+	 * Format up to a few product names for a shopper notice.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array<int, array<string, mixed>> $items Restore outcomes.
+	 *
+	 * @return string Comma-separated names, or '' when none are known.
+	 */
+	private function format_item_names( array $items ): string {
+		$names = array();
+		foreach ( $items as $item ) {
+			$name = isset( $item['name'] ) ? trim( (string) $item['name'] ) : '';
+			if ( '' !== $name ) {
+				$names[] = $name;
+			}
+		}
+
+		$names = array_values( array_unique( $names ) );
+		if ( empty( $names ) ) {
+			return '';
+		}
+
+		$max = 5;
+		if ( count( $names ) > $max ) {
+			$extra   = count( $names ) - $max;
+			$names   = array_slice( $names, 0, $max );
+			$names[] = sprintf(
+				/* translators: %d: number of additional items. */
+				_n( '%d more', '%d more', $extra, 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+				$extra
+			);
+		}
+
+		return implode( ', ', $names );
 	}
 
 	/**

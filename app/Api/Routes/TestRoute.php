@@ -127,12 +127,14 @@ class TestRoute {
 		$session->update_meta_data( '_cartbay_last_activity_at', time() );
 
 		// Add a real product so the recovery email's restore link rebuilds a
-		// genuine cart. Without a restorable line item the restore link resolves
-		// to an empty-cart error instead of a working checkout.
+		// genuine cart. A `_cartbay_cart_snapshot` is written alongside the line
+		// item so restore takes the same snapshot path a real captured cart does
+		// (RestoreService::get_restore_items()), not the order-item fallback.
 		$sample_product = $this->get_sample_product();
 		if ( $sample_product instanceof \WC_Product ) {
 			$session->add_product( $sample_product, 1 );
 			$session->calculate_totals( false );
+			$session->update_meta_data( '_cartbay_cart_snapshot', $this->build_test_snapshot( $sample_product ) );
 		} else {
 			Logger::warning(
 				'Test flow: no purchasable product found; the restore link will be empty.',
@@ -201,5 +203,43 @@ class TestRoute {
 		}
 
 		return null;
+	}
+
+	/**
+	 * Build a cart snapshot for the test session.
+	 *
+	 * Mirrors the item shape produced by
+	 * CaptureService::build_server_cart_snapshot() closely enough for the
+	 * restore path — RestoreService reads product_id/variation_id/quantity plus
+	 * line_subtotal (for price-change detection) — so the test flow exercises
+	 * the production snapshot path rather than the order-item fallback.
+	 *
+	 * @since 1.0.1
+	 *
+	 * @param \WC_Product $product Seed product.
+	 *
+	 * @return array<string, mixed> Cart snapshot.
+	 */
+	private function build_test_snapshot( \WC_Product $product ): array {
+		$price = (float) $product->get_price();
+
+		return array(
+			'items'           => array(
+				array(
+					'product_id'     => $product->get_id(),
+					'variation_id'   => 0,
+					'quantity'       => 1,
+					'variation'      => array(),
+					'cart_item_data' => array(),
+					'product_name'   => $product->get_name(),
+					'line_subtotal'  => $price,
+					'line_total'     => $price,
+				),
+			),
+			'currency'        => get_woocommerce_currency(),
+			'cart_item_count' => 1,
+			'grand_total'     => $price,
+			'captured_at'     => time(),
+		);
 	}
 }
