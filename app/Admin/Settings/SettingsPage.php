@@ -237,15 +237,16 @@ jQuery( function( $ ) {
 		var $result = $( '#cartbay-test-email-result' );
 
 		btn.prop( 'disabled', true ).text( 'TEST_EMAIL_SENDING_TEXT' );
+		$result.removeClass( 'is-success is-error' );
 		$.post( 'TEST_EMAIL_URL', {
 			_wpnonce: 'REST_NONCE',
 			email: email
 		} ).done( function( resp ) {
-			$result.text( resp.message || 'TEST_EMAIL_SUCCESS_TEXT' );
+			$result.text( resp.message || 'TEST_EMAIL_SUCCESS_TEXT' ).addClass( 'is-success' );
 		} ).fail( function( jqXHR ) {
 			var base = 'TEST_EMAIL_FAILURE_TEXT';
 			var reason = jqXHR.responseJSON && jqXHR.responseJSON.data && jqXHR.responseJSON.data.reason;
-			$result.text( reason ? base + ' ' + reason : base );
+			$result.text( reason ? base + ' ' + reason : base ).addClass( 'is-error' );
 		} ).always( function() {
 			btn.prop( 'disabled', false ).text( 'TEST_EMAIL_BUTTON_TEXT' );
 		} );

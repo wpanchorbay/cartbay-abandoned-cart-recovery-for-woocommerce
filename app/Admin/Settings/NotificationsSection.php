@@ -232,9 +232,8 @@ class NotificationsSection extends AbstractSettingsSection {
 				<button type="button" id="cartbay-test-email-notifications" class="button">
 					<?php esc_html_e( 'Send Test Email', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?>
 				</button>
-				<span id="cartbay-test-email-result" class="cartbay-test-email-result"></span>
 			</p>
-			<p class="description"><?php esc_html_e( 'Enter an email address and click to send a test email and verify delivery.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></p>
+			<p id="cartbay-test-email-result" class="description cartbay-test-email-result" role="status" aria-live="polite"><?php esc_html_e( 'Enter an email address and click to send a test email and verify delivery.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></p>
 		</div>
 		<?php
 	}
