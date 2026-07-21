@@ -231,6 +231,20 @@ class WizardController {
 			</tr>
 			<tr>
 				<th scope="row">
+					<label for="cartbay_consent_default_state"><?php esc_html_e( 'Consent Checkbox Default State', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></label>
+					<?php $this->render_help_tip( __( 'Sets whether the checkout consent checkbox starts checked or unchecked. CartBay only captures a shopper\'s email and cart while this box is checked.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) ); ?>
+				</th>
+				<td>
+					<?php $consent_default_state = ( isset( $settings['consent_default_state'] ) && 'checked' === $settings['consent_default_state'] ) ? 'checked' : 'unchecked'; ?>
+					<select name="cartbay_consent_default_state" id="cartbay_consent_default_state">
+						<option value="unchecked" <?php selected( 'unchecked', $consent_default_state ); ?>><?php esc_html_e( 'Unchecked (recommended)', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></option>
+						<option value="checked" <?php selected( 'checked', $consent_default_state ); ?>><?php esc_html_e( 'Checked', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></option>
+					</select>
+					<p class="description"><?php esc_html_e( 'EU/UK stores should keep this unchecked to comply with GDPR. Stores selling only where opt-out is allowed (for example, the US) may switch it to Checked.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></p>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row">
 					<label for="cartbay_abandonment_timeout"><?php esc_html_e( 'Abandonment Timeout (minutes)', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></label>
 					<?php $this->render_help_tip( __( 'CartBay waits this long after the shopper last interacts with checkout before marking the cart abandoned. Shorter values start recovery sooner; longer values reduce the chance of emailing someone who is still checking out.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) ); ?>
 				</th>
@@ -399,6 +413,9 @@ class WizardController {
 				$settings = get_option( 'cartbay_settings', array() );
 				// phpcs:ignore WordPress.Security.NonceVerification -- nonce verified in render().
 				$settings['consent_text'] = sanitize_text_field( wp_unslash( $_POST['cartbay_consent_text'] ?? '' ) );
+				// phpcs:ignore WordPress.Security.NonceVerification -- nonce verified in render().
+				$consent_default_state             = sanitize_key( wp_unslash( $_POST['cartbay_consent_default_state'] ?? 'unchecked' ) );
+				$settings['consent_default_state'] = 'checked' === $consent_default_state ? 'checked' : 'unchecked';
 				// phpcs:ignore WordPress.Security.NonceVerification -- nonce verified in render().
 				$settings['abandonment_timeout'] = absint( $_POST['cartbay_abandonment_timeout'] ?? 30 );
 				update_option( 'cartbay_settings', $settings );
