@@ -124,7 +124,7 @@ class SettingsSection extends AbstractSettingsSection {
 				),
 				array(
 					'title'    => __( 'Test Mode', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
-					'desc'     => __( 'Enable test mode (shortened email delays, dummy sessions)', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+					'desc'     => __( 'Enable test mode (unlocks Trigger Test Flow to preview recovery emails using dummy sessions)', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 					'desc_tip' => __( 'Use this in staging or QA when you want quick feedback loops without waiting for the normal recovery schedule.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 					'id'       => 'cartbay_settings[test_mode]',
 					'default'  => 'no',

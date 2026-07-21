@@ -163,9 +163,9 @@ class OverviewSection extends AbstractSettingsSection {
 		 */
 		$cards    = apply_filters( 'cartbay_overview_metric_cards', $cards, $period, $data );
 		$periods  = array(
-			7  => '7 Days',
-			30 => '30 Days',
-			90 => '90 Days',
+			7  => __( '7 Days', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+			30 => __( '30 Days', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+			90 => __( '90 Days', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 		);
 		$base_url = $this->url->section( 'overview' );
 

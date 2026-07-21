@@ -409,14 +409,14 @@ jQuery( function( $ ) {
 		}
 
 		if ( unit === 'days' ) {
-			return numericValue + ' ' + ( numericValue === 1 ? 'day' : 'days' );
+			return numericValue + ' ' + ( numericValue === 1 ? 'UNIT_DAY_TEXT' : 'UNIT_DAYS_TEXT' );
 		}
 
 		if ( unit === 'hours' ) {
-			return numericValue + ' ' + ( numericValue === 1 ? 'hour' : 'hours' );
+			return numericValue + ' ' + ( numericValue === 1 ? 'UNIT_HOUR_TEXT' : 'UNIT_HOURS_TEXT' );
 		}
 
-		return numericValue + ' ' + ( numericValue === 1 ? 'minute' : 'minutes' );
+		return numericValue + ' ' + ( numericValue === 1 ? 'UNIT_MINUTE_TEXT' : 'UNIT_MINUTES_TEXT' );
 	}
 
 	function updateSequenceSummaries() {
@@ -450,6 +450,12 @@ JS;
 				'TEST_EMAIL_SUCCESS_TEXT',
 				'TEST_EMAIL_FAILURE_TEXT',
 				'TEST_EMAIL_BUTTON_TEXT',
+				'UNIT_DAY_TEXT',
+				'UNIT_DAYS_TEXT',
+				'UNIT_HOUR_TEXT',
+				'UNIT_HOURS_TEXT',
+				'UNIT_MINUTE_TEXT',
+				'UNIT_MINUTES_TEXT',
 			),
 			array(
 				esc_js( __( 'Triggering...', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) ),
@@ -465,6 +471,12 @@ JS;
 				esc_js( __( 'Test email sent!', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) ),
 				esc_js( __( 'Failed to send test email.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) ),
 				esc_js( __( 'Send Test Email', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) ),
+				esc_js( __( 'day', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) ),
+				esc_js( __( 'days', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) ),
+				esc_js( __( 'hour', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) ),
+				esc_js( __( 'hours', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) ),
+				esc_js( __( 'minute', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) ),
+				esc_js( __( 'minutes', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) ),
 			),
 			$script
 		);
@@ -600,7 +612,7 @@ JS;
 				'warning',
 				sprintf(
 					/* translators: %s: URL to disable test mode. */
-					__( '<strong>CartBay Test Mode is active.</strong> Recovery emails use shortened delays. <a href="%s">Disable Test Mode</a> before going live.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+					__( '<strong>CartBay Test Mode is active.</strong> Use Trigger Test Flow in Templates to preview recovery emails. <a href="%s">Disable Test Mode</a> before going live.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
 					esc_url( $disable_url )
 				)
 			);
@@ -679,7 +691,7 @@ JS;
 
 		echo '<div class="notice notice-warning is-dismissible">';
 		echo '<p><strong>' . esc_html__( 'CartBay Test Mode is active.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '</strong> ';
-		echo esc_html__( 'Recovery emails use shortened delays. Disable before going live.', 'cartbay-abandoned-cart-recovery-for-woocommerce' );
+		echo esc_html__( 'Use Trigger Test Flow in Templates to preview recovery emails. Disable before going live.', 'cartbay-abandoned-cart-recovery-for-woocommerce' );
 		echo ' <a href="' . esc_url( $disable_url ) . '">' . esc_html__( 'Disable Test Mode', 'cartbay-abandoned-cart-recovery-for-woocommerce' ) . '</a></p>';
 		echo '</div>';
 	}

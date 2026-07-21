@@ -285,7 +285,7 @@ class RestoreService {
 	 *
 	 * @return true|array<string, mixed> True on success or safe failure details.
 	 */
-	private function restore_item( array $item ): true|array {
+	private function restore_item( array $item ): bool|array {
 		$product_id   = absint( $item['product_id'] ?? 0 );
 		$variation_id = absint( $item['variation_id'] ?? 0 );
 		$restore_id   = $variation_id > 0 ? $variation_id : $product_id;

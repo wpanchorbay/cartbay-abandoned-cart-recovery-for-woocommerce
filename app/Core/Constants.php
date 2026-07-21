@@ -25,7 +25,7 @@ class Constants {
 	 * @return void
 	 */
 	public static function register( string $plugin_file ): void {
-		self::define( 'CARTBAY_VERSION', '1.0.0' );
+		self::define( 'CARTBAY_VERSION', '1.0.1' );
 		self::define( 'CARTBAY_SLUG', 'cartbay-abandoned-cart-recovery-for-woocommerce' );
 		self::define( 'CARTBAY_DIR', plugin_dir_path( $plugin_file ) );
 		self::define( 'CARTBAY_URL', plugin_dir_url( $plugin_file ) );

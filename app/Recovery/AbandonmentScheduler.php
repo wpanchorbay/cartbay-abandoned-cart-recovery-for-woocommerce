@@ -149,6 +149,10 @@ class AbandonmentScheduler {
 				continue;
 			}
 
+			if ( ! function_exists( 'as_schedule_single_action' ) ) {
+				continue;
+			}
+
 			as_schedule_single_action(
 				$scheduled_at,
 				'cartbay_send_recovery_email',
