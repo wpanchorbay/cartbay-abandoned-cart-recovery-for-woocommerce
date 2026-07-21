@@ -6,7 +6,7 @@ Tested up to: 7.0
 Requires PHP: 8.0
 WC requires at least: 9.8
 WC tested up to: 10.9
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -160,10 +160,20 @@ To regenerate the compiled assets from source, run these commands in the plugin 
 
 == Changelog ==
 
+= 1.0.1 =
+* Lowered minimum requirements to PHP 8.0, WordPress 6.6, and WooCommerce 9.8.
+* Fixed a fatal error when Action Scheduler functions were unavailable.
+* Removed registration of a nonexistent order-status filter.
+* Improved translation coverage for admin strings.
+* Updated compatibility: tested up to WordPress 7.0 and WooCommerce 10.9.
+
 = 1.0.0 =
 * Initial release.
 
 == Upgrade Notice ==
+
+= 1.0.1 =
+Reliability and compatibility fixes, plus lower minimum requirements (PHP 8.0, WordPress 6.6, WooCommerce 9.8).
 
 = 1.0.0 =
 Initial release of CartBay - abandoned cart recovery for WooCommerce.

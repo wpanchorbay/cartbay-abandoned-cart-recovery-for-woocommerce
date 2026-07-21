@@ -6,7 +6,7 @@
  */
 
 if ( ! defined( 'CARTBAY_VERSION' ) ) {
-	define( 'CARTBAY_VERSION', '1.0.0' );
+	define( 'CARTBAY_VERSION', '1.0.1' );
 }
 
 if ( ! defined( 'CARTBAY_SLUG' ) ) {
