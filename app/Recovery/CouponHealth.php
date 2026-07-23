@@ -213,7 +213,7 @@ class CouponHealth {
 				continue;
 			}
 
-			/* translators: %d: recovery email step number. */
+			/* translators: %d: recovery email step number */
 			$fallback = sprintf( __( 'Email %d', 'cartbay-abandoned-cart-recovery-for-woocommerce' ), (int) $index + 1 );
 			$labels[] = isset( $blueprint[ $index ]['label'] ) ? (string) $blueprint[ $index ]['label'] : $fallback;
 		}
