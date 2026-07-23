@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-07-23T14:02:11+00:00\n"
+"POT-Creation-Date: 2026-07-23T17:04:26+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: cartbay-abandoned-cart-recovery-for-woocommerce\n"
@@ -665,7 +665,7 @@ msgstr ""
 
 #. translators: %d: recovery email step number
 #: app/Admin/Settings/RecoverySequenceSection.php:128
-#: app/Recovery/CouponHealth.php:217
+#: app/Recovery/CouponHealth.php:295
 #, php-format
 msgid "Email %d"
 msgstr ""
@@ -1633,52 +1633,52 @@ msgid "A recovery coupon code is set, but no email step includes it. Turn on the
 msgstr ""
 
 #. translators: %s: coupon code.
-#: app/Recovery/CouponHealth.php:111
+#: app/Recovery/CouponHealth.php:158
 #, php-format
 msgid "No active WooCommerce coupon matches the code <strong>%s</strong>. Create or publish it under WooCommerce &rarr; Marketing &rarr; Coupons, or recovery emails will send a code shoppers can't use."
 msgstr ""
 
 #. translators: 1: coupon code, 2: expiry date.
-#: app/Recovery/CouponHealth.php:128
+#: app/Recovery/CouponHealth.php:175
 #, php-format
 msgid "Coupon <strong>%1$s</strong> expired on %2$s. Shoppers who receive it will not be able to apply it."
 msgstr ""
 
 #. translators: %s: coupon code.
-#: app/Recovery/CouponHealth.php:142
+#: app/Recovery/CouponHealth.php:188
 #, php-format
 msgid "Coupon <strong>%s</strong> has reached its usage limit and can no longer be applied."
 msgstr ""
 
 #. translators: %s: coupon code.
-#: app/Recovery/CouponHealth.php:155
+#: app/Recovery/CouponHealth.php:201
 #, php-format
 msgid "Coupon <strong>%s</strong> is restricted to specific email addresses. Abandoned-cart shoppers rarely match, so it will usually fail. Use an unrestricted coupon for recovery emails."
 msgstr ""
 
 #. translators: %s: coupon code.
-#: app/Recovery/CouponHealth.php:169
+#: app/Recovery/CouponHealth.php:215
 #, php-format
 msgid "Coupon <strong>%s</strong> has cart restrictions (minimum spend or specific products/categories). Shoppers whose carts don't qualify won't be able to use it at checkout."
 msgstr ""
 
 #. translators: %s: a single email step label, e.g. "Email 3".
-#: app/Recovery/CouponHealth.php:238
+#: app/Recovery/CouponHealth.php:316
 #, php-format
 msgid "%s is"
 msgstr ""
 
 #. translators: %s: comma-separated list of email step labels.
-#: app/Recovery/CouponHealth.php:242
+#: app/Recovery/CouponHealth.php:320
 #, php-format
 msgid "%s are"
 msgstr ""
 
-#: app/Recovery/EmailSequenceService.php:201
+#: app/Recovery/EmailSequenceService.php:223
 msgid "Recovery email class is unavailable."
 msgstr ""
 
-#: app/Recovery/EmailSequenceService.php:222
+#: app/Recovery/EmailSequenceService.php:244
 msgid "WordPress mail did not confirm the email send."
 msgstr ""
 
