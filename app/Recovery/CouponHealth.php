@@ -85,6 +85,53 @@ class CouponHealth {
 	}
 
 	/**
+	 * Determine whether the configured static coupon code is fit to include in a
+	 * recovery email at send time.
+	 *
+	 * Checks only cart-independent, send-time-relevant conditions: the code is
+	 * set, matches a published WooCommerce coupon, is not expired, and has not
+	 * exhausted its global usage limit. Email restrictions and cart-applicability
+	 * are intentionally excluded — those stay config-time warnings, and cart
+	 * applicability is WooCommerce's job at checkout.
+	 *
+	 * Unlike the admin notices, this runs at send time — potentially days after
+	 * setup — so it catches coupons that expired or ran out after configuration.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @param string $code Configured static coupon code.
+	 *
+	 * @return string Empty string when the code is fit to send; otherwise a reason
+	 *                slug: 'empty', 'not_found', 'expired', or 'usage_exhausted'.
+	 */
+	public static function static_code_suppression_reason( string $code ): string {
+		if ( '' === trim( $code ) ) {
+			return 'empty';
+		}
+
+		if ( ! function_exists( 'wc_get_coupon_id_by_code' ) || ! class_exists( 'WC_Coupon' ) ) {
+			return '';
+		}
+
+		$coupon_id = wc_get_coupon_id_by_code( $code );
+		if ( 0 === $coupon_id ) {
+			return 'not_found';
+		}
+
+		$coupon = new \WC_Coupon( $coupon_id );
+
+		if ( self::is_coupon_expired( $coupon ) ) {
+			return 'expired';
+		}
+
+		if ( self::is_usage_exhausted( $coupon ) ) {
+			return 'usage_exhausted';
+		}
+
+		return '';
+	}
+
+	/**
 	 * Validate a coupon code against its WooCommerce coupon record.
 	 *
 	 * @since 1.1.0
@@ -120,7 +167,7 @@ class CouponHealth {
 
 		// Expired — mirror WooCommerce's own UTC comparison so this agrees with checkout.
 		$expires = $coupon->get_date_expires();
-		if ( $expires instanceof \WC_DateTime && time() > $expires->getTimestamp() ) {
+		if ( $expires instanceof \WC_DateTime && self::is_coupon_expired( $coupon ) ) {
 			$issues[] = array(
 				'type'    => 'warning',
 				'message' => sprintf(
@@ -133,8 +180,7 @@ class CouponHealth {
 		}
 
 		// Global usage limit exhausted.
-		$usage_limit = $coupon->get_usage_limit();
-		if ( $usage_limit > 0 && $coupon->get_usage_count() >= $usage_limit ) {
+		if ( self::is_usage_exhausted( $coupon ) ) {
 			$issues[] = array(
 				'type'    => 'warning',
 				'message' => sprintf(
@@ -173,6 +219,38 @@ class CouponHealth {
 		}
 
 		return $issues;
+	}
+
+	/**
+	 * Determine whether a coupon has passed its expiry date.
+	 *
+	 * Mirrors WooCommerce's own UTC comparison so this agrees with checkout.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @param \WC_Coupon $coupon Coupon object.
+	 *
+	 * @return bool True when the coupon has expired.
+	 */
+	private static function is_coupon_expired( \WC_Coupon $coupon ): bool {
+		$expires = $coupon->get_date_expires();
+
+		return $expires instanceof \WC_DateTime && time() > $expires->getTimestamp();
+	}
+
+	/**
+	 * Determine whether a coupon has exhausted its global usage limit.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @param \WC_Coupon $coupon Coupon object.
+	 *
+	 * @return bool True when no uses remain.
+	 */
+	private static function is_usage_exhausted( \WC_Coupon $coupon ): bool {
+		$usage_limit = $coupon->get_usage_limit();
+
+		return $usage_limit > 0 && $coupon->get_usage_count() >= $usage_limit;
 	}
 
 	/**
