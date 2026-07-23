@@ -36,12 +36,20 @@ do_action( 'woocommerce_email_header', $email_heading, $email ); ?>
 <?php if ( ! empty( $coupon_code ) ) : ?>
 <p>
 	<?php
-	printf(
-		/* translators: %1$s: coupon code, %2$s: expiry date */
-		esc_html__( 'Use coupon code %1$s at checkout. Expires %2$s.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
-		'<strong>' . esc_html( $coupon_code ) . '</strong>',
-		esc_html( $coupon_expiry )
-	);
+	if ( ! empty( $coupon_expiry ) ) {
+		printf(
+			/* translators: %1$s: coupon code, %2$s: expiry date */
+			esc_html__( 'Use coupon code %1$s at checkout. Expires %2$s.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+			'<strong>' . esc_html( $coupon_code ) . '</strong>',
+			esc_html( $coupon_expiry )
+		);
+	} else {
+		printf(
+			/* translators: %s: coupon code */
+			esc_html__( 'Use coupon code %s at checkout.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+			'<strong>' . esc_html( $coupon_code ) . '</strong>'
+		);
+	}
 	?>
 </p>
 <?php endif; ?>
