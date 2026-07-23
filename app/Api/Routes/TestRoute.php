@@ -177,7 +177,7 @@ class TestRoute {
 	 * variation, not its parent, is what a shopper buys) and returns the first
 	 * simple purchasable, in-stock product instead.
 	 *
-	 * @since 1.0.1
+	 * @since 1.1.0
 	 *
 	 * @return \WC_Product|null A restorable product, or null when the store has none.
 	 */
@@ -214,7 +214,7 @@ class TestRoute {
 	 * line_subtotal (for price-change detection) — so the test flow exercises
 	 * the production snapshot path rather than the order-item fallback.
 	 *
-	 * @since 1.0.1
+	 * @since 1.1.0
 	 *
 	 * @param \WC_Product $product Seed product.
 	 *

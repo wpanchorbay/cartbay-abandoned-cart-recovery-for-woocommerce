@@ -17,7 +17,7 @@ defined( 'ABSPATH' ) || exit;
  * defaults. Centralizing the lookup keeps the delivery-test display and the
  * test send in sync with what buyers actually receive.
  *
- * @since 1.0.1
+ * @since 1.1.0
  */
 class RecoveryEmailSender {
 
@@ -29,7 +29,7 @@ class RecoveryEmailSender {
 	 * email and site title (the same values WooCommerce itself defaults these
 	 * options to on install).
 	 *
-	 * @since 1.0.1
+	 * @since 1.1.0
 	 *
 	 * @return array{email: string, name: string} From address and display name.
 	 */

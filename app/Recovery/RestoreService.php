@@ -344,7 +344,7 @@ class RestoreService {
 	/**
 	 * Build a structured restore outcome for one item.
 	 *
-	 * @since 1.0.0
+	 * @since 1.1.0
 	 *
 	 * @param string $status        'added', 'partial', or 'failed'.
 	 * @param int    $product_id    Product ID.
@@ -376,7 +376,7 @@ class RestoreService {
 	 * Only snapshot items carry a captured price; order-item fallback restores
 	 * (which lack line totals) are treated as unchanged.
 	 *
-	 * @since 1.0.0
+	 * @since 1.1.0
 	 *
 	 * @param array<string, mixed> $item      Restore item.
 	 * @param \WC_Product          $product   Current product.
@@ -542,7 +542,7 @@ class RestoreService {
 	/**
 	 * Format up to a few product names for a shopper notice.
 	 *
-	 * @since 1.0.0
+	 * @since 1.1.0
 	 *
 	 * @param array<int, array<string, mixed>> $items Restore outcomes.
 	 *

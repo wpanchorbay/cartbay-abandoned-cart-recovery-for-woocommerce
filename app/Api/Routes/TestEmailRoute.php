@@ -102,7 +102,7 @@ class TestEmailRoute {
 	 * delivered from the same From name/address as real recovery emails. The
 	 * filters are always removed, even if the send throws.
 	 *
-	 * @since 1.0.1
+	 * @since 1.1.0
 	 *
 	 * @param callable $sender Callable that triggers a `wp_mail()`-backed send and returns bool.
 	 *
