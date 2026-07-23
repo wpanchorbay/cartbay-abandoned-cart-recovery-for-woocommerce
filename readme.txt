@@ -6,7 +6,7 @@ Tested up to: 7.0
 Requires PHP: 8.0
 WC requires at least: 9.8
 WC tested up to: 10.9
-Stable tag: 1.0.1
+Stable tag: 1.1.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -160,6 +160,12 @@ To regenerate the compiled assets from source, run these commands in the plugin 
 
 == Changelog ==
 
+= 1.1.0 =
+* Recovery emails no longer include a coupon by default. Turn a coupon on per email under **WooCommerce > CartBay > Recovery Sequence** when you want one. Existing setups are preserved; only untouched default configurations move to the new recommended default.
+* Added coupon setup checks on the **Offers** screen. CartBay now warns when an email is set to include a coupon but no code is entered, and when the configured code has no matching WooCommerce coupon, has expired, has reached its usage limit, or is restricted to specific email addresses.
+* Added a developer filter, `cartbay_offers_coupon_notice_relevant`, so extensions can control the new Offers notices.
+* Fixed recovery emails showing an empty "Expires ." line when the coupon had no expiry date.
+
 = 1.0.1 =
 * Lowered minimum requirements to PHP 8.0, WordPress 6.6, and WooCommerce 9.8.
 * Fixed a fatal error when Action Scheduler functions were unavailable.
@@ -171,6 +177,9 @@ To regenerate the compiled assets from source, run these commands in the plugin 
 * Initial release.
 
 == Upgrade Notice ==
+
+= 1.1.0 =
+New coupon setup checks on the Offers screen, and recovery emails no longer include a coupon by default. Existing configurations are preserved.
 
 = 1.0.1 =
 Reliability and compatibility fixes, plus lower minimum requirements (PHP 8.0, WordPress 6.6, WooCommerce 9.8).
