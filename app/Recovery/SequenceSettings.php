@@ -174,7 +174,7 @@ class SequenceSettings {
 	 * the newer v3 shape) so the v2 → v3 migration only flips genuinely untouched
 	 * installs and never clobbers a merchant's deliberate configuration.
 	 *
-	 * @since 1.0.2
+	 * @since 1.1.0
 	 *
 	 * @param array<string, mixed> $campaign Campaign settings.
 	 *

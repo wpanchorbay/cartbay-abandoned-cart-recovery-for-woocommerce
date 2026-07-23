@@ -9,8 +9,8 @@
  * Plugin Name:       CartBay - Abandoned Cart Recovery for WooCommerce
  * Plugin URI:        https://wpanchorbay.com/plugins/cartbay/
  * Description:       Recover abandoned WooCommerce checkout revenue with a focused plugin that sets up in minutes.
- * Version:           1.0.1
- * Stable tag:        1.0.1
+ * Version:           1.1.0
+ * Stable tag:        1.1.0
  * Author:            WPAnchorBay
  * Author URI:        https://wpanchorbay.com/
  * Text Domain:       cartbay-abandoned-cart-recovery-for-woocommerce

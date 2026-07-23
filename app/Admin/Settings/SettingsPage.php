@@ -641,7 +641,7 @@ JS;
 	 * expired, usage exhausted, email-restricted). Pro, which ignores the static
 	 * code entirely, can suppress these via the filter below.
 	 *
-	 * @since 1.0.2
+	 * @since 1.1.0
 	 *
 	 * @return void
 	 */
@@ -652,7 +652,7 @@ JS;
 		 * CartBay Pro generates per-session coupons and ignores the static code,
 		 * so it can return false here to suppress these Free-only notices.
 		 *
-		 * @since 1.0.2
+		 * @since 1.1.0
 		 *
 		 * @param bool $relevant Whether to render the coupon configuration notices.
 		 */

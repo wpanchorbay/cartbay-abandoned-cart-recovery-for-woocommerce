@@ -18,14 +18,14 @@ defined( 'ABSPATH' ) || exit;
  * apply to a given shopper's cart) is intentionally left to WooCommerce, which
  * already validates it at checkout against a real cart.
  *
- * @since 1.0.2
+ * @since 1.1.0
  */
 class CouponHealth {
 
 	/**
 	 * Build the list of coupon configuration issues.
 	 *
-	 * @since 1.0.2
+	 * @since 1.1.0
 	 *
 	 * @param string $offers_url   Optional link to the Offers settings section.
 	 * @param string $sequence_url Optional link to the Recovery Sequence settings section.
@@ -87,7 +87,7 @@ class CouponHealth {
 	/**
 	 * Validate a coupon code against its WooCommerce coupon record.
 	 *
-	 * @since 1.0.2
+	 * @since 1.1.0
 	 *
 	 * @param string $code Configured coupon code.
 	 *
@@ -178,7 +178,7 @@ class CouponHealth {
 	/**
 	 * Determine whether a coupon carries cart-dependent restrictions.
 	 *
-	 * @since 1.0.2
+	 * @since 1.1.0
 	 *
 	 * @param \WC_Coupon $coupon Coupon object.
 	 *
@@ -197,7 +197,7 @@ class CouponHealth {
 	/**
 	 * Collect the labels of steps that include a coupon.
 	 *
-	 * @since 1.0.2
+	 * @since 1.1.0
 	 *
 	 * @param array<string, mixed> $campaign Normalized campaign settings.
 	 *
@@ -224,7 +224,7 @@ class CouponHealth {
 	/**
 	 * Join step labels into a human-readable list with correct pluralized verb.
 	 *
-	 * @since 1.0.2
+	 * @since 1.1.0
 	 *
 	 * @param array<int, string> $labels Step labels.
 	 *
