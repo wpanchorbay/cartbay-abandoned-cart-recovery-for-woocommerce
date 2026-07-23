@@ -131,7 +131,7 @@ class Installer {
 		);
 
 		add_option( 'cartbay_wizard_complete', false );
-		add_option( 'cartbay_sequence_defaults_version', 2, '', false );
+		add_option( 'cartbay_sequence_defaults_version', 3, '', false );
 	}
 
 	/**
@@ -241,12 +241,18 @@ class Installer {
 
 		if ( $current_version < 2 && is_array( $campaign ) && SequenceSettings::is_legacy_default_campaign( $campaign ) ) {
 			$campaign = SequenceSettings::get_defaults();
+		} elseif ( $current_version < 3 && is_array( $campaign ) && SequenceSettings::is_v2_default_campaign( $campaign ) ) {
+			// Untouched v2 install: Email 3 shipped with its coupon enabled. Flip
+			// only that flag to match the new default, preserving assigned template
+			// IDs and any other normalized values.
+			$campaign                               = SequenceSettings::normalize( $campaign );
+			$campaign['steps'][2]['coupon_enabled'] = false;
 		} else {
 			$campaign = SequenceSettings::normalize( is_array( $campaign ) ? $campaign : array() );
 		}
 
 		update_option( 'cartbay_campaign_settings', $campaign );
-		update_option( 'cartbay_sequence_defaults_version', 2, false );
+		update_option( 'cartbay_sequence_defaults_version', 3, false );
 	}
 
 	/**

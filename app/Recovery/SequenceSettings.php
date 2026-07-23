@@ -60,7 +60,7 @@ class SequenceSettings {
 				array(
 					'delay_minutes'  => 72 * 60,
 					'template_id'    => 0,
-					'coupon_enabled' => true,
+					'coupon_enabled' => false,
 				),
 			),
 		);
@@ -164,6 +164,38 @@ class SequenceSettings {
 		}
 
 		return ! $enabled && array( 60, 1440, 4320 ) === $delays;
+	}
+
+	/**
+	 * Determine whether campaign settings still match the untouched v2 defaults.
+	 *
+	 * The v2 defaults shipped with Email 3's coupon enabled. This fingerprint is
+	 * hardcoded on purpose (never derived from get_defaults(), which now returns
+	 * the newer v3 shape) so the v2 → v3 migration only flips genuinely untouched
+	 * installs and never clobbers a merchant's deliberate configuration.
+	 *
+	 * @since 1.0.2
+	 *
+	 * @param array<string, mixed> $campaign Campaign settings.
+	 *
+	 * @return bool True when the campaign matches the out-of-box v2 defaults.
+	 */
+	public static function is_v2_default_campaign( array $campaign ): bool {
+		if ( ! self::normalize_boolean( $campaign['enabled'] ?? false ) ) {
+			return false;
+		}
+
+		$steps   = isset( $campaign['steps'] ) && is_array( $campaign['steps'] ) ? $campaign['steps'] : array();
+		$delays  = array();
+		$coupons = array();
+
+		for ( $index = 0; $index < 3; $index++ ) {
+			$raw_step  = isset( $steps[ $index ] ) && is_array( $steps[ $index ] ) ? $steps[ $index ] : array();
+			$delays[]  = self::sanitize_delay_minutes( $raw_step, 0 );
+			$coupons[] = self::normalize_boolean( $raw_step['coupon_enabled'] ?? false );
+		}
+
+		return array( 45, 1440, 4320 ) === $delays && array( false, false, true ) === $coupons;
 	}
 
 	/**
