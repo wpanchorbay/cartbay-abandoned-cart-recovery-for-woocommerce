@@ -148,6 +148,14 @@ class EmailSequenceService {
 			$settings    = get_option( 'cartbay_settings', array() );
 			$static_code = isset( $settings['static_coupon_code'] ) ? sanitize_text_field( (string) $settings['static_coupon_code'] ) : '';
 
+			// Fail-safe: if the free static code is missing or invalid (no matching
+			// coupon, expired, or usage-exhausted at send time), don't send a code
+			// shoppers can't use. The default passed to the filter is emptied, but
+			// the filter still runs so CartBay Pro can override with its own
+			// generated, guaranteed-valid coupon.
+			$suppression_reason = CouponHealth::static_code_suppression_reason( $static_code );
+			$default_code       = '' === $suppression_reason ? $static_code : '';
+
 			/**
 			 * Filter the coupon included in a recovery email step.
 			 *
@@ -164,7 +172,7 @@ class EmailSequenceService {
 			$coupon = apply_filters(
 				'cartbay_email_coupon',
 				array(
-					'code'   => $static_code,
+					'code'   => $default_code,
 					'expiry' => '',
 				),
 				$session_id,
@@ -173,6 +181,20 @@ class EmailSequenceService {
 
 			$coupon_code   = isset( $coupon['code'] ) ? sanitize_text_field( (string) $coupon['code'] ) : '';
 			$coupon_expiry = isset( $coupon['expiry'] ) ? sanitize_text_field( (string) $coupon['expiry'] ) : '';
+
+			// Record when free suppressed its own coupon and nothing overrode it,
+			// so the omission is visible in the session's event history.
+			if ( '' !== $suppression_reason && '' === $coupon_code ) {
+				$this->sessions->add_event(
+					$session_id,
+					'coupon_suppressed',
+					array(
+						'step'   => $step_index,
+						'code'   => $static_code,
+						'reason' => $suppression_reason,
+					)
+				);
+			}
 		}
 
 		// Generate restore token.

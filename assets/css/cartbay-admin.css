@@ -40,6 +40,11 @@
 .cartbay-wizard__schedule-label{align-items:center;display:inline-flex;gap:6px;min-width:0;}
 .cartbay-wizard__test-email{align-items:center;display:flex;flex-wrap:wrap;gap:8px;}
 .cartbay-wizard__test-email label{font-weight:600;}
+.cartbay-test-email-result{margin-top:8px;}
+.cartbay-test-email-result.is-success,
+.cartbay-test-email-result.is-error{padding:8px 12px;border-left:4px solid transparent;border-radius:2px;font-style:normal;}
+.cartbay-test-email-result.is-success{background-color:#edfaef;border-left-color:#46b450;color:#135e2b;}
+.cartbay-test-email-result.is-error{background-color:#fcf0f1;border-left-color:#d63638;color:#8a1f11;}
 .cartbay-wizard-help-tip{align-items:center;background:#f6f7f7;border:1px solid #c3c4c7;border-radius:50%;box-sizing:border-box;color:#646970;cursor:help;display:inline-flex;font-size:11px;font-weight:600;height:18px;justify-content:center;line-height:1;position:relative;width:18px;}
 .cartbay-wizard-help-tip:hover,
 .cartbay-wizard-help-tip:focus{background:#2145e6;border-color:#2145e6;color:#fff;outline:2px solid transparent;}

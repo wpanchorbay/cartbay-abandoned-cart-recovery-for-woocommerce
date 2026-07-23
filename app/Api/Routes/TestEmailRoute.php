@@ -7,6 +7,7 @@
 
 namespace WPAnchorBay\CartBay\Api\Routes;
 
+use WPAnchorBay\CartBay\Email\RecoveryEmailSender;
 use WPAnchorBay\CartBay\Utils\Logger;
 use WP_Error;
 use WP_REST_Request;
@@ -91,6 +92,46 @@ class TestEmailRoute {
 		}
 
 		return array( $sent, $reason );
+	}
+
+	/**
+	 * Send a plain wp_mail() using CartBay's recovery-email store sender.
+	 *
+	 * Wraps attempt_send() with temporary `wp_mail_from`/`wp_mail_from_name`
+	 * filters set to the WooCommerce store sender, so the test email is
+	 * delivered from the same From name/address as real recovery emails. The
+	 * filters are always removed, even if the send throws.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @param callable $sender Callable that triggers a `wp_mail()`-backed send and returns bool.
+	 *
+	 * @return array{0: bool, 1: string} Whether the send succeeded, and the captured failure reason.
+	 */
+	private function send_with_recovery_sender( callable $sender ): array {
+		$from       = RecoveryEmailSender::resolve();
+		$from_email = static fn (): string => $from['email'];
+		$from_name  = static fn (): string => $from['name'];
+		$set_email  = '' !== $from['email'];
+		$set_name   = '' !== $from['name'];
+
+		if ( $set_email ) {
+			add_filter( 'wp_mail_from', $from_email ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+		}
+		if ( $set_name ) {
+			add_filter( 'wp_mail_from_name', $from_name ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+		}
+
+		try {
+			return $this->attempt_send( $sender );
+		} finally {
+			if ( $set_email ) {
+				remove_filter( 'wp_mail_from', $from_email ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+			}
+			if ( $set_name ) {
+				remove_filter( 'wp_mail_from_name', $from_name ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+			}
+		}
 	}
 
 	/**
@@ -180,7 +221,10 @@ class TestEmailRoute {
 		$subject = __( 'CartBay Test Email', 'cartbay-abandoned-cart-recovery-for-woocommerce' );
 		$message = __( 'This is a test email from CartBay. If you received this, your email delivery is working correctly.', 'cartbay-abandoned-cart-recovery-for-woocommerce' );
 
-		list( $sent, $reason ) = $this->attempt_send(
+		// Send with the same store sender recovery emails use, so this
+		// deliverability probe exercises the real From domain (SPF/DKIM/DMARC
+		// alignment depends on it), not the WordPress wp_mail_from default.
+		list( $sent, $reason ) = $this->send_with_recovery_sender(
 			static fn (): bool => wp_mail( $target_email, $subject, $message )
 		);
 

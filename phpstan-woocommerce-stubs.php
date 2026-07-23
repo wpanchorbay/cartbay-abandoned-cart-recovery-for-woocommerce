@@ -293,6 +293,44 @@ if ( ! class_exists( 'WC_Product' ) ) {
 		public function is_in_stock(): bool {
 			return true;
 		}
+
+		/**
+		 * Get the active product price.
+		 *
+		 * @param string $context View or edit context.
+		 *
+		 * @return string
+		 */
+		public function get_price( string $context = 'view' ): string {
+			return '';
+		}
+
+		/**
+		 * Whether the product manages stock at the product level.
+		 *
+		 * @return bool
+		 */
+		public function managing_stock(): bool {
+			return false;
+		}
+
+		/**
+		 * Get the managed stock quantity.
+		 *
+		 * @return int|null
+		 */
+		public function get_stock_quantity(): ?int {
+			return null;
+		}
+
+		/**
+		 * Whether backorders are allowed.
+		 *
+		 * @return bool
+		 */
+		public function backorders_allowed(): bool {
+			return false;
+		}
 	}
 }
 
@@ -610,6 +648,69 @@ if ( ! class_exists( 'WC_Coupon' ) ) {
 		 */
 		public function get_usage_count(): int {
 			return 0;
+		}
+
+		/**
+		 * Get usage limit.
+		 *
+		 * @return int
+		 */
+		public function get_usage_limit(): int {
+			return 0;
+		}
+
+		/**
+		 * Get email restrictions.
+		 *
+		 * @return array<int, string>
+		 */
+		public function get_email_restrictions(): array {
+			return array();
+		}
+
+		/**
+		 * Get minimum order amount.
+		 *
+		 * @return string
+		 */
+		public function get_minimum_amount(): string {
+			return '';
+		}
+
+		/**
+		 * Get product IDs the coupon applies to.
+		 *
+		 * @return array<int, int>
+		 */
+		public function get_product_ids(): array {
+			return array();
+		}
+
+		/**
+		 * Get excluded product IDs.
+		 *
+		 * @return array<int, int>
+		 */
+		public function get_excluded_product_ids(): array {
+			return array();
+		}
+
+		/**
+		 * Get product category IDs the coupon applies to.
+		 *
+		 * @return array<int, int>
+		 */
+		public function get_product_categories(): array {
+			return array();
+		}
+
+		/**
+		 * Get excluded product category IDs.
+		 *
+		 * @return array<int, int>
+		 */
+		public function get_excluded_product_categories(): array {
+			return array();
 		}
 
 		/**
@@ -1066,6 +1167,15 @@ if ( ! class_exists( 'WC_Cart' ) ) {
 		 * @return void
 		 */
 		public function empty_cart(): void {}
+
+		/**
+		 * Whether the cart has no items.
+		 *
+		 * @return bool
+		 */
+		public function is_empty(): bool {
+			return true;
+		}
 
 		/**
 		 * Add to cart.

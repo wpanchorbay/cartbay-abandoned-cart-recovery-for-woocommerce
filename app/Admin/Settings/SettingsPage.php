@@ -11,6 +11,7 @@ use WPAnchorBay\CartBay\Admin\Wizard\WizardController;
 use WPAnchorBay\CartBay\Analytics\AnalyticsService;
 use WPAnchorBay\CartBay\Core\Container;
 use WPAnchorBay\CartBay\Core\Settings;
+use WPAnchorBay\CartBay\Recovery\CouponHealth;
 use WPAnchorBay\CartBay\Recovery\NotificationService;
 
 defined( 'ABSPATH' ) || exit;
@@ -237,15 +238,16 @@ jQuery( function( $ ) {
 		var $result = $( '#cartbay-test-email-result' );
 
 		btn.prop( 'disabled', true ).text( 'TEST_EMAIL_SENDING_TEXT' );
+		$result.removeClass( 'is-success is-error' );
 		$.post( 'TEST_EMAIL_URL', {
 			_wpnonce: 'REST_NONCE',
 			email: email
 		} ).done( function( resp ) {
-			$result.text( resp.message || 'TEST_EMAIL_SUCCESS_TEXT' );
+			$result.text( resp.message || 'TEST_EMAIL_SUCCESS_TEXT' ).addClass( 'is-success' );
 		} ).fail( function( jqXHR ) {
 			var base = 'TEST_EMAIL_FAILURE_TEXT';
 			var reason = jqXHR.responseJSON && jqXHR.responseJSON.data && jqXHR.responseJSON.data.reason;
-			$result.text( reason ? base + ' ' + reason : base );
+			$result.text( reason ? base + ' ' + reason : base ).addClass( 'is-error' );
 		} ).always( function() {
 			btn.prop( 'disabled', false ).text( 'TEST_EMAIL_BUTTON_TEXT' );
 		} );
@@ -626,7 +628,53 @@ JS;
 			);
 		}
 
+		$this->render_coupon_config_notices();
+
 		do_action( 'cartbay_admin_context_notices', $this );
+	}
+
+	/**
+	 * Render notices about the recovery coupon configuration.
+	 *
+	 * Warns when an email includes a coupon but no code is set, and surfaces
+	 * cart-independent problems with the configured coupon (missing/unpublished,
+	 * expired, usage exhausted, email-restricted). Pro, which ignores the static
+	 * code entirely, can suppress these via the filter below.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @return void
+	 */
+	private function render_coupon_config_notices(): void {
+		/**
+		 * Filter whether the free-tier recovery coupon notices are relevant.
+		 *
+		 * CartBay Pro generates per-session coupons and ignores the static code,
+		 * so it can return false here to suppress these Free-only notices.
+		 *
+		 * @since 1.1.0
+		 *
+		 * @param bool $relevant Whether to render the coupon configuration notices.
+		 */
+		if ( ! apply_filters( 'cartbay_offers_coupon_notice_relevant', true ) ) {
+			return;
+		}
+
+		$issues = CouponHealth::get_issues(
+			$this->url->section( 'offers' ),
+			$this->url->section( 'sequence' )
+		);
+
+		foreach ( $issues as $issue ) {
+			$type    = isset( $issue['type'] ) ? (string) $issue['type'] : 'warning';
+			$message = isset( $issue['message'] ) ? (string) $issue['message'] : '';
+
+			if ( '' === $message ) {
+				continue;
+			}
+
+			$this->render_wc_settings_inline_notice( $type, $message );
+		}
 	}
 
 	/**

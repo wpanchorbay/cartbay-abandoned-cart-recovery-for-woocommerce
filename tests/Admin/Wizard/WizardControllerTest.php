@@ -243,9 +243,10 @@ class WizardControllerTest extends TestCase {
 	 */
 	public function test_consent_step_persists_recovery_email_delays(): void {
 		$_POST = array(
-			'cartbay_consent_text'        => 'Recover my cart.',
-			'cartbay_abandonment_timeout' => '25',
-			'cartbay_campaign_settings'   => array(
+			'cartbay_consent_text'          => 'Recover my cart.',
+			'cartbay_consent_default_state' => 'checked',
+			'cartbay_abandonment_timeout'   => '25',
+			'cartbay_campaign_settings'     => array(
 				'steps' => array(
 					array(
 						'delay_value' => '30',
@@ -267,6 +268,7 @@ class WizardControllerTest extends TestCase {
 
 		self::assertSame( 3, $next_step );
 		self::assertSame( 'Recover my cart.', $this->updates['cartbay_settings']['consent_text'] );
+		self::assertSame( 'checked', $this->updates['cartbay_settings']['consent_default_state'] );
 		self::assertSame( 25, $this->updates['cartbay_settings']['abandonment_timeout'] );
 		self::assertSame( 30, $this->updates['cartbay_campaign_settings']['steps'][0]['delay_minutes'] );
 		self::assertSame( 120, $this->updates['cartbay_campaign_settings']['steps'][1]['delay_minutes'] );
@@ -283,8 +285,9 @@ class WizardControllerTest extends TestCase {
 	public function test_consent_step_includes_tooltips_for_each_control(): void {
 		$html = $this->render_wizard_step( 2 );
 
-		self::assertSame( 5, substr_count( $html, 'cartbay-wizard-help-tip' ) );
+		self::assertSame( 6, substr_count( $html, 'cartbay-wizard-help-tip' ) );
 		self::assertStringContainsString( 'This text appears beside the checkout consent checkbox.', $html );
+		self::assertStringContainsString( 'Sets whether the checkout consent checkbox starts checked or unchecked.', $html );
 		self::assertStringContainsString( 'CartBay waits this long after the shopper last interacts with checkout before marking the cart abandoned.', $html );
 		self::assertStringContainsString( 'The first recovery email should arrive while the shopper still remembers the cart.', $html );
 		self::assertStringContainsString( 'The second email gives shoppers time to compare options before following up.', $html );

@@ -9,6 +9,7 @@ namespace WPAnchorBay\CartBay\Tests\Api\Routes;
 
 use Brain\Monkey;
 use Brain\Monkey\Actions;
+use Brain\Monkey\Filters;
 use Brain\Monkey\Functions;
 use Mockery;
 use PHPUnit\Framework\TestCase;
@@ -120,6 +121,34 @@ class TestEmailRouteTest extends TestCase {
 		Actions\expectAdded( 'wp_mail_failed' )->once();
 		Actions\expectRemoved( 'wp_mail_failed' )->once();
 
+		Functions\when( 'wp_mail' )->justReturn( true );
+
+		$result = ( new TestEmailRoute() )->handle( $this->request( array( 'email' => 'shopper@example.test' ) ) );
+
+		self::assertInstanceOf( WP_REST_Response::class, $result );
+		self::assertTrue( $result->get_data()['success'] );
+	}
+
+	/**
+	 * The basic test email should be sent with the WooCommerce store sender, so the
+	 * deliverability probe exercises the same From as real recovery emails.
+	 *
+	 * @since 1.0.1
+	 *
+	 * @return void
+	 */
+	public function test_basic_test_email_applies_store_sender(): void {
+		Functions\when( 'get_option' )->alias(
+			static fn ( string $key, mixed $default = false ): mixed => match ( $key ) {
+				'cartbay_settings'               => array( 'log_enabled' => false ),
+				'woocommerce_email_from_address' => 'store@example.test',
+				'woocommerce_email_from_name'    => 'My Store',
+				default                          => $default,
+			}
+		);
+
+		Filters\expectAdded( 'wp_mail_from' )->once();
+		Filters\expectAdded( 'wp_mail_from_name' )->once();
 		Functions\when( 'wp_mail' )->justReturn( true );
 
 		$result = ( new TestEmailRoute() )->handle( $this->request( array( 'email' => 'shopper@example.test' ) ) );

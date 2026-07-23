@@ -9,6 +9,7 @@ namespace WPAnchorBay\CartBay\Admin\Settings;
 
 use WPAnchorBay\CartBay\Analytics\AnalyticsService;
 use WPAnchorBay\CartBay\Admin\Settings\MailEnvironmentDetector;
+use WPAnchorBay\CartBay\Email\RecoveryEmailSender;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -151,8 +152,9 @@ class NotificationsSection extends AbstractSettingsSection {
 	private function render_test_email_delivery(): void {
 		$mail_status    = $this->mail_detector->detect();
 		$admin_email    = sanitize_email( (string) wp_get_current_user()->user_email );
-		$from_email     = sanitize_email( apply_filters( 'wp_mail_from', 'wordpress@' . wp_parse_url( home_url(), PHP_URL_HOST ) ) ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-		$from_name      = apply_filters( 'wp_mail_from_name', 'WordPress' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+		$sender         = RecoveryEmailSender::resolve();
+		$from_email     = $sender['email'];
+		$from_name      = $sender['name'];
 		$delivery_label = '';
 		$delivery_class = 'notice-warning';
 
@@ -206,15 +208,32 @@ class NotificationsSection extends AbstractSettingsSection {
 				</tbody>
 			</table>
 
+			<p class="description">
+				<?php esc_html_e( 'Recovery emails are sent with your WooCommerce store sender details.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?>
+				<br />
+				<?php
+				echo wp_kses_post(
+					sprintf(
+						/* translators: %s: link to the WooCommerce email settings screen. */
+						__( 'Change the From name and address in %s.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ),
+						sprintf(
+							'<a href="%1$s">%2$s</a>',
+							esc_url( admin_url( 'admin.php?page=wc-settings&tab=email' ) ),
+							esc_html__( 'WooCommerce → Settings → Emails', 'cartbay-abandoned-cart-recovery-for-woocommerce' )
+						)
+					)
+				);
+				?>
+			</p>
+
 			<p>
 				<label for="cartbay-test-email-address"><?php esc_html_e( 'Send to:', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></label>
 				<input type="email" id="cartbay-test-email-address" class="regular-text" value="<?php echo esc_attr( $admin_email ); ?>" placeholder="<?php esc_attr_e( 'email@example.com', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?>" />
 				<button type="button" id="cartbay-test-email-notifications" class="button">
 					<?php esc_html_e( 'Send Test Email', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?>
 				</button>
-				<span id="cartbay-test-email-result" class="cartbay-test-email-result"></span>
 			</p>
-			<p class="description"><?php esc_html_e( 'Enter an email address and click to send a test email and verify delivery.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></p>
+			<p id="cartbay-test-email-result" class="description cartbay-test-email-result" role="status" aria-live="polite"><?php esc_html_e( 'Enter an email address and click to send a test email and verify delivery.', 'cartbay-abandoned-cart-recovery-for-woocommerce' ); ?></p>
 		</div>
 		<?php
 	}
