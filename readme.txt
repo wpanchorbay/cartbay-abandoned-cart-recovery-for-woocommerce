@@ -20,6 +20,8 @@ Every abandoned cart is a shopper who already wanted to buy. **CartBay** brings 
 
 CartBay is built for performance and privacy. It stores everything in **WooCommerce-native order objects** - no custom database tables to bloat your site, and full compatibility with WooCommerce **HPOS** (High-Performance Order Storage). Setup takes under 5 minutes with the built-in wizard, and the whole plugin is open source with un-minified, human-readable code included in the package.
 
+[youtube https://www.youtube.com/watch?v=XnECWpfgf8U]
+
 = How CartBay works =
 
 1. A shopper reaches checkout and sees a clear, consent-based recovery checkbox (classic **and** WooCommerce Block Checkout).
