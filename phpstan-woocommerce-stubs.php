@@ -651,6 +651,69 @@ if ( ! class_exists( 'WC_Coupon' ) ) {
 		}
 
 		/**
+		 * Get usage limit.
+		 *
+		 * @return int
+		 */
+		public function get_usage_limit(): int {
+			return 0;
+		}
+
+		/**
+		 * Get email restrictions.
+		 *
+		 * @return array<int, string>
+		 */
+		public function get_email_restrictions(): array {
+			return array();
+		}
+
+		/**
+		 * Get minimum order amount.
+		 *
+		 * @return string
+		 */
+		public function get_minimum_amount(): string {
+			return '';
+		}
+
+		/**
+		 * Get product IDs the coupon applies to.
+		 *
+		 * @return array<int, int>
+		 */
+		public function get_product_ids(): array {
+			return array();
+		}
+
+		/**
+		 * Get excluded product IDs.
+		 *
+		 * @return array<int, int>
+		 */
+		public function get_excluded_product_ids(): array {
+			return array();
+		}
+
+		/**
+		 * Get product category IDs the coupon applies to.
+		 *
+		 * @return array<int, int>
+		 */
+		public function get_product_categories(): array {
+			return array();
+		}
+
+		/**
+		 * Get excluded product category IDs.
+		 *
+		 * @return array<int, int>
+		 */
+		public function get_excluded_product_categories(): array {
+			return array();
+		}
+
+		/**
 		 * Delete the coupon.
 		 *
 		 * @param bool $force_delete Whether to bypass trash.
